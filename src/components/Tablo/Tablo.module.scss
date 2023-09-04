@@ -1,0 +1,63 @@
+/* Tablo.module.scss */
+.tabloMain{
+
+    .header{
+        text-align: center;
+        margin-top: 5vw;
+    }
+
+    .tabloCards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 1vw;
+        justify-items: center;
+        padding: 3vw;
+
+        .appointmentCards{
+            margin-top: 0;
+
+            .appointmentCard {
+                background-color: #9bd2ff;
+                border-radius: 8px;
+                box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.1);
+                padding-inline: 5%;
+                margin-bottom: 3vw;
+                display: grid;
+                grid-template-rows: 1fr 1fr;
+                width: 25vw;
+
+                .upperRow{
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    align-items: center;
+                    justify-self: space-between;
+                    h1{
+                        font-size: 1.5rem;
+                    }
+                    img{
+                        height: 1.8vw;
+                        width: 1.8vw;
+                        justify-self: end;
+                        background: rgb(255, 58, 58);
+                        border-radius: 100%;
+                        cursor:pointer;
+                    }
+                }
+
+                .lowerRow{
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    align-items: center;
+                    justify-self: space-between;
+                    .missed {
+                        color: red;
+                        justify-self: end;
+                    }
+                }
+            }
+        }
+    }
+}
+
+  
+    
