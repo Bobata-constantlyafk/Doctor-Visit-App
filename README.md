@@ -26,3 +26,6 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+# Doctor-Visit-App
+A React web app for doctors appointments, developed in September 2023 by Boyan Dechev.This application serves as a platform where patients can schedule appointments and doctors can access their appointment schedules.
