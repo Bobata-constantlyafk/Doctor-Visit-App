@@ -1,18 +1,14 @@
 {
-  "..\\..\\node_modules\\@supabase\\functions-js\\dist\\module\\helper.js -> @supabase/node-fetch": {
-    "id": "..\\..\\node_modules\\@supabase\\functions-js\\dist\\module\\helper.js -> @supabase/node-fetch",
-    "files": [
-      "static/chunks/node_modules_supabase_node-fetch_browser_js.js"
-    ]
-  },
-  "..\\..\\node_modules\\@supabase\\gotrue-js\\dist\\module\\lib\\helpers.js -> cross-fetch": {
-    "id": "..\\..\\node_modules\\@supabase\\gotrue-js\\dist\\module\\lib\\helpers.js -> cross-fetch",
+  "..\\..\\node_modules\\@supabase\\functions-js\\dist\\module\\helper.js -> cross-fetch": {
+    "id": "..\\..\\node_modules\\@supabase\\functions-js\\dist\\module\\helper.js -> cross-fetch",
     "files": []
   },
-  "..\\..\\node_modules\\@supabase\\storage-js\\dist\\module\\lib\\helpers.js -> @supabase/node-fetch": {
-    "id": "..\\..\\node_modules\\@supabase\\storage-js\\dist\\module\\lib\\helpers.js -> @supabase/node-fetch",
-    "files": [
-      "static/chunks/node_modules_supabase_node-fetch_browser_js.js"
-    ]
+  "..\\..\\node_modules\\@supabase\\gotrue-js\\dist\\module\\lib\\helpers.js -> @supabase/node-fetch": {
+    "id": "..\\..\\node_modules\\@supabase\\gotrue-js\\dist\\module\\lib\\helpers.js -> @supabase/node-fetch",
+    "files": []
+  },
+  "..\\..\\node_modules\\@supabase\\storage-js\\dist\\module\\lib\\helpers.js -> cross-fetch": {
+    "id": "..\\..\\node_modules\\@supabase\\storage-js\\dist\\module\\lib\\helpers.js -> cross-fetch",
+    "files": []
   }
 }
