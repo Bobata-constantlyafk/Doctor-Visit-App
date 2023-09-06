@@ -13,14 +13,23 @@ import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 
-interface CalendarProps {}
+// eslint-disable-next-line
 
 interface DateType {
   justDate: Date | null;
   dateTime: Date | null;
 }
 
-const Calendar: FC<CalendarProps> = ({}) => {
+interface Appointment {
+  date: string;
+  age_range?: string;
+  type?: string;
+  phone_nr?: string;
+  name?: string;
+  missed?: boolean;
+}
+
+const Calendar: FC = ({}) => {
   const [date, setDate] = useState<DateType>({
     justDate: null,
     dateTime: null,
@@ -35,28 +44,38 @@ const Calendar: FC<CalendarProps> = ({}) => {
     // Fetch existing appointments for the selected date from the database
     const fetchExistingAppointments = async () => {
       if (!date.justDate) return;
-
+  
       const formattedSelectedDate = format(date.justDate, "yyyy-MM-dd");
-      console.log("Formatted selected date:", formattedSelectedDate);
-
-      const { data, error }: PostgrestSingleResponse<any> = await supabase
-        .from("Appointments")
-        .select("date")
-        .gte("date", formattedSelectedDate) // Use greater than or equal to filter
-        .order("date");
-
-      if (error) {
-        console.error("Error fetching existing appointments:", error);
-      } else {
-        const existingDates = data.map(
-          (appointment: any) => new Date(appointment.date)
-        );
-        console.log("Existing appointments:", existingDates);
-        setExistingAppointments(existingDates);
+  
+      try {
+        const { data, error }: PostgrestSingleResponse<Appointment[]> = await supabase
+          .from("Appointments")
+          .select("date")
+          .gte("date", formattedSelectedDate)
+          .order("date");
+  
+        if (error) {
+          console.error("Error fetching existing appointments:", error);
+        } else {
+          const existingDates = data.map(
+            (appointment: { date: string })=> 
+            new Date(appointment.date)
+          );
+          setExistingAppointments(existingDates);
+        }
+      } catch (error) {
+        console.error("Error in fetchExistingAppointments:", error);
       }
     };
+  
+      fetchExistingAppointments()
+      .then(() => {
+        console.log("Existing appointments:", existingAppointments);
+      })
+      .catch((error) => {
+        console.error("Error in fetchExistingAppointments:", error);
+      });
 
-    fetchExistingAppointments();
   }, [date.justDate]);
 
   const getTimes = () => {
@@ -95,38 +114,40 @@ const Calendar: FC<CalendarProps> = ({}) => {
 
     return `${day} ${month} (${dayName})`;
   }
-
-  const createAppointments = async (dateTime: Date) => {
-    try {
-      const oneHourAhead = add(dateTime, { hours: 1 });
-
-      const { data, error }: PostgrestSingleResponse<any> = await supabase
-        .from("Appointments")
-        .upsert([
-          {
-            date: dateTime,
-            age_range: age_range,
-            type: typeEye,
-            phone_nr: phoneNumber,
-            name: name,
-          },
-          {
-            date: oneHourAhead,
-            age_range: age_range,
-            type: typeEye,
-            phone_nr: phoneNumber,
-            name: name,
-          },
-        ]);
-
-      if (error) {
-        console.error("Error creating appointments:", error);
-      } else {
-        console.log("Appointments created successfully");
-      }
-    } catch (error) {
-      console.error("Error creating appointments:", error);
-    }
+  
+  const createAppointments = (dateTime: Date) => {
+    const oneHourAhead = add(dateTime, { hours: 1 });
+    (
+      supabase.from("Appointments").upsert([
+        {
+          date: dateTime,
+          age_range: age_range,
+          type: typeEye,
+          phone_nr: phoneNumber,
+          name: name,
+        },
+        {
+          date: oneHourAhead,
+          age_range: age_range,
+          type: typeEye,
+          phone_nr: phoneNumber,
+          name: name,
+        },
+      ])  as unknown as Promise<{
+        data: Appointment;
+        error: Error;
+      }>
+    )
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Error creating appointment:", error);
+        } else {
+          console.log("Appointment created successfully:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating appointment:", error);
+      });
   };
 
   return (

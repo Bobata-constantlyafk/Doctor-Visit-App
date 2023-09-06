@@ -9,8 +9,8 @@ const Navbar: React.FC = () => {
         <nav className={styles.navbarContainer}>
           <ul className={styles.nav__links}>
             <li>
-              <a href="/">Начало</a>
-              <a href="/tablo">Табло</a>
+              <Link href="/">Начало</Link>
+              <Link href="/tablo">Табло</Link>
             </li>
           </ul>
         </nav>

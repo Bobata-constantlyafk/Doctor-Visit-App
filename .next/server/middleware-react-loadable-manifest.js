@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST='{"..\\\\..\\\\node_modules\\\\@supabase\\\\functions-js\\\\dist\\\\module\\\\helper.js -> @supabase/node-fetch":{"id":9743,"files":["static/chunks/743.82157852d307f024.js"]},"..\\\\..\\\\node_modules\\\\@supabase\\\\gotrue-js\\\\dist\\\\module\\\\lib\\\\helpers.js -> cross-fetch":{"id":4098,"files":[]},"..\\\\..\\\\node_modules\\\\@supabase\\\\storage-js\\\\dist\\\\module\\\\lib\\\\helpers.js -> @supabase/node-fetch":{"id":9743,"files":["static/chunks/743.82157852d307f024.js"]}}';

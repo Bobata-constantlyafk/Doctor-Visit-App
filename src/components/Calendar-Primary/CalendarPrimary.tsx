@@ -10,17 +10,24 @@ import {
   CLOSING_MINUTES,
 } from "~/constants/config";
 import supabase from "../../constants/supaClient.js";
-import { PostgrestSingleResponse } from "@supabase/supabase-js";
+import { PostgrestSingleResponse, PostgrestError } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
-
-interface CalendarPrimaryProps {}
 
 interface DateType {
   justDate: Date | null;
   dateTime: Date | null;
 }
 
-const CalendarPrimary: FC<CalendarPrimaryProps> = ({}) => {
+interface Appointment {
+  date: string;
+  age_range?: string;
+  type?: string;
+  phone_nr?: string;
+  name?: string;
+  missed?: boolean;
+}
+
+const CalendarPrimary: FC = ({}) => {
   const [date, setDate] = useState<DateType>({
     justDate: null,
     dateTime: null,
@@ -37,26 +44,34 @@ const CalendarPrimary: FC<CalendarPrimaryProps> = ({}) => {
       if (!date.justDate) return;
 
       const formattedSelectedDate = format(date.justDate, "yyyy-MM-dd");
-      console.log("Formatted selected date:", formattedSelectedDate);
 
-      const { data, error }: PostgrestSingleResponse<any> = await supabase
-        .from("Appointments")
-        .select("date")
-        .gte("date", formattedSelectedDate) // Use greater than or equal to filter
-        .order("date");
+      const { data, error }: PostgrestSingleResponse<Appointment[]> =
+        await supabase
+          .from("Appointments")
+          .select("date")
+          .gte("date", formattedSelectedDate) // Use greater than or equal to filter
+          .order("date");
+
+      console.log("eto go: ", data);
 
       if (error) {
         console.error("Error fetching existing appointments:", error);
       } else {
         const existingDates = data.map(
-          (appointment: any) => new Date(appointment.date)
+          (appointment: { date: string }) => new Date(appointment.date)
         );
         console.log("Existing appointments:", existingDates);
         setExistingAppointments(existingDates);
       }
     };
 
-    fetchExistingAppointments();
+    fetchExistingAppointments()
+      .then(() => {
+        console.log("Existing appointments:", existingAppointments);
+      })
+      .catch((error) => {
+        console.error("Error in fetchExistingAppointments:", error);
+      });
   }, [date.justDate]);
 
   const getTimes = () => {
@@ -96,28 +111,31 @@ const CalendarPrimary: FC<CalendarPrimaryProps> = ({}) => {
     return `${day} ${month} (${dayName})`;
   }
 
-  const createAppointment = async (dateTime: Date) => {
-    try {
-      const { data, error }: PostgrestSingleResponse<any> = await supabase
-        .from("Appointments")
-        .insert([
-          {
-            date: dateTime,
-            age_range: age_range,
-            type: typeEye,
-            phone_nr: phoneNumber,
-            name: name,
-          },
-        ]);
-
-      if (error) {
+  const createAppointment = (dateTime: Date) => {
+    (
+      supabase.from("Appointments").insert([
+        {
+          date: dateTime,
+          age_range: age_range,
+          type: typeEye,
+          phone_nr: phoneNumber,
+          name: name,
+        },
+      ]) as unknown as Promise<{
+        data: Appointment;
+        error: Error;
+      }>
+    )
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Error creating appointment:", error);
+        } else {
+          console.log("Appointment created successfully:", data);
+        }
+      })
+      .catch((error) => {
         console.error("Error creating appointment:", error);
-      } else {
-        console.log("Appointment created successfully:", data);
-      }
-    } catch (error) {
-      console.error("Error creating appointment:", error);
-    }
+      });
   };
 
   return (

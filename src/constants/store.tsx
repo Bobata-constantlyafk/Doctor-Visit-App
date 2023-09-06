@@ -1,6 +1,6 @@
 "use client";
 
-import {
+import React, {
   createContext,
   useContext,
   Dispatch,
@@ -35,8 +35,11 @@ const GlobalContext = createContext<ContextProps>({
   setTypeEye: (): string => "",
 });
 
-//@ts-ignore
-export const GlobalContextProvider = ({ children }) => {
+export const GlobalContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [age_range, setAge_range] = useState("");

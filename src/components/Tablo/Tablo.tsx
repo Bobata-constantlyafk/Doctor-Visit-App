@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
-import {
-  getHours,
-  getMinutes,
-  getDate,
-  isBefore,
-  isAfter,
-  isSameDay,
-} from "date-fns";
+import { getHours, getMinutes, getDate, isAfter, isSameDay } from "date-fns";
 
 interface Appointment {
   date: Date;
@@ -18,7 +11,7 @@ interface Appointment {
   name: string;
   missed: boolean;
 }
-
+// eslint-disable-next-line
 interface TabloProps {}
 
 const Tablo: React.FC<TabloProps> = ({}) => {
@@ -36,10 +29,16 @@ const Tablo: React.FC<TabloProps> = ({}) => {
         setAppointments(data);
       }
     }
-    fetchAppointments();
+    fetchAppointments()
+      .then(() => {
+        console.log("Existing appointments:", appointments);
+      })
+      .catch((error) => {
+        console.error("Error in fetchExistingAppointments:", error);
+      });
   }, []);
 
-  const handleDeleteAppointment = async (index: number) => {
+  const handleDeleteAppointment = (index: number) => {
     // Get the appointment to be deleted
     const appointmentToDelete = appointments[index];
 
@@ -49,19 +48,29 @@ const Tablo: React.FC<TabloProps> = ({}) => {
     }
 
     // Update the database (you need to define the delete operation in your Supabase config)
-    const { error } = await supabase
-      .from("Appointments")
-      .delete()
-      .eq("date", appointmentToDelete.date);
-    if (error) {
-      console.error("Error deleting appointment:", error);
-      return;
-    }
-
-    // Remove the appointment from the state
-    const updatedAppointments = [...appointments];
-    updatedAppointments.splice(index, 1);
-    setAppointments(updatedAppointments);
+    (
+      supabase
+        .from("Appointments")
+        .delete()
+        .eq("date", appointmentToDelete.date) as unknown as Promise<{
+        data: Appointment;
+        error: Error;
+      }>
+    )
+      .then(({ error }) => {
+        if (error) {
+          console.error("Error deleting appointment:", error);
+        } else {
+          // Remove the appointment from the state
+          const updatedAppointments = [...appointments];
+          updatedAppointments.splice(index, 1);
+          setAppointments(updatedAppointments);
+          console.log("Appointment deleted successfully");
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting appointment:", error);
+      });
   };
 
   const monthAbbreviations = [
@@ -88,9 +97,11 @@ const Tablo: React.FC<TabloProps> = ({}) => {
   }
 
   const currentDate = new Date();
+
   const filteredAppointments = appointments.filter((appointment) =>
     isAfter(new Date(appointment.date), currentDate)
   );
+
   const todaysAppointments = appointments.filter((appointment) =>
     isSameDay(new Date(appointment.date), currentDate)
   );
