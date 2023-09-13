@@ -22,9 +22,7 @@ interface Appointment {
   date: string;
   age_range?: string;
   type?: string;
-  phone_nr?: string;
-  name?: string;
-  missed?: boolean;
+  patient_id?: string;
 }
 
 const CalendarPrimary: FC = ({}) => {
@@ -49,10 +47,8 @@ const CalendarPrimary: FC = ({}) => {
         await supabase
           .from("Appointments")
           .select("date")
-          .gte("date", formattedSelectedDate) // Use greater than or equal to filter
+          .gte("date", formattedSelectedDate)
           .order("date");
-
-      console.log("eto go: ", data);
 
       if (error) {
         console.error("Error fetching existing appointments:", error);
@@ -60,14 +56,13 @@ const CalendarPrimary: FC = ({}) => {
         const existingDates = data.map(
           (appointment: { date: string }) => new Date(appointment.date)
         );
-        console.log("Existing appointments:", existingDates);
         setExistingAppointments(existingDates);
       }
     };
 
     fetchExistingAppointments()
       .then(() => {
-        console.log("Existing appointments:", existingAppointments);
+        console.log("We have the appointments!");
       })
       .catch((error) => {
         console.error("Error in fetchExistingAppointments:", error);
@@ -111,31 +106,64 @@ const CalendarPrimary: FC = ({}) => {
     return `${day} ${month} (${dayName})`;
   }
 
-  const createAppointment = (dateTime: Date) => {
-    (
-      supabase.from("Appointments").insert([
-        {
-          date: dateTime,
-          age_range: age_range,
-          type: typeEye,
-          phone_nr: phoneNumber,
-          name: name,
-        },
-      ]) as unknown as Promise<{
-        data: Appointment;
-        error: Error;
-      }>
-    )
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("Error creating appointment:", error);
-        } else {
-          console.log("Appointment created successfully:", data);
-        }
+  const createPatient = async () => {
+    const { data, error } = await supabase
+      .from("Patients")
+      .upsert([{ name: name, phone_nr: phoneNumber }], {
+        onConflict: "phone_nr",
       })
-      .catch((error) => {
-        console.error("Error creating appointment:", error);
-      });
+      .select("*");
+
+    if (error) {
+      console.error("Error creating patient:", error);
+      return null;
+    }
+
+    if (data) {
+      console.log("Data from Supabase:", data);
+
+      const patient = data[0];
+
+      console.log("Patient id form 1:", patient.id);
+      return patient.id;
+    } else {
+      console.error("No data received from Supabase.");
+      return null;
+    }
+  };
+
+  const createAppointment = async (dateTime: Date) => {
+    try {
+      const patient_id = await createPatient();
+      console.log("patient_id: ", patient_id);
+      if (!patient_id) return;
+
+      (
+        supabase.from("Appointments").insert([
+          {
+            date: dateTime,
+            age_range: age_range,
+            type: typeEye,
+            patient_id: patient_id,
+          },
+        ]) as unknown as Promise<{
+          data: Appointment;
+          error: Error;
+        }>
+      )
+        .then(({ data, error }) => {
+          if (error) {
+            console.error("Error creating appointment:", error);
+          } else {
+            console.log("Appointment created successfully:", data);
+          }
+        })
+        .catch((error) => {
+          console.error("Error creating appointment:", error);
+        });
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+    }
   };
 
   return (

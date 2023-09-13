@@ -1,0 +1,35 @@
+.missedMain{
+    height: 100vh;
+    width: 100%;
+
+    h1{
+        text-align: center;
+    }
+
+    .infoMain{
+
+        margin-left: 10vw;
+        margin-right: 10vw;
+
+        .infoHeader{
+            display: grid;
+            grid-template-columns: 15rem 15rem 15rem 5rem;
+            justify-content: space-between;
+        }
+        
+        .info{
+            display: grid;
+            grid-template-columns: 15rem 15rem 15rem 5rem;
+            justify-content: space-between;
+
+            button{
+                border: none;
+                height: 2rem;
+                border-radius: 5px;
+                background-color: #71d56a;
+                cursor: pointer;
+                align-self: center;
+              }
+        }
+    }
+}

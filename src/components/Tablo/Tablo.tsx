@@ -7,9 +7,10 @@ interface Appointment {
   date: Date;
   age_range: string;
   type: string;
-  phone_nr: string;
-  name: string;
-  missed: boolean;
+  phone_nr?: string;
+  name?: string;
+  patient_id: number;
+  Patients: { name: string; phone_nr: number; missed: boolean }[];
 }
 // eslint-disable-next-line
 interface TabloProps {}
@@ -21,8 +22,11 @@ const Tablo: React.FC<TabloProps> = ({}) => {
     async function fetchAppointments() {
       const { data, error } = await supabase
         .from("Appointments")
-        .select("date, age_range, type, phone_nr, name, missed")
+        .select(
+          "date, age_range, type, patient_id, Patients(name, phone_nr, missed)"
+        )
         .order("date");
+      console.log("Data: ", data);
       if (error) {
         console.error("Error fetching appointments:", error);
       } else {
@@ -31,7 +35,7 @@ const Tablo: React.FC<TabloProps> = ({}) => {
     }
     fetchAppointments()
       .then(() => {
-        console.log("Existing appointments:", appointments);
+        console.log("success");
       })
       .catch((error) => {
         console.error("Error in fetchExistingAppointments:", error);
@@ -106,6 +110,42 @@ const Tablo: React.FC<TabloProps> = ({}) => {
     isSameDay(new Date(appointment.date), currentDate)
   );
 
+  const handleMissedAppointment = async (
+    patientId: number,
+    missed_date: Date
+  ) => {
+    try {
+      // Update the "missed" field in the "Patients" table for the specified patient
+      const { data, error } = await supabase
+        .from("Patients")
+        .update({ missed: true, missed_date: missed_date })
+        .eq("id", patientId);
+
+      if (error) {
+        console.error("Error updating missed status:", error);
+      } else {
+        console.log("Missed status updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating missed status:", error);
+    }
+  };
+
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState<boolean[]>(
+    filteredAppointments.map(() => false)
+  );
+
+  const toggleAdditionalInfo = (index: number) => {
+    // Create a copy of the showAdditionalInfo array
+    const updatedInfo = [...showAdditionalInfo];
+
+    // Toggle the state for the specific card at the given index
+    updatedInfo[index] = !updatedInfo[index];
+
+    // Update the state with the modified array
+    setShowAdditionalInfo(updatedInfo);
+  };
+
   return (
     <div className={styles.tabloMain}>
       <h1 className={styles.header}>Днешни срещи</h1>
@@ -114,7 +154,14 @@ const Tablo: React.FC<TabloProps> = ({}) => {
           <div
             className={styles.appointmentCards}
             key={appointment.date.toString()}>
-            <div className={styles.appointmentCard}>
+            <div
+              className={`${styles.appointmentCard} ${
+                appointment.Patients &&
+                "missed" in appointment.Patients &&
+                appointment.Patients.missed
+                  ? styles.missedAppointment
+                  : ""
+              }`}>
               <div className={styles.upperRow}>
                 <h1 className={styles.hour}>
                   {getHours(new Date(appointment.date))}:
@@ -135,13 +182,48 @@ const Tablo: React.FC<TabloProps> = ({}) => {
                   }}
                 />
               </div>
-              <div className={styles.lowerRow}>
-                <p className={styles.name}>{appointment.name}</p>
-                <p>{appointment.type ? "Първичен" : "Вторичен"}</p>
-                <p className={styles.missed}>
-                  {appointment.missed ? "Пропуснат" : ""}
+              <div className={styles.middleRow}>
+                <p className={styles.name}>
+                  {appointment.Patients && "name" in appointment.Patients
+                    ? (appointment.Patients.name as string)
+                    : ""}
                 </p>
+                <p>{appointment.type ? "Първичен" : "Вторичен"}</p>
+                <div className={styles.toggle}>
+                  <input
+                    type="checkbox"
+                    id={`toggle-btn-${index}`}
+                    className={styles.input}
+                  />
+                  <label
+                    htmlFor={`toggle-btn-${index}`}
+                    className={styles.label}
+                    onClick={() => toggleAdditionalInfo(index)}></label>
+                </div>
               </div>
+              {showAdditionalInfo[index] && (
+                <div className={styles.lowerRow}>
+                  <p className={styles.phone_nr}>
+                    {appointment.Patients && "phone_nr" in appointment.Patients
+                      ? (appointment.Patients.phone_nr as number)
+                      : ""}
+                  </p>
+                  <button
+                    disabled={
+                      appointment.Patients && "missed" in appointment.Patients
+                        ? (appointment.Patients.missed as boolean)
+                        : false
+                    }
+                    onClick={() =>
+                      handleMissedAppointment(
+                        appointment.patient_id,
+                        appointment.date
+                      )
+                    }>
+                    Пропуснат
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -153,7 +235,14 @@ const Tablo: React.FC<TabloProps> = ({}) => {
           <div
             className={styles.appointmentCards}
             key={appointment.date.toString()}>
-            <div className={styles.appointmentCard}>
+            <div
+              className={`${styles.appointmentCard} ${
+                appointment.Patients &&
+                "missed" in appointment.Patients &&
+                appointment.Patients.missed
+                  ? styles.missedAppointment
+                  : ""
+              }`}>
               <div className={styles.upperRow}>
                 <h1 className={styles.hour}>
                   {getHours(new Date(appointment.date))}:
@@ -174,13 +263,43 @@ const Tablo: React.FC<TabloProps> = ({}) => {
                   }}
                 />
               </div>
-              <div className={styles.lowerRow}>
-                <p className={styles.name}>{appointment.name}</p>
-                <p>{appointment.type ? "Първичен" : "Вторичен"}</p>
-                <p className={styles.missed}>
-                  {appointment.missed ? "Пропуснат" : ""}
+              <div className={styles.middleRow}>
+                <p className={styles.name}>
+                  {appointment.Patients && "name" in appointment.Patients
+                    ? (appointment.Patients.name as string)
+                    : ""}
                 </p>
+                <p>{appointment.type ? "Първичен" : "Вторичен"}</p>
+                <div className={styles.toggle}>
+                  <input
+                    type="checkbox"
+                    id={`toggle-btn-${index}`}
+                    className={styles.input}
+                  />
+                  <label
+                    htmlFor={`toggle-btn-${index}`}
+                    className={styles.label}
+                    onClick={() => toggleAdditionalInfo(index)}></label>
+                </div>
               </div>
+              {showAdditionalInfo[index] && (
+                <div className={styles.lowerRow}>
+                  <p className={styles.phone_nr}>
+                    {appointment.Patients && "phone_nr" in appointment.Patients
+                      ? (appointment.Patients.phone_nr as number)
+                      : ""}
+                  </p>
+                  <button
+                    onClick={() =>
+                      handleMissedAppointment(
+                        appointment.patient_id,
+                        appointment.date
+                      )
+                    }>
+                    Пропуснат
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

@@ -16,6 +16,7 @@
         .appointmentCards{
             margin-top: 0;
 
+
             .appointmentCard {
                 background-color: #9bd2ff;
                 border-radius: 8px;
@@ -44,6 +45,53 @@
                     }
                 }
 
+                .middleRow{
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    align-items: center;
+                    justify-self: space-between;
+
+                    .toggle {
+                        justify-self: end;
+                        .input {
+                          display: none;
+                        }
+                      
+                        .label {
+                          position: relative;
+                          cursor: pointer;
+                          display: block;
+                          width: 50px;
+                          height: 30px;
+                          background: #cccccc;
+                          border-radius: 50px;
+                          transition: 300ms linear;
+                      
+                          &:before {
+                            position: absolute;
+                            top: 50%;
+                            left: 2px;
+                            transform: translateY(-50%);
+                            content: "";
+                            display: block;
+                            width: 25px;
+                            height: 25px;
+                            background: #fff;
+                            border-radius: 50%;
+                            transition: left 300ms linear;
+                          }
+                        }
+                      
+                        .input:checked + .label {
+                          background: #273540;
+                      
+                          &:before {
+                            left: 23px;
+                          }
+                        }
+                      }
+                }
+
                 .lowerRow{
                     display: grid;
                     grid-template-columns: 1fr 1fr 1fr;
@@ -51,13 +99,31 @@
                     justify-self: space-between;
                     .missed {
                         color: red;
-                        justify-self: end;
+                    }
+                    button{
+                      border: none;
+                      height: 1.8rem;
+                      width: 5rem;
+                      border-radius: 5px;
+                      background-color: #cccccc;
+                      cursor: pointer;
+                    }
+                    button:disabled{
+                        background-color: #cccccc;
+                        cursor: not-allowed;
                     }
                 }
+                
             }
+            
+            .missedAppointment {
+                background-color: rgb(249, 97, 97);
+                /* Any other styles for missed appointments */
+              }
         }
     }
 }
+
 
   
     

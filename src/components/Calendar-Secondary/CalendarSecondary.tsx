@@ -70,7 +70,7 @@ const Calendar: FC = ({}) => {
   
       fetchExistingAppointments()
       .then(() => {
-        console.log("Existing appointments:", existingAppointments);
+        console.log("We have the existing appointments!");
       })
       .catch((error) => {
         console.error("Error in fetchExistingAppointments:", error);
