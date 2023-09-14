@@ -100,20 +100,22 @@ const Tablo: FC = ({}) => {
 
   const currentDate = new Date();
 
-  const filteredAppointments = appointments.filter((appointment) =>
-    isAfter(new Date(appointment.date), currentDate)
+  const futureAppointments = appointments.filter(
+    (appointment) =>
+      isAfter(new Date(appointment.date), currentDate) &&
+      !isSameDay(new Date(appointment.date), currentDate)
   );
 
   const todaysAppointments = appointments.filter((appointment) =>
     isSameDay(new Date(appointment.date), currentDate)
   );
 
+  // Update the "missed" field in the "Patients" table for the specified patient
   const handleMissedAppointment = async (
     patientId: number,
     missed_date: Date
   ): Promise<void> => {
     try {
-      // Update the "missed" field in the "Patients" table for the specified patient
       const { data, error } = await supabase
         .from("Patients")
         .update({ missed: true, missed_date: missed_date })
@@ -130,17 +132,14 @@ const Tablo: FC = ({}) => {
   };
 
   const [showAdditionalInfo, setShowAdditionalInfo] = useState<boolean[]>(
-    filteredAppointments.map(() => false)
+    futureAppointments.map(() => false)
   );
 
   const toggleAdditionalInfo = (index: number) => {
-    // Create a copy of the showAdditionalInfo array
     const updatedInfo = [...showAdditionalInfo];
 
-    // Toggle the state for the specific card at the given index
     updatedInfo[index] = !updatedInfo[index];
 
-    // Update the state with the modified array
     setShowAdditionalInfo(updatedInfo);
   };
 
@@ -186,7 +185,13 @@ const Tablo: FC = ({}) => {
                     ? (appointment.Patients.name as string)
                     : ""}
                 </p>
-                <p>{appointment.type ? "Първичен" : "Вторичен"}</p>
+                <p>
+                  {appointment.type === "Purvichen"
+                    ? "Първичен"
+                    : appointment.type === "Vtorichen"
+                    ? "Вторичен"
+                    : ""}
+                </p>
                 <div className={styles.toggle}>
                   <input
                     type="checkbox"
@@ -229,7 +234,7 @@ const Tablo: FC = ({}) => {
 
       <h1 className={styles.header}>Престоящи срещи</h1>
       <div className={styles.tabloCards}>
-        {filteredAppointments.map((appointment, index) => (
+        {futureAppointments.map((appointment, index) => (
           <div
             className={styles.appointmentCards}
             key={appointment.date.toString()}>
@@ -267,7 +272,13 @@ const Tablo: FC = ({}) => {
                     ? (appointment.Patients.name as string)
                     : ""}
                 </p>
-                <p>{appointment.type ? "Първичен" : "Вторичен"}</p>
+                <p>
+                  {appointment.type === "Purvichen"
+                    ? "Първичен"
+                    : appointment.type === "Vtorichen"
+                    ? "Вторичен"
+                    : ""}
+                </p>
                 <div className={styles.toggle}>
                   <input
                     type="checkbox"
