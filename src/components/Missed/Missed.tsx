@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, FC } from "react";
 import supabase from "../../constants/supaClient.js";
 import styles from "./Missed.module.scss";
-
-interface MissedProps {}
 
 interface Patient {
   id: number;
@@ -12,7 +10,7 @@ interface Patient {
   missed_date: string;
 }
 
-const Missed: React.FC<MissedProps> = () => {
+const Missed: FC = () => {
   const [missedPatients, setMissedPatients] = useState<Patient[]>([]);
 
   useEffect(() => {
@@ -29,7 +27,7 @@ const Missed: React.FC<MissedProps> = () => {
       }
     }
 
-    fetchMissedPatients();
+    void fetchMissedPatients();
   }, []);
 
   const setAppointmentAsPaid = async (patientId: number) => {
@@ -77,7 +75,7 @@ const Missed: React.FC<MissedProps> = () => {
               <p>{patient.name}</p>
               <p>{patient.phone_nr}</p>
               <p>{formatDate(patient.missed_date)}</p>
-              <button onClick={() => setAppointmentAsPaid(patient.id)}>
+              <button onClick={() => void setAppointmentAsPaid(patient.id)}>
                 Решен
               </button>
             </div>

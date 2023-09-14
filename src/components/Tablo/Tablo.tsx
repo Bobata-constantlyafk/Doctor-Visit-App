@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
 import { getHours, getMinutes, getDate, isAfter, isSameDay } from "date-fns";
@@ -12,10 +12,8 @@ interface Appointment {
   patient_id: number;
   Patients: { name: string; phone_nr: number; missed: boolean }[];
 }
-// eslint-disable-next-line
-interface TabloProps {}
 
-const Tablo: React.FC<TabloProps> = ({}) => {
+const Tablo: FC = ({}) => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
@@ -113,7 +111,7 @@ const Tablo: React.FC<TabloProps> = ({}) => {
   const handleMissedAppointment = async (
     patientId: number,
     missed_date: Date
-  ) => {
+  ): Promise<void> => {
     try {
       // Update the "missed" field in the "Patients" table for the specified patient
       const { data, error } = await supabase
@@ -215,7 +213,7 @@ const Tablo: React.FC<TabloProps> = ({}) => {
                         : false
                     }
                     onClick={() =>
-                      handleMissedAppointment(
+                      void handleMissedAppointment(
                         appointment.patient_id,
                         appointment.date
                       )
@@ -291,7 +289,7 @@ const Tablo: React.FC<TabloProps> = ({}) => {
                   </p>
                   <button
                     onClick={() =>
-                      handleMissedAppointment(
+                      void handleMissedAppointment(
                         appointment.patient_id,
                         appointment.date
                       )

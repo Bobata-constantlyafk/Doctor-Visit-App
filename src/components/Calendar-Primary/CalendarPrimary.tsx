@@ -22,7 +22,13 @@ interface Appointment {
   date: string;
   age_range?: string;
   type?: string;
-  patient_id?: string;
+  patient_id?: number;
+}
+
+interface Patient {
+  id: number;
+  name: string;
+  phone_nr: number;
 }
 
 const CalendarPrimary: FC = ({}) => {
@@ -31,13 +37,14 @@ const CalendarPrimary: FC = ({}) => {
     dateTime: null,
   });
 
+  // Global state variables
   const { name, phoneNumber, age_range, typeEye } = useGlobalContext();
 
   // State to store existing appointments for the selected date
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
 
+  // Fetch existing appointments for the selected date from the database
   useEffect(() => {
-    // Fetch existing appointments for the selected date from the database
     const fetchExistingAppointments = async () => {
       if (!date.justDate) return;
 
@@ -107,63 +114,59 @@ const CalendarPrimary: FC = ({}) => {
   }
 
   const createPatient = async () => {
-    const { data, error } = await supabase
-      .from("Patients")
-      .upsert([{ name: name, phone_nr: phoneNumber }], {
-        onConflict: "phone_nr",
+    let patient_id = null;
+    await (
+      supabase
+        .from("Patients")
+        .upsert([{ name: name, phone_nr: phoneNumber }], {
+          onConflict: "phone_nr",
+        })
+        .select("*") as unknown as Promise<{
+        data: Patient[];
+        error: PostgrestError;
+      }>
+    )
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Error creating appointment:", error);
+          return null;
+        } else {
+          const patient = data[0]?.id;
+          console.log("Patient id form createPatient:", data);
+          patient_id = patient;
+        }
       })
-      .select("*");
-
-    if (error) {
-      console.error("Error creating patient:", error);
-      return null;
-    }
-
-    if (data) {
-      console.log("Data from Supabase:", data);
-
-      const patient = data[0];
-
-      console.log("Patient id form 1:", patient.id);
-      return patient.id;
-    } else {
-      console.error("No data received from Supabase.");
-      return null;
-    }
+      .catch((error) => {
+        console.error("Error creating appointment:", error);
+      });
+    return patient_id;
   };
 
   const createAppointment = async (dateTime: Date) => {
-    try {
-      const patient_id = await createPatient();
-      console.log("patient_id: ", patient_id);
-      if (!patient_id) return;
-
-      (
-        supabase.from("Appointments").insert([
-          {
-            date: dateTime,
-            age_range: age_range,
-            type: typeEye,
-            patient_id: patient_id,
-          },
-        ]) as unknown as Promise<{
-          data: Appointment;
-          error: Error;
-        }>
-      )
-        .then(({ data, error }) => {
-          if (error) {
-            console.error("Error creating appointment:", error);
-          } else {
-            console.log("Appointment created successfully:", data);
-          }
-        })
-        .catch((error) => {
+    const patient_id = await createPatient();
+    (
+      supabase.from("Appointments").insert([
+        {
+          date: dateTime,
+          age_range: age_range,
+          type: typeEye,
+          patient_id: patient_id,
+        },
+      ]) as unknown as Promise<{
+        data: Appointment;
+        error: Error;
+      }>
+    )
+      .then(({ data, error }) => {
+        if (error) {
           console.error("Error creating appointment:", error);
-        });
-    } catch (error) {
-      console.error("Error creating appointment:", error);
-    }
+        } else {
+          console.log("Appointment created successfully:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating appointment:", error);
+      });
   };
 
   return (
@@ -193,7 +196,13 @@ const CalendarPrimary: FC = ({}) => {
                     type="button"
                     onClick={() => {
                       setDate((prev) => ({ ...prev, dateTime: time }));
-                      createAppointment(time);
+                      createAppointment(time)
+                        .then(() => {
+                          console.log("Appointment created successfully");
+                        })
+                        .catch(() => {
+                          console.error("Error creating appointment");
+                        });
                     }}
                     disabled={isTimeTaken}>
                     {format(time, "kk:mm")}

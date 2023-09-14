@@ -13,8 +13,6 @@ import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 
-// eslint-disable-next-line
-
 interface DateType {
   justDate: Date | null;
   dateTime: Date | null;
@@ -24,9 +22,13 @@ interface Appointment {
   date: string;
   age_range?: string;
   type?: string;
-  phone_nr?: string;
-  name?: string;
-  missed?: boolean;
+  patient_id?: number;
+}
+
+interface Patient {
+  id: number;
+  name: string;
+  phone_nr: number;
 }
 
 const Calendar: FC = ({}) => {
@@ -35,31 +37,32 @@ const Calendar: FC = ({}) => {
     dateTime: null,
   });
 
+  // Global state variables
   const { name, phoneNumber, age_range, typeEye } = useGlobalContext();
 
   // State to store existing appointments for the selected date
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
 
+  // Fetch existing appointments for the selected date from the database
   useEffect(() => {
-    // Fetch existing appointments for the selected date from the database
     const fetchExistingAppointments = async () => {
       if (!date.justDate) return;
-  
+
       const formattedSelectedDate = format(date.justDate, "yyyy-MM-dd");
-  
+
       try {
-        const { data, error }: PostgrestSingleResponse<Appointment[]> = await supabase
-          .from("Appointments")
-          .select("date")
-          .gte("date", formattedSelectedDate)
-          .order("date");
-  
+        const { data, error }: PostgrestSingleResponse<Appointment[]> =
+          await supabase
+            .from("Appointments")
+            .select("date")
+            .gte("date", formattedSelectedDate)
+            .order("date");
+
         if (error) {
           console.error("Error fetching existing appointments:", error);
         } else {
           const existingDates = data.map(
-            (appointment: { date: string })=> 
-            new Date(appointment.date)
+            (appointment: { date: string }) => new Date(appointment.date)
           );
           setExistingAppointments(existingDates);
         }
@@ -67,15 +70,14 @@ const Calendar: FC = ({}) => {
         console.error("Error in fetchExistingAppointments:", error);
       }
     };
-  
-      fetchExistingAppointments()
+
+    fetchExistingAppointments()
       .then(() => {
         console.log("We have the existing appointments!");
       })
       .catch((error) => {
         console.error("Error in fetchExistingAppointments:", error);
       });
-
   }, [date.justDate]);
 
   const getTimes = () => {
@@ -114,8 +116,38 @@ const Calendar: FC = ({}) => {
 
     return `${day} ${month} (${dayName})`;
   }
-  
-  const createAppointments = (dateTime: Date) => {
+
+  const createPatient = async () => {
+    let patient_id = null;
+    await (
+      supabase
+        .from("Patients")
+        .upsert([{ name: name, phone_nr: phoneNumber }], {
+          onConflict: "phone_nr",
+        })
+        .select("*") as unknown as Promise<{
+        data: Patient[];
+        error: Error;
+      }>
+    )
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Error creating appointment:", error);
+          return null;
+        } else {
+          const patient = data[0]?.id;
+          console.log("Patient id form createPatient:", data);
+          patient_id = patient;
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating appointment:", error);
+      });
+    return patient_id;
+  };
+
+  const createAppointments = async (dateTime: Date) => {
+    const patient_id = await createPatient();
     const oneHourAhead = add(dateTime, { hours: 1 });
     (
       supabase.from("Appointments").upsert([
@@ -123,17 +155,15 @@ const Calendar: FC = ({}) => {
           date: dateTime,
           age_range: age_range,
           type: typeEye,
-          phone_nr: phoneNumber,
-          name: name,
+          patient_id: patient_id,
         },
         {
           date: oneHourAhead,
           age_range: age_range,
           type: typeEye,
-          phone_nr: phoneNumber,
-          name: name,
+          patient_id: patient_id,
         },
-      ])  as unknown as Promise<{
+      ]) as unknown as Promise<{
         data: Appointment;
         error: Error;
       }>
@@ -184,7 +214,13 @@ const Calendar: FC = ({}) => {
                     type="button"
                     onClick={() => {
                       setDate((prev) => ({ ...prev, dateTime: time }));
-                      createAppointments(time);
+                      createAppointments(time)
+                        .then(() => {
+                          console.log("Appointment created successfully");
+                        })
+                        .catch(() => {
+                          console.error("Error creating appointment");
+                        });
                     }}
                     disabled={isTimeTaken}>
                     {format(time, "kk:mm")}
