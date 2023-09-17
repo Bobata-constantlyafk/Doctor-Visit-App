@@ -40,6 +40,7 @@ const Tablo: FC = ({}) => {
       });
   }, []);
 
+  // Update the database to delete the specified appointment
   const handleDeleteAppointment = (index: number) => {
     // Get the appointment to be deleted
     const appointmentToDelete = appointments[index];
@@ -49,7 +50,6 @@ const Tablo: FC = ({}) => {
       return;
     }
 
-    // Update the database (you need to define the delete operation in your Supabase config)
     (
       supabase
         .from("Appointments")
