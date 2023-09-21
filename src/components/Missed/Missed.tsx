@@ -12,6 +12,7 @@ interface Patient {
 
 const Missed: FC = () => {
   const [missedPatients, setMissedPatients] = useState<Patient[]>([]);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     async function fetchMissedPatients() {
@@ -27,12 +28,26 @@ const Missed: FC = () => {
       }
     }
 
-    void fetchMissedPatients();
+    async function getUserData() {
+      await supabase.auth
+        .getUser()
+        .then((value) => {
+          if (value.data?.user) {
+            setUser(value.data.user);
+            void fetchMissedPatients();
+            console.log("User: ", value.data.user);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    }
+
+    getUserData();
   }, []);
 
   const setAppointmentAsPaid = async (patientId: number) => {
     try {
-      // Update the "missed" field in the "Patients" table for the specified patient
       const { data, error } = await supabase
         .from("Patients")
         .update({ missed: false })
@@ -41,6 +56,13 @@ const Missed: FC = () => {
       if (error) {
         console.error("Error updating missed status:", error);
       } else {
+        // Update the local state with the new data
+        setMissedPatients((prevPatients) =>
+          prevPatients.map((patient) =>
+            patient.id === patientId ? { ...patient, missed: false } : patient
+          )
+        );
+
         console.log("Missed status updated successfully");
       }
     } catch (error) {
@@ -61,28 +83,35 @@ const Missed: FC = () => {
 
   return (
     <div className={styles.missedMain}>
-      <h1>Пропуснати часове</h1>
-      <div className={styles.infoMain}>
-        <div className={styles.infoHeader}>
-          <h2>Име</h2>
-          <h2>Телефонен номер</h2>
-          <h2>Дата</h2>
-          <h2 className={styles.paid}>Статус</h2>
-        </div>
-        {missedPatients.map((patient, index) => (
-          <>
-            <div className={styles.info} key={index}>
-              <p>{patient.name}</p>
-              <p>{patient.phone_nr}</p>
-              <p>{formatDate(patient.missed_date)}</p>
-              <button onClick={() => void setAppointmentAsPaid(patient.id)}>
-                Решен
-              </button>
+      {/* If logged in */}
+      {user ? (
+        <>
+          <h1>Пропуснати часове</h1>
+          <div className={styles.infoMain}>
+            <div className={styles.infoHeader}>
+              <h2>Име</h2>
+              <h2>Телефонен номер</h2>
+              <h2>Дата</h2>
+              <h2 className={styles.paid}>Статус</h2>
             </div>
-            <hr />
-          </>
-        ))}
-      </div>
+            {missedPatients.map((patient) => (
+              <>
+                <div className={styles.info} key={patient.id}>
+                  <p>{patient.name}</p>
+                  <p>{patient.phone_nr}</p>
+                  <p>{formatDate(patient.missed_date)}</p>
+                  <button onClick={() => void setAppointmentAsPaid(patient.id)}>
+                    Решен
+                  </button>
+                </div>
+                <hr />
+              </>
+            ))}
+          </div>
+        </>
+      ) : (
+        <h1>Mоля, влезте в акаунта си!</h1>
+      )}
     </div>
   );
 };

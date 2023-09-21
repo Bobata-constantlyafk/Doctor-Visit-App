@@ -1,126 +1,127 @@
 /* Tablo.module.scss */
 .tabloMain{
 
-    .header{
+  .header{
         text-align: center;
         margin-top: 5vw;
-    }
+   }
+  .tabloCards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 1vw;
+    justify-items: center;
+    padding: 3vw;
 
-    .tabloCards {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        column-gap: 1vw;
-        justify-items: center;
-        padding: 3vw;
+      .appointmentCards{
+          margin-top: 0;
 
-        .appointmentCards{
-            margin-top: 0;
+        .appointmentCard {
+            background-color: #9bd2ff;
+            border-radius: 8px;
+            box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.1);
+            padding-inline: 5%;
+            margin-bottom: 3vw;
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            width: 25vw;
 
+            .upperRow{
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr;
+              align-items: center;
+              justify-self: space-between;
+              h1{
+                  font-size: 1.5rem;
+              }
+              img{
+                height: 1.8vw;
+                width: 1.8vw;
+                justify-self: end;
+                background: rgb(255, 58, 58);
+                border-radius: 100%;
+                cursor:pointer;
+            }
+            }
+            .middleRow{
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr;
+              align-items: center;
+              justify-self: space-between;
 
-            .appointmentCard {
-                background-color: #9bd2ff;
-                border-radius: 8px;
-                box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.1);
-                padding-inline: 5%;
-                margin-bottom: 3vw;
-                display: grid;
-                grid-template-rows: 1fr 1fr;
-                width: 25vw;
-
-                .upperRow{
-                    display: grid;
-                    grid-template-columns: 1fr 1fr 1fr;
-                    align-items: center;
-                    justify-self: space-between;
-                    h1{
-                        font-size: 1.5rem;
-                    }
-                    img{
-                        height: 1.8vw;
-                        width: 1.8vw;
-                        justify-self: end;
-                        background: rgb(255, 58, 58);
-                        border-radius: 100%;
-                        cursor:pointer;
-                    }
-                }
-
-                .middleRow{
-                    display: grid;
-                    grid-template-columns: 1fr 1fr 1fr;
-                    align-items: center;
-                    justify-self: space-between;
-
-                    .toggle {
-                        justify-self: end;
-                        .input {
-                          display: none;
-                        }
-                      
-                        .label {
-                          position: relative;
-                          cursor: pointer;
-                          display: block;
-                          width: 50px;
-                          height: 30px;
-                          background: #cccccc;
-                          border-radius: 50px;
-                          transition: 300ms linear;
-                      
-                          &:before {
-                            position: absolute;
-                            top: 50%;
-                            left: 2px;
-                            transform: translateY(-50%);
-                            content: "";
-                            display: block;
-                            width: 25px;
-                            height: 25px;
-                            background: #fff;
-                            border-radius: 50%;
-                            transition: left 300ms linear;
-                          }
-                        }
-                      
-                        .input:checked + .label {
-                          background: #273540;
-                      
-                          &:before {
-                            left: 23px;
-                          }
-                        }
-                      }
-                }
-
-                .lowerRow{
-                    display: grid;
-                    grid-template-columns: 1fr 1fr 1fr;
-                    align-items: center;
-                    justify-self: space-between;
-                    .missed {
-                        color: red;
-                    }
-                    button{
-                      border: none;
-                      height: 1.8rem;
-                      width: 5rem;
-                      border-radius: 5px;
-                      background-color: #cccccc;
-                      cursor: pointer;
-                    }
-                    button:disabled{
-                        background-color: #cccccc;
-                        cursor: not-allowed;
-                    }
-                }
+              .toggle {
+                justify-self: end;
                 
+                .input {
+                  display: none;
+                }
+              
+                .label {
+                  position: relative;
+                  cursor: pointer;
+                  display: block;
+                  width: 50px;
+                  height: 30px;
+                  background: #cccccc;
+                  border-radius: 50px;
+                  transition: 300ms linear;
+              
+                  &:before {
+                    position: absolute;
+                    top: 50%;
+                    left: 2px;
+                    transform: translateY(-50%);
+                    content: "";
+                    display: block;
+                    width: 25px;
+                    height: 25px;
+                    background: #fff;
+                    border-radius: 50%;
+                    transition: left 300ms linear;
+                  }
+                }
+              
+                .input:checked + .label {
+                  background: #273540;
+              
+                  &:before {
+                    left: 23px;
+                  }
+                }
+                }
+            }
+
+            .lowerRow{
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                align-items: center;
+                justify-self: space-between;
+                .missed {
+                    color: red;
+                }
+                button{
+                  border: none;
+                  height: 1.8rem;
+                  width: 5rem;
+                  border-radius: 5px;
+                  background-color: #cccccc;
+                  cursor: pointer;
+                }
+                button:disabled{
+                    background-color: #cccccc;
+                    cursor: not-allowed;
+                }
             }
             
-            .missedAppointment {
-                background-color: rgb(249, 97, 97);
-                /* Any other styles for missed appointments */
-              }
         }
+        
+        .missedAppointment {
+          background-color: rgb(249, 97, 97);
+          }
+    }
+  }
+
+    .log{
+      text-align: center;
     }
 }
 

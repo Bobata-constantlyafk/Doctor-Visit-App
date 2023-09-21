@@ -12,6 +12,7 @@ import {
 import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
+import { useRouter } from "next/router";
 
 interface DateType {
   justDate: Date | null;
@@ -36,6 +37,7 @@ const Calendar: FC = ({}) => {
     justDate: null,
     dateTime: null,
   });
+  const router = useRouter();
 
   // Global state variables
   const { name, phoneNumber, age_range, typeEye } = useGlobalContext();
@@ -132,7 +134,7 @@ const Calendar: FC = ({}) => {
     )
       .then(({ data, error }) => {
         if (error) {
-          console.error("Error creating appointment:", error);
+          console.error("Error with creating the patient:", error);
           return null;
         } else {
           const patient = data[0]?.id;
@@ -141,7 +143,7 @@ const Calendar: FC = ({}) => {
         }
       })
       .catch((error) => {
-        console.error("Error creating appointment:", error);
+        console.error("Error with creating the patient:", error);
       });
     return patient_id;
   };
@@ -173,6 +175,11 @@ const Calendar: FC = ({}) => {
           console.error("Error creating appointment:", error);
         } else {
           console.log("Appointment created successfully:", data);
+          router.push(
+            `/success?appointmentDate=${encodeURIComponent(
+              dateTime.toISOString()
+            )}`
+          );
         }
       })
       .catch((error) => {
