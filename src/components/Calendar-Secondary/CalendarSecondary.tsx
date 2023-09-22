@@ -175,7 +175,7 @@ const Calendar: FC = ({}) => {
           console.error("Error creating appointment:", error);
         } else {
           console.log("Appointment created successfully:", data);
-          router.push(
+          void router.push(
             `/success?appointmentDate=${encodeURIComponent(
               dateTime.toISOString()
             )}`

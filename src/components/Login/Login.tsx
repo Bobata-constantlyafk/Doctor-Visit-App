@@ -19,7 +19,7 @@ const Login: FC = ({}) => {
       if (error) {
         setError(error.message);
       } else {
-        router.push("/tablo");
+        void router.push("/tablo");
         window.location.reload();
       }
     } catch (error) {
@@ -51,7 +51,7 @@ const Login: FC = ({}) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button onClick={handleLogin}>Вход</button>
+        <button onClick={void handleLogin}>Вход</button>
       </div>
     </div>
   );

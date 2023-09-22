@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
       }
     };
 
-    fetchUser(); // Call the fetchUser function
+    void fetchUser(); // Call the fetchUser function
   }, []);
 
   return (
@@ -33,12 +33,14 @@ const Navbar: React.FC = () => {
           <ul className={styles.nav__links}>
             <li>
               <Link href="/">Начало</Link>
-              {user ? (
+              {/* {user ? (
                 <>
                   <Link href="/tablo">Табло</Link>
                   <Link href="/propusnati">Пропуснати</Link>
                 </>
-              ) : null}
+              ) : null} */}
+              <Link href="/tablo">Табло</Link>
+              <Link href="/propusnati">Пропуснати</Link>
             </li>
           </ul>
         </nav>

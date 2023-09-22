@@ -2,6 +2,7 @@ import React, { useState, useEffect, FC } from "react";
 import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
 import { getHours, getMinutes, getDate, isAfter, isSameDay } from "date-fns";
+import { User } from "@supabase/supabase-js";
 
 interface Appointment {
   date: Date;
@@ -15,7 +16,7 @@ interface Appointment {
 
 const Tablo: FC = ({}) => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     async function fetchAppointments() {
@@ -39,7 +40,7 @@ const Tablo: FC = ({}) => {
         .then((value) => {
           if (value.data?.user) {
             setUser(value.data.user);
-            fetchAppointments();
+            void fetchAppointments();
             console.log("User: ", value.data.user);
           }
         })
@@ -47,8 +48,9 @@ const Tablo: FC = ({}) => {
           console.error("Error fetching user data:", error);
         });
     }
+    void fetchAppointments();
 
-    getUserData();
+    void getUserData();
 
     // .then(() => {
     //   console.log("success");
@@ -163,190 +165,181 @@ const Tablo: FC = ({}) => {
 
   return (
     <div className={styles.tabloMain}>
-      {/* If logged in */}
-      {user ? (
-        <>
-          {/* First we show todays appointments */}
-          <h1 className={styles.header}>Днешни срещи</h1>
-          <div className={styles.tabloCards}>
-            {todaysAppointments.map((appointment, index) => (
-              <div
-                className={styles.appointmentCards}
-                key={appointment.date.toString()}>
-                <div
-                  className={`${styles.appointmentCard} ${
-                    appointment.Patients &&
-                    "missed" in appointment.Patients &&
-                    appointment.Patients.missed
-                      ? styles.missedAppointment
-                      : ""
-                  }`}>
-                  <div className={styles.upperRow}>
-                    <h1 className={styles.hour}>
-                      {getHours(new Date(appointment.date))}:
-                      {String(getMinutes(new Date(appointment.date))).padStart(
-                        2,
-                        "0"
-                      )}
-                    </h1>
-                    <p>{formatDate(new Date(appointment.date))}</p>
-                    <img
-                      src="close.png"
-                      alt=""
-                      onClick={(
-                        event: React.MouseEvent<HTMLImageElement, MouseEvent>
-                      ) => {
-                        event.preventDefault();
-                        handleDeleteAppointment(
-                          appointments.indexOf(appointment)
-                        );
-                      }}
-                    />
-                  </div>
-                  <div className={styles.middleRow}>
-                    <p className={styles.name}>
-                      {appointment.Patients && "name" in appointment.Patients
-                        ? (appointment.Patients.name as string)
-                        : ""}
-                    </p>
-                    <p>
-                      {appointment.type === "Purvichen"
-                        ? "Първичен"
-                        : appointment.type === "Vtorichen"
-                        ? "Вторичен"
-                        : ""}
-                    </p>
-                    <div className={styles.toggle}>
-                      <input
-                        type="checkbox"
-                        id={`toggle-btn-${index}`}
-                        className={styles.input}
-                      />
-                      <label
-                        htmlFor={`toggle-btn-${index}`}
-                        className={styles.label}
-                        onClick={() => toggleAdditionalInfo(index)}></label>
-                    </div>
-                  </div>
-                  {showAdditionalInfo[index] && (
-                    <div className={styles.lowerRow}>
-                      <p className={styles.phone_nr}>
-                        {appointment.Patients &&
-                        "phone_nr" in appointment.Patients
-                          ? (appointment.Patients.phone_nr as number)
-                          : ""}
-                      </p>
-                      <button
-                        disabled={
-                          appointment.Patients &&
-                          "missed" in appointment.Patients
-                            ? (appointment.Patients.missed as boolean)
-                            : false
-                        }
-                        onClick={() =>
-                          void handleMissedAppointment(
-                            appointment.patient_id,
-                            appointment.date
-                          )
-                        }>
-                        Пропуснат
-                      </button>
-                    </div>
+      {/* {user ? (
+        <> */}
+      <h1 className={styles.header}>Днешни срещи</h1>
+      <div className={styles.tabloCards}>
+        {todaysAppointments.map((appointment, index) => (
+          <div
+            className={styles.appointmentCards}
+            key={appointment.date.toString()}>
+            <div
+              className={`${styles.appointmentCard} ${
+                appointment.Patients &&
+                "missed" in appointment.Patients &&
+                appointment.Patients.missed
+                  ? styles.missedAppointment
+                  : ""
+              }`}>
+              <div className={styles.upperRow}>
+                <h1 className={styles.hour}>
+                  {getHours(new Date(appointment.date))}:
+                  {String(getMinutes(new Date(appointment.date))).padStart(
+                    2,
+                    "0"
                   )}
+                </h1>
+                <p>{formatDate(new Date(appointment.date))}</p>
+                <img
+                  src="close.png"
+                  alt=""
+                  onClick={(
+                    event: React.MouseEvent<HTMLImageElement, MouseEvent>
+                  ) => {
+                    event.preventDefault();
+                    handleDeleteAppointment(appointments.indexOf(appointment));
+                  }}
+                />
+              </div>
+              <div className={styles.middleRow}>
+                <p className={styles.name}>
+                  {appointment.Patients && "name" in appointment.Patients
+                    ? (appointment.Patients.name as string)
+                    : ""}
+                </p>
+                <p>
+                  {appointment.type === "Purvichen"
+                    ? "Първичен"
+                    : appointment.type === "Vtorichen"
+                    ? "Вторичен"
+                    : ""}
+                </p>
+                <div className={styles.toggle}>
+                  <input
+                    type="checkbox"
+                    id={`toggle-btn-${index}`}
+                    className={styles.input}
+                  />
+                  <label
+                    htmlFor={`toggle-btn-${index}`}
+                    className={styles.label}
+                    onClick={() => toggleAdditionalInfo(index)}></label>
                 </div>
               </div>
-            ))}
+              {showAdditionalInfo[index] && (
+                <div className={styles.lowerRow}>
+                  <p className={styles.phone_nr}>
+                    {appointment.Patients && "phone_nr" in appointment.Patients
+                      ? (appointment.Patients.phone_nr as number)
+                      : ""}
+                  </p>
+                  <button
+                    disabled={
+                      appointment.Patients && "missed" in appointment.Patients
+                        ? (appointment.Patients.missed as boolean)
+                        : false
+                    }
+                    onClick={() =>
+                      void handleMissedAppointment(
+                        appointment.patient_id,
+                        appointment.date
+                      )
+                    }>
+                    Пропуснат
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
+        ))}
+      </div>
 
-          {/* Then we show future appointments */}
-          <h1 className={styles.header}>Престоящи срещи</h1>
-          <div className={styles.tabloCards}>
-            {futureAppointments.map((appointment, index) => (
-              <div
-                className={styles.appointmentCards}
-                key={appointment.date.toString()}>
-                <div
-                  className={`${styles.appointmentCard} ${
-                    appointment.Patients &&
-                    "missed" in appointment.Patients &&
-                    appointment.Patients.missed
-                      ? styles.missedAppointment
-                      : ""
-                  }`}>
-                  <div className={styles.upperRow}>
-                    <h1 className={styles.hour}>
-                      {getHours(new Date(appointment.date))}:
-                      {String(getMinutes(new Date(appointment.date))).padStart(
-                        2,
-                        "0"
-                      )}
-                    </h1>
-                    <p>{formatDate(new Date(appointment.date))}</p>
-                    <img
-                      src="close.png"
-                      alt=""
-                      onClick={(
-                        event: React.MouseEvent<HTMLImageElement, MouseEvent>
-                      ) => {
-                        event.preventDefault();
-                        handleDeleteAppointment(
-                          appointments.indexOf(appointment)
-                        );
-                      }}
-                    />
-                  </div>
-                  <div className={styles.middleRow}>
-                    <p className={styles.name}>
-                      {appointment.Patients && "name" in appointment.Patients
-                        ? (appointment.Patients.name as string)
-                        : ""}
-                    </p>
-                    <p>
-                      {appointment.type === "Purvichen"
-                        ? "Първичен"
-                        : appointment.type === "Vtorichen"
-                        ? "Вторичен"
-                        : ""}
-                    </p>
-                    <div className={styles.toggle}>
-                      <input
-                        type="checkbox"
-                        id={`toggle-btn-${index}`}
-                        className={styles.input}
-                      />
-                      <label
-                        htmlFor={`toggle-btn-${index}`}
-                        className={styles.label}
-                        onClick={() => toggleAdditionalInfo(index)}></label>
-                    </div>
-                  </div>
-                  {showAdditionalInfo[index] && (
-                    <div className={styles.lowerRow}>
-                      <p className={styles.phone_nr}>
-                        {appointment.Patients &&
-                        "phone_nr" in appointment.Patients
-                          ? (appointment.Patients.phone_nr as number)
-                          : ""}
-                      </p>
-                      <button
-                        onClick={() =>
-                          void handleMissedAppointment(
-                            appointment.patient_id,
-                            appointment.date
-                          )
-                        }>
-                        Пропуснат
-                      </button>
-                    </div>
+      {/* Then we show future appointments */}
+      <h1 className={styles.header}>Престоящи срещи</h1>
+      <div className={styles.tabloCards}>
+        {futureAppointments.map((appointment, index) => (
+          <div
+            className={styles.appointmentCards}
+            key={appointment.date.toString()}>
+            <div
+              className={`${styles.appointmentCard} ${
+                appointment.Patients &&
+                "missed" in appointment.Patients &&
+                appointment.Patients.missed
+                  ? styles.missedAppointment
+                  : ""
+              }`}>
+              <div className={styles.upperRow}>
+                <h1 className={styles.hour}>
+                  {getHours(new Date(appointment.date))}:
+                  {String(getMinutes(new Date(appointment.date))).padStart(
+                    2,
+                    "0"
                   )}
+                </h1>
+                <p>{formatDate(new Date(appointment.date))}</p>
+                <img
+                  src="close.png"
+                  alt=""
+                  onClick={(
+                    event: React.MouseEvent<HTMLImageElement, MouseEvent>
+                  ) => {
+                    event.preventDefault();
+                    handleDeleteAppointment(appointments.indexOf(appointment));
+                  }}
+                />
+              </div>
+              <div className={styles.middleRow}>
+                <p className={styles.name}>
+                  {appointment.Patients && "name" in appointment.Patients
+                    ? (appointment.Patients.name as string)
+                    : ""}
+                </p>
+                <p>
+                  {appointment.type === "Purvichen"
+                    ? "Първичен"
+                    : appointment.type === "Vtorichen"
+                    ? "Вторичен"
+                    : ""}
+                </p>
+                <div className={styles.toggle}>
+                  <input
+                    type="checkbox"
+                    id={`toggle-btn-${index}`}
+                    className={styles.input}
+                  />
+                  <label
+                    htmlFor={`toggle-btn-${index}`}
+                    className={styles.label}
+                    onClick={() => toggleAdditionalInfo(index)}></label>
                 </div>
               </div>
-            ))}
+              {showAdditionalInfo[index] && (
+                <div className={styles.lowerRow}>
+                  <p className={styles.phone_nr}>
+                    {appointment.Patients && "phone_nr" in appointment.Patients
+                      ? (appointment.Patients.phone_nr as number)
+                      : ""}
+                  </p>
+                  <button
+                    onClick={() =>
+                      void handleMissedAppointment(
+                        appointment.patient_id,
+                        appointment.date
+                      )
+                    }>
+                    Пропуснат
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </>
+        ))}
+      </div>
+      {/* </>
       ) : (
         <h1 className={styles.log}>Mоля, влезте в акаунта си!</h1>
-      )}
+      )} */}
     </div>
   );
 };

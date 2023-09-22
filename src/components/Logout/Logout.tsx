@@ -13,7 +13,7 @@ const Logout = () => {
       if (error) {
         console.error("Error during logout:", error);
       } else {
-        router.push("/");
+        void router.push("/");
         window.location.reload();
       }
     } catch (error) {
@@ -24,7 +24,7 @@ const Logout = () => {
   return (
     <div className={styles.loginMain}>
       <div className={styles.login}>
-        <button onClick={handleLogout}>Изход</button>
+        <button onClick={void handleLogout}>Изход</button>
       </div>
     </div>
   );
