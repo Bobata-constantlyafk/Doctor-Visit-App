@@ -2,6 +2,7 @@ import React, { useState, useEffect, FC } from "react";
 import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
 import { getHours, getMinutes, getDate, isAfter, isSameDay } from "date-fns";
+import { User } from "@supabase/supabase-js";
 
 interface Appointment {
   date: Date;
@@ -15,6 +16,7 @@ interface Appointment {
 
 const Tablo: FC = ({}) => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     async function fetchAppointments() {
@@ -31,13 +33,31 @@ const Tablo: FC = ({}) => {
         setAppointments(data);
       }
     }
-    fetchAppointments()
-      .then(() => {
-        console.log("success");
-      })
-      .catch((error) => {
-        console.error("Error in fetchExistingAppointments:", error);
-      });
+
+    async function getUserData() {
+      await supabase.auth
+        .getUser()
+        .then((value) => {
+          if (value.data?.user) {
+            setUser(value.data.user);
+            void fetchAppointments();
+            console.log("User: ", value.data.user);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    }
+    void fetchAppointments();
+
+    void getUserData();
+
+    // .then(() => {
+    //   console.log("success");
+    // })
+    // .catch((error) => {
+    //   console.error("Error in fetchExistingAppointments:", error);
+    // });
   }, []);
 
   // Update the database to delete the specified appointment
@@ -145,6 +165,8 @@ const Tablo: FC = ({}) => {
 
   return (
     <div className={styles.tabloMain}>
+      {/* {user ? (
+        <> */}
       <h1 className={styles.header}>Днешни срещи</h1>
       <div className={styles.tabloCards}>
         {todaysAppointments.map((appointment, index) => (
@@ -232,6 +254,7 @@ const Tablo: FC = ({}) => {
         ))}
       </div>
 
+      {/* Then we show future appointments */}
       <h1 className={styles.header}>Престоящи срещи</h1>
       <div className={styles.tabloCards}>
         {futureAppointments.map((appointment, index) => (
@@ -313,6 +336,10 @@ const Tablo: FC = ({}) => {
           </div>
         ))}
       </div>
+      {/* </>
+      ) : (
+        <h1 className={styles.log}>Mоля, влезте в акаунта си!</h1>
+      )} */}
     </div>
   );
 };

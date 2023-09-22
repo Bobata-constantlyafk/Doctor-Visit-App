@@ -27,6 +27,11 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/izhod": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/izhod.js"
+    ],
     "/propusnati": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -36,6 +41,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/tablo.js"
+    ],
+    "/vhod": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/vhod.js"
     ]
   },
   "ampFirstPages": []

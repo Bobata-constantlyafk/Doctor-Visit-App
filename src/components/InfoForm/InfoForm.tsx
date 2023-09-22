@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { ChangeEvent } from "react";
 import styles from "./InfoForm.module.scss";
 import { useGlobalContext } from "~/constants/store";
 

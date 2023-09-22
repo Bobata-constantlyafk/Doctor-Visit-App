@@ -4,7 +4,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: #bafdff;
+    background-color: #3175c8;
 }
 
 .navbarContainer {
@@ -13,8 +13,8 @@
     button {
       font-family: 'Montserrat', sans-serif;
       font-weight: 500;
-      font-size: 16px;
-      color: #1e2f3e;
+      font-size: 0.9rem;
+      color: #ffffff;
       text-decoration: none;
     }
 }
@@ -23,13 +23,13 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 30px 10%;
+    padding: 15px 3%;
 }
 
 .logo{
     cursor: pointer;
     margin-right: auto;
-    width: 200px;
+    width: 150px;
     height: auto;
 }
 
@@ -44,7 +44,7 @@
 
 .nav__links li a{
     transition: all 0.3s ease 0s;
-    padding: 0 20px;
+    padding: 0 30px;
 }
 
 .nav__links li a:hover{

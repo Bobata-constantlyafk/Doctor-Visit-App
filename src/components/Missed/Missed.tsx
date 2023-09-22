@@ -12,6 +12,7 @@ interface Patient {
 
 const Missed: FC = () => {
   const [missedPatients, setMissedPatients] = useState<Patient[]>([]);
+  // const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     async function fetchMissedPatients() {
@@ -27,12 +28,26 @@ const Missed: FC = () => {
       }
     }
 
+    // async function getUserData() {
+    //   await supabase.auth
+    //     .getUser()
+    //     .then((value) => {
+    //       if (value.data?.user) {
+    //         setUser(value.data.user);
+    //         void fetchMissedPatients();
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching user data:", error);
+    //     });
+    // }
+
     void fetchMissedPatients();
+    // getUserData();
   }, []);
 
   const setAppointmentAsPaid = async (patientId: number) => {
     try {
-      // Update the "missed" field in the "Patients" table for the specified patient
       const { data, error } = await supabase
         .from("Patients")
         .update({ missed: false })
@@ -41,6 +56,9 @@ const Missed: FC = () => {
       if (error) {
         console.error("Error updating missed status:", error);
       } else {
+        setMissedPatients((prevPatients) =>
+          prevPatients.filter((patient) => patient.id !== patientId)
+        );
         console.log("Missed status updated successfully");
       }
     } catch (error) {
@@ -65,13 +83,13 @@ const Missed: FC = () => {
       <div className={styles.infoMain}>
         <div className={styles.infoHeader}>
           <h2>Име</h2>
-          <h2>Телефонен номер</h2>
+          <h2>Телефон</h2>
           <h2>Дата</h2>
           <h2 className={styles.paid}>Статус</h2>
         </div>
-        {missedPatients.map((patient, index) => (
-          <>
-            <div className={styles.info} key={index}>
+        {missedPatients.map((patient) => (
+          <React.Fragment key={patient.id}>
+            <div className={styles.info}>
               <p>{patient.name}</p>
               <p>{patient.phone_nr}</p>
               <p>{formatDate(patient.missed_date)}</p>
@@ -80,7 +98,7 @@ const Missed: FC = () => {
               </button>
             </div>
             <hr />
-          </>
+          </React.Fragment>
         ))}
       </div>
     </div>
