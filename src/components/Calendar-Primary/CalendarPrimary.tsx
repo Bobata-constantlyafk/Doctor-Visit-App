@@ -91,7 +91,10 @@ const CalendarPrimary: FC = ({}) => {
 
     const times = [];
     for (let i = beginning; i <= end; i = add(i, { minutes: interval })) {
-      times.push(i);
+      const isTimeTaken = existingAppointments.some((appointmentTime) =>
+        isSameMinute(appointmentTime, i)
+      );
+      times.push({ time: i, isTimeTaken });
     }
 
     return times;
@@ -192,10 +195,8 @@ const CalendarPrimary: FC = ({}) => {
             </div>
           </div>
           <div className={styles.buttonContainer}>
-            {times?.map((time, i) => {
-              const isTimeTaken = existingAppointments.some((appointmentTime) =>
-                isSameMinute(appointmentTime, time)
-              );
+            {times?.map((timeObj, i) => {
+              const { time, isTimeTaken } = timeObj;
 
               return (
                 <div key={`time-${i}`} className="hour">

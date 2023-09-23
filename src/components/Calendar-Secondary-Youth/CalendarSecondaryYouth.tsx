@@ -32,7 +32,7 @@ interface Patient {
   phone_nr: number;
 }
 
-const Calendar: FC = ({}) => {
+const CalendarSecondaryYouth: FC = ({}) => {
   const [date, setDate] = useState<DateType>({
     justDate: null,
     dateTime: null,
@@ -96,15 +96,32 @@ const Calendar: FC = ({}) => {
     const times = [];
     for (let i = beginning; i <= end; i = add(i, { minutes: interval })) {
       const oneHourAhead = add(i, { hours: 1 });
-      const isOneHourAheadAvailable = existingAppointments.some((appointment) =>
-        isSameMinute(appointment, oneHourAhead)
-      );
+      const oneHourTwentyMinutesAhead = add(i, { minutes: 80 });
 
       const isTimeTaken = existingAppointments.some((appointmentTime) =>
         isSameMinute(appointmentTime, i)
       );
+      const check1H = existingAppointments.some((appointment) =>
+        isSameMinute(appointment, oneHourAhead)
+      );
+      const check1H20M = existingAppointments.some((appointment) =>
+        isSameMinute(appointment, oneHourTwentyMinutesAhead)
+      );
 
-      times.push({ time: i, isOneHourAheadAvailable, isTimeTaken });
+      let freeStatus = "non";
+
+      switch (true) {
+        case !check1H:
+          freeStatus = "1h";
+          break;
+        case !check1H20M:
+          freeStatus = "2h";
+          break;
+        default:
+          break;
+      }
+
+      times.push({ time: i, freeStatus, isTimeTaken });
     }
 
     return times;
@@ -157,9 +174,17 @@ const Calendar: FC = ({}) => {
     return patient_id;
   };
 
-  const createAppointments = async (dateTime: Date) => {
+  const createAppointments = async (dateTime: Date, freeStatus: string) => {
     const patient_id = await createPatient();
-    const oneHourAhead = add(dateTime, { hours: 1 });
+    let appointmentTime;
+    if (freeStatus === "1h") {
+      appointmentTime = add(dateTime, { hours: 1 });
+    } else if (freeStatus === "2h") {
+      appointmentTime = add(dateTime, { hours: 1, minutes: 20 });
+    } else {
+      // Handle other cases or throw an error if needed
+      return;
+    }
     (
       supabase.from("Appointments").upsert([
         {
@@ -169,7 +194,7 @@ const Calendar: FC = ({}) => {
           patient_id: patient_id,
         },
         {
-          date: oneHourAhead,
+          date: appointmentTime,
           age_range: age_range,
           type: typeEye,
           patient_id: patient_id,
@@ -208,12 +233,12 @@ const Calendar: FC = ({}) => {
             </button>
             <div>
               <h1>{formatDate(date.justDate)}</h1>
-              <h3> Вторичен преглед</h3>
+              <h3> млади сме</h3>
             </div>
           </div>
           <div className={styles.buttonContainer}>
             {times?.map((timeObj, i) => {
-              const { time, isOneHourAheadAvailable, isTimeTaken } = timeObj;
+              const { time, freeStatus, isTimeTaken } = timeObj;
 
               return (
                 <div key={`time-${i}`} className="hour">
@@ -221,7 +246,7 @@ const Calendar: FC = ({}) => {
                     type="button"
                     onClick={() => {
                       setDate((prev) => ({ ...prev, dateTime: time }));
-                      createAppointments(time)
+                      createAppointments(time, freeStatus)
                         .then(() => {
                           console.log("Appointment created successfully");
                         })
@@ -229,7 +254,7 @@ const Calendar: FC = ({}) => {
                           console.error("Error creating appointment");
                         });
                     }}
-                    disabled={isTimeTaken || isOneHourAheadAvailable}>
+                    disabled={isTimeTaken || freeStatus === "non"}>
                     {format(time, "kk:mm")}
                   </button>
                 </div>
@@ -251,4 +276,4 @@ const Calendar: FC = ({}) => {
   );
 };
 
-export default Calendar;
+export default CalendarSecondaryYouth;

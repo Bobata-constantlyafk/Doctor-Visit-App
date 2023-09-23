@@ -5,7 +5,7 @@ import styles from "./InfoForm.module.scss";
 import { useGlobalContext } from "~/constants/store";
 
 interface InfoFormProps {
-  onFormSubmit: (choice: string) => void;
+  onFormSubmit: (choiceType: string, age_range: string) => void;
 }
 
 const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
@@ -92,12 +92,12 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
             <option value="" disabled>
               Изберете възрастова група
             </option>
-            <option value="Nad">Над 25</option>
             <option value="Pod">Под 25</option>
+            <option value="Nad">Над 25</option>
           </select>
         </div>
         <div>
-          <label htmlFor="choice">Вид преглед:</label>
+          <label htmlFor="choiceType">Вид преглед:</label>
           <select
             className="examinationType"
             id="typeEye"
@@ -118,7 +118,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
             //   logVars();
             //   onFormSubmit();
             // }
-            onFormSubmit(typeEye), logVars();
+            onFormSubmit(typeEye, age_range), logVars();
           }}>
           Напред →
         </button>
