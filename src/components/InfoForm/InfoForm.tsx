@@ -64,7 +64,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
           <label htmlFor="name">Име:</label>
           <input
             type="text"
-            placeholder="Моля въведете си името"
+            placeholder="Моля, въведете името си"
             id="name"
             value={name}
             onChange={(e) => handleInputChange(e, setName)}
@@ -74,7 +74,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
           <label htmlFor="phoneNumber">Тел номер:</label>
           <input
             type="tel"
-            placeholder="Моля въведете си номера"
+            placeholder="Моля, въведете номера си"
             id="phoneNumber"
             value={phoneNumber}
             pattern="[0-9]*"

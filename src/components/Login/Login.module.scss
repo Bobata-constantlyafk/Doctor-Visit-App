@@ -20,6 +20,8 @@
         h1{
             font-size:2rem;
             color: #000;
+            font-weight: unset;
+            
         }
     
         p{
@@ -42,9 +44,9 @@
             width: 50%;
             border: none;
             border-radius: 5px;
-            background-color: #71d56a;
+            background-color: #3fcf8e;
+            color: #fff;
             cursor: pointer;
-            font-weight: bold;
           }
     } 
 }
