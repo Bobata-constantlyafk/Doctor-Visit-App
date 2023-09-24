@@ -8,6 +8,7 @@ import {
   INTERVAL,
   OPENING_HOURS,
   CLOSING_MINUTES,
+  OPENING_MINUTES,
 } from "~/constants/config";
 import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse, PostgrestError } from "@supabase/supabase-js";
@@ -82,7 +83,10 @@ const CalendarPrimary: FC = ({}) => {
     if (!date.justDate) return;
 
     const { justDate } = date;
-    const beginning = add(justDate, { hours: OPENING_HOURS });
+    const beginning = setMinutes(
+      add(justDate, { hours: OPENING_HOURS }),
+      OPENING_MINUTES
+    );
     const end = setMinutes(
       add(justDate, { hours: CLOSING_HOURS }),
       CLOSING_MINUTES
@@ -197,7 +201,6 @@ const CalendarPrimary: FC = ({}) => {
           <div className={styles.buttonContainer}>
             {times?.map((timeObj, i) => {
               const { time, isTimeTaken } = timeObj;
-
               return (
                 <div key={`time-${i}`} className="hour">
                   <button
