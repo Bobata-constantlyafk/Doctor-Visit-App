@@ -27,15 +27,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/log": [
+    "/propusnati": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/log.js"
-    ],
-    "/tablo": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/tablo.js"
+      "static/chunks/pages/propusnati.js"
     ]
   },
   "ampFirstPages": []

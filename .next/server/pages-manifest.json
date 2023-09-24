@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/log": "pages/log.js",
   "/": "pages/index.js",
-  "/propusnati": "pages/propusnati.js",
-  "/tablo": "pages/tablo.js"
+  "/tablo": "pages/tablo.js",
+  "/propusnati": "pages/propusnati.js"
 }
