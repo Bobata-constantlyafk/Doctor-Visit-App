@@ -4,14 +4,14 @@ import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
 import {
-  CLOSING_HOURS,
   INTERVAL,
   OPENING_HOURS,
-  CLOSING_MINUTES,
+  CLOSING_HOURS_SECONDARY,
+  CLOSING_MINUTES_SECONDARY,
   OPENING_MINUTES,
 } from "~/constants/config";
 import supabase from "../../constants/supaClient.js";
-import { PostgrestSingleResponse, PostgrestError } from "@supabase/supabase-js";
+import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 import { useRouter } from "next/router";
 
@@ -53,26 +53,30 @@ const CalendarPrimary: FC = ({}) => {
 
       const formattedSelectedDate = format(date.justDate, "yyyy-MM-dd");
 
-      const { data, error }: PostgrestSingleResponse<Appointment[]> =
-        await supabase
-          .from("Appointments")
-          .select("date")
-          .gte("date", formattedSelectedDate)
-          .order("date");
+      try {
+        const { data, error }: PostgrestSingleResponse<Appointment[]> =
+          await supabase
+            .from("Appointments")
+            .select("date")
+            .gte("date", formattedSelectedDate)
+            .order("date");
 
-      if (error) {
-        console.error("Error fetching existing appointments:", error);
-      } else {
-        const existingDates = data.map(
-          (appointment: { date: string }) => new Date(appointment.date)
-        );
-        setExistingAppointments(existingDates);
+        if (error) {
+          console.error("Error fetching existing appointments:", error);
+        } else {
+          const existingDates = data.map(
+            (appointment: { date: string }) => new Date(appointment.date)
+          );
+          setExistingAppointments(existingDates);
+        }
+      } catch (error) {
+        console.error("Error in fetchExistingAppointments:", error);
       }
     };
 
     fetchExistingAppointments()
       .then(() => {
-        console.log("We have the appointments!");
+        console.log("We have the existing appointments!");
       })
       .catch((error) => {
         console.error("Error in fetchExistingAppointments:", error);
@@ -88,17 +92,26 @@ const CalendarPrimary: FC = ({}) => {
       OPENING_MINUTES
     );
     const end = setMinutes(
-      add(justDate, { hours: CLOSING_HOURS }),
-      CLOSING_MINUTES
+      add(justDate, { hours: CLOSING_HOURS_SECONDARY }),
+      CLOSING_MINUTES_SECONDARY
     );
     const interval = INTERVAL;
 
     const times = [];
     for (let i = beginning; i <= end; i = add(i, { minutes: interval })) {
+      const fortyMinutesAhead = add(i, { minutes: 40 }); // Updated to 40 minutes
+      // const isOneHourAheadAvailable = existingAppointments.some((appointment) =>
+      //   isSameMinute(appointment, oneHourAhead)
+      // );
+      const isFortyMinutesAheadAvailable = existingAppointments.some(
+        (appointment) => isSameMinute(appointment, fortyMinutesAhead)
+      );
+
       const isTimeTaken = existingAppointments.some((appointmentTime) =>
         isSameMinute(appointmentTime, i)
       );
-      times.push({ time: i, isTimeTaken });
+
+      times.push({ time: i, isFortyMinutesAheadAvailable, isTimeTaken });
     }
 
     return times;
@@ -132,7 +145,7 @@ const CalendarPrimary: FC = ({}) => {
         })
         .select("*") as unknown as Promise<{
         data: Patient[];
-        error: PostgrestError;
+        error: Error;
       }>
     )
       .then(({ data, error }) => {
@@ -151,12 +164,19 @@ const CalendarPrimary: FC = ({}) => {
     return patient_id;
   };
 
-  const createAppointment = async (dateTime: Date) => {
+  const createAppointments = async (dateTime: Date) => {
     const patient_id = await createPatient();
+    const fortyMinutesAhead = add(dateTime, { minutes: 40 });
     (
-      supabase.from("Appointments").insert([
+      supabase.from("Appointments").upsert([
         {
           date: dateTime,
+          age_range: age_range,
+          type: typeEye,
+          patient_id: patient_id,
+        },
+        {
+          date: fortyMinutesAhead,
           age_range: age_range,
           type: typeEye,
           patient_id: patient_id,
@@ -195,19 +215,21 @@ const CalendarPrimary: FC = ({}) => {
             </button>
             <div>
               <h1>{formatDate(date.justDate)}</h1>
-              <h3> Първичен преглед</h3>
+              <h3> Вторичен преглед</h3>
             </div>
           </div>
           <div className={styles.buttonContainer}>
             {times?.map((timeObj, i) => {
-              const { time, isTimeTaken } = timeObj;
+              const { time, isFortyMinutesAheadAvailable, isTimeTaken } =
+                timeObj;
+
               return (
                 <div key={`time-${i}`} className="hour">
                   <button
                     type="button"
                     onClick={() => {
                       setDate((prev) => ({ ...prev, dateTime: time }));
-                      createAppointment(time)
+                      createAppointments(time)
                         .then(() => {
                           console.log("Appointment created successfully");
                         })
@@ -215,7 +237,7 @@ const CalendarPrimary: FC = ({}) => {
                           console.error("Error creating appointment");
                         });
                     }}
-                    disabled={isTimeTaken}>
+                    disabled={isTimeTaken || isFortyMinutesAheadAvailable}>
                     {format(time, "kk:mm")}
                   </button>
                 </div>

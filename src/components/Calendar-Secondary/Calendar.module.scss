@@ -23,13 +23,13 @@
             background-color: #a4a2a2;
             cursor: pointer;
             font-weight: bold;
-            height: 30%;
+            height: 50%;
             width: 30%;
             justify-self: left;
             font-size: 1.2rem;
         }
 
-        h1,h3{
+        h1,h3 {
             text-align: center;
         }
     }
@@ -41,7 +41,6 @@
         column-gap: 5vw;
         max-width: 80%;
         justify-content: center;
-        padding-bottom: 10vw;
     
         button {
             background-color: white;

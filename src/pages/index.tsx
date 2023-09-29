@@ -1,7 +1,7 @@
 import Head from "next/head";
-import CalendarSecondary from "../components/Calendar-Secondary";
 import CalendarPrimary from "../components/Calendar-Primary";
-import CalendarSecondaryYouth from "~/components/Calendar-Secondary-Youth";
+import CalendarSecondary from "../components/Calendar-Secondary";
+import CalendarPrimaryYouth from "~/components/Calendar-Primary-Youth";
 import InfoForm from "~/components/InfoForm";
 import { useState } from "react";
 import { GlobalContextProvider } from "~/constants/store";
@@ -31,14 +31,14 @@ export default function Home() {
       <GlobalContextProvider>
         <main>
           {showCalendar ? (
-            selectedType === "Vtorichen" ? (
+            selectedType === "Purvichen" ? (
               selectedAge === "Pod" ? (
-                <CalendarSecondaryYouth />
+                <CalendarPrimaryYouth />
               ) : (
-                <CalendarSecondary />
+                <CalendarPrimary />
               )
             ) : (
-              <CalendarPrimary />
+              <CalendarSecondary />
             )
           ) : (
             <InfoForm onFormSubmit={handleFormSubmission} />
