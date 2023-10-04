@@ -215,7 +215,7 @@ const CalendarPrimary: FC = ({}) => {
             </button>
             <div>
               <h1>{formatDate(date.justDate)}</h1>
-              <h3> Вторичен преглед</h3>
+              <h3> Първичен преглед</h3>
             </div>
           </div>
           <div className={styles.buttonContainer}>

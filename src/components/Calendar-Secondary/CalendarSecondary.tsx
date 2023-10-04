@@ -14,6 +14,7 @@ import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse, PostgrestError } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 import { useRouter } from "next/router";
+import { createAppointmentFunc } from "~/utils/functions";
 
 interface DateType {
   justDate: Date | null;
@@ -70,7 +71,13 @@ const CalendarSecondary: FC = ({}) => {
       }
     };
 
-    void fetchExistingAppointments();
+    fetchExistingAppointments()
+      .then(() => {
+        console.log("We have the appointments!");
+      })
+      .catch((error) => {
+        console.error("Error in fetchExistingAppointments:", error);
+      });
   }, [date.justDate]);
 
   const getTimes = () => {
@@ -116,66 +123,66 @@ const CalendarSecondary: FC = ({}) => {
     return `${day} ${month} (${dayName})`;
   }
 
-  const createPatient = async () => {
-    let patient_id = null;
-    await (
-      supabase
-        .from("Patients")
-        .upsert([{ name: name, phone_nr: phoneNumber }], {
-          onConflict: "phone_nr",
-        })
-        .select("*") as unknown as Promise<{
-        data: Patient[];
-        error: PostgrestError;
-      }>
-    )
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("Error with creating the patient:", error);
-          return null;
-        } else {
-          const patient = data[0]?.id;
-          console.log("Patient id form createPatient:", data);
-          patient_id = patient;
-        }
-      })
-      .catch((error) => {
-        console.error("Error with creating the patient:", error);
-      });
-    return patient_id;
-  };
+  // const createPatient = async () => {
+  //   let patient_id = null;
+  //   await (
+  //     supabase
+  //       .from("Patients")
+  //       .upsert([{ name: name, phone_nr: phoneNumber }], {
+  //         onConflict: "phone_nr",
+  //       })
+  //       .select("*") as unknown as Promise<{
+  //       data: Patient[];
+  //       error: PostgrestError;
+  //     }>
+  //   )
+  //     .then(({ data, error }) => {
+  //       if (error) {
+  //         console.error("Error with creating the patient:", error);
+  //         return null;
+  //       } else {
+  //         const patient = data[0]?.id;
+  //         console.log("Patient id form createPatient:", data);
+  //         patient_id = patient;
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error with creating the patient:", error);
+  //     });
+  //   return patient_id;
+  // };
 
-  const createAppointment = async (dateTime: Date) => {
-    const patient_id = await createPatient();
-    (
-      supabase.from("Appointments").insert([
-        {
-          date: dateTime,
-          age_range: age_range,
-          type: typeEye,
-          patient_id: patient_id,
-        },
-      ]) as unknown as Promise<{
-        data: Appointment;
-        error: Error;
-      }>
-    )
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("Error creating appointment:", error);
-        } else {
-          console.log("Appointment created successfully:", data);
-          void router.push(
-            `/success?appointmentDate=${encodeURIComponent(
-              dateTime.toISOString()
-            )}`
-          );
-        }
-      })
-      .catch((error) => {
-        console.error("Error creating appointment:", error);
-      });
-  };
+  // const createAppointment = async (dateTime: Date) => {
+  //   const patient_id = await createPatient();
+  //   (
+  //     supabase.from("Appointments").insert([
+  //       {
+  //         date: dateTime,
+  //         age_range: age_range,
+  //         type: typeEye,
+  //         patient_id: patient_id,
+  //       },
+  //     ]) as unknown as Promise<{
+  //       data: Appointment;
+  //       error: Error;
+  //     }>
+  //   )
+  //     .then(({ data, error }) => {
+  //       if (error) {
+  //         console.error("Error creating appointment:", error);
+  //       } else {
+  //         console.log("Appointment created successfully:", data);
+  //         void router.push(
+  //           `/success?appointmentDate=${encodeURIComponent(
+  //             dateTime.toISOString()
+  //           )}`
+  //         );
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error creating appointment:", error);
+  //     });
+  // };
 
   return (
     <div className={styles.calendarMain}>
@@ -189,7 +196,7 @@ const CalendarSecondary: FC = ({}) => {
             </button>
             <div>
               <h1>{formatDate(date.justDate)}</h1>
-              <h3> Първичен преглед</h3>
+              <h3> Вторичен преглед</h3>
             </div>
           </div>
           <div className={styles.buttonContainer}>
@@ -201,7 +208,14 @@ const CalendarSecondary: FC = ({}) => {
                     type="button"
                     onClick={() => {
                       setDate((prev) => ({ ...prev, dateTime: time }));
-                      createAppointment(time)
+                      createAppointmentFunc(
+                        time,
+                        age_range,
+                        typeEye,
+                        name,
+                        phoneNumber
+                      )
+                        //try to replace with void
                         .then(() => {
                           console.log("Appointment created successfully");
                         })

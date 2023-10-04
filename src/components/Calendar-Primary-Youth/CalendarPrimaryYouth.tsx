@@ -237,7 +237,7 @@ const CalendarPrimaryYouth: FC = ({}) => {
             </button>
             <div>
               <h1>{formatDate(date.justDate)}</h1>
-              <h3> млади сме</h3>
+              <h3> Първичен преглед</h3>
             </div>
           </div>
           <div className={styles.buttonContainer}>
