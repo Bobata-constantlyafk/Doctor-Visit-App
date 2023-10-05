@@ -364,7 +364,7 @@ const Tablo: FC = ({}) => {
                     <div className={styles.middleRow}>
                       <p className={styles.name}>
                         {appointment.patient_id === 0
-                          ? appointment.name || "" // Display appointment.name if available, else empty string
+                          ? appointment.name ?? ""
                           : appointment.Patients &&
                             "name" in appointment.Patients
                           ? (appointment.Patients.name as string)

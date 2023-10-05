@@ -1,7 +1,14 @@
 {
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
+  "/api/trpc/[trpc]": "pages/api/trpc/[trpc].js",
+  "/": "pages/index.js",
+  "/izhod": "pages/izhod.js",
+  "/log": "pages/log.js",
+  "/propusnati": "pages/propusnati.js",
+  "/success": "pages/success.js",
   "/tablo": "pages/tablo.js",
-  "/propusnati": "pages/propusnati.js"
+  "/test": "pages/test.js",
+  "/vhod": "pages/vhod.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js"
 }
