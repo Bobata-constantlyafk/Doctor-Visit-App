@@ -283,7 +283,7 @@ const Tablo: FC = ({}) => {
       type: typeEye,
       name: name,
       phone_nr: phoneNumber,
-      patient_id: 1,
+      patient_id: 0,
       Patients: [{ name: name, phone_nr: phoneNumber_parsed, missed: false }],
     };
     console.log("patient", updatedAppointment.Patients);
@@ -363,10 +363,14 @@ const Tablo: FC = ({}) => {
                   ) : (
                     <div className={styles.middleRow}>
                       <p className={styles.name}>
-                        {appointment.Patients && "name" in appointment.Patients
+                        {appointment.patient_id === 0
+                          ? appointment.name || "" // Display appointment.name if available, else empty string
+                          : appointment.Patients &&
+                            "name" in appointment.Patients
                           ? (appointment.Patients.name as string)
                           : ""}
                       </p>
+
                       <p>
                         {appointment.type === "Purvichen"
                           ? "Първичен"
@@ -501,8 +505,7 @@ const Tablo: FC = ({}) => {
                           typeEye,
                           name,
                           phoneNumber
-                        ),
-                          void closeModal();
+                        );
                       }}>
                       Запази
                     </button>
