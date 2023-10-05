@@ -400,7 +400,7 @@ const Tablo: FC = ({}) => {
                           ? (appointment.Patients.phone_nr as number)
                           : ""}
                       </p>
-                      <p>{appointment.Patients[0]?.phone_nr}</p>
+                      <p></p>
                       <button
                         className={styles.buttonche}
                         disabled={
