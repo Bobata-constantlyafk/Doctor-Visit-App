@@ -14,6 +14,7 @@ import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 import { useRouter } from "next/router";
+import { formatDateToWords } from "~/utils/functions";
 
 interface DateType {
   justDate: Date | null;
@@ -119,22 +120,6 @@ const CalendarPrimary: FC = ({}) => {
 
   const times = getTimes();
 
-  const capitalizeFirstLetter = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  function formatDate(date: Date) {
-    const day = date.getDate();
-    const month = capitalizeFirstLetter(
-      date.toLocaleString("bg-BG", { month: "long" })
-    );
-    const dayName = capitalizeFirstLetter(
-      date.toLocaleString("bg-BG", { weekday: "long" })
-    );
-
-    return `${day} ${month} (${dayName})`;
-  }
-
   const createPatient = async () => {
     let patient_id = null;
     await (
@@ -214,7 +199,7 @@ const CalendarPrimary: FC = ({}) => {
               ← Назад
             </button>
             <div>
-              <h1>{formatDate(date.justDate)}</h1>
+              <h1>{formatDateToWords(date.justDate)}</h1>
               <h3> Първичен преглед</h3>
             </div>
           </div>

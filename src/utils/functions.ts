@@ -2,6 +2,8 @@ import supabase from "~/constants/supaClient";
 import { PostgrestError } from "@supabase/supabase-js";
 import { format } from "date-fns";
 
+//Interfaces
+//===========================================================================================
 interface Appointment {
   date: string;
   age_range?: string;
@@ -14,6 +16,9 @@ interface Patient {
   name: string;
   phone_nr: string;
 }
+
+//Functions
+//===========================================================================================
 
 const createPatient = async (name: string, phoneNumber: string) => {
   let patient_id = null;
@@ -77,3 +82,21 @@ export async function createAppointmentFunc(
       console.error("Error creating appointment:", error);
     });
 }
+
+const capitalizeFirstLetter = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export function formatDateToWords(date: Date) {
+  const day = date.getDate();
+  const month = capitalizeFirstLetter(
+    date.toLocaleString("bg-BG", { month: "long" })
+  );
+  const dayName = capitalizeFirstLetter(
+    date.toLocaleString("bg-BG", { weekday: "long" })
+  );
+
+  return `${day} ${month} (${dayName})`;
+}
+
+

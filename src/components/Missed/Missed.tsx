@@ -66,7 +66,7 @@ const Missed: FC = () => {
     }
   };
 
-  const formatDate = (date: string) => {
+  const formatDateAndHour = (date: string) => {
     const dateObj = new Date(date);
     const day = dateObj.getDate();
     const month = dateObj.getMonth() + 1;
@@ -92,7 +92,7 @@ const Missed: FC = () => {
             <div className={styles.info}>
               <p>{patient.name}</p>
               <p>{patient.phone_nr}</p>
-              <p>{formatDate(patient.missed_date)}</p>
+              <p>{formatDateAndHour(patient.missed_date)}</p>
               <button onClick={() => void setAppointmentAsPaid(patient.id)}>
                 Решен
               </button>

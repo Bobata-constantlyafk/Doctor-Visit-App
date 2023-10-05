@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/fKqe5u7YzkPhBwnWRgz-u/_buildManifest.js",
-    "static/fKqe5u7YzkPhBwnWRgz-u/_ssgManifest.js"
+    "static/Scthw8713Dgyj7qsaEUFP/_buildManifest.js",
+    "static/Scthw8713Dgyj7qsaEUFP/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
@@ -16,7 +16,7 @@
       "static/chunks/main-daf67cc10f8a009e.js",
       "static/chunks/52-76702fb7f48addea.js",
       "static/css/aa7722dad0c18093.css",
-      "static/chunks/pages/index-85caf464d7cbc827.js"
+      "static/chunks/pages/index-8d5a8e74325b2c5c.js"
     ],
     "/_app": [
       "static/chunks/webpack-87b3a303122f2f0d.js",
@@ -67,13 +67,7 @@
       "static/chunks/52-76702fb7f48addea.js",
       "static/chunks/321-102460bec9ca052a.js",
       "static/css/76af09f927fe9410.css",
-      "static/chunks/pages/tablo-1696b062759dcd23.js"
-    ],
-    "/test": [
-      "static/chunks/webpack-87b3a303122f2f0d.js",
-      "static/chunks/framework-63157d71ad419e09.js",
-      "static/chunks/main-daf67cc10f8a009e.js",
-      "static/chunks/pages/test-bc88990f0d5fceb3.js"
+      "static/chunks/pages/tablo-a65e495b99f3e128.js"
     ],
     "/vhod": [
       "static/chunks/webpack-87b3a303122f2f0d.js",

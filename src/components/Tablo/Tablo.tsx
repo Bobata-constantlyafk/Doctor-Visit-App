@@ -6,6 +6,7 @@ import ReactModal from "react-modal";
 import { createAppointmentFunc } from "~/utils/functions";
 import ReactCalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { formatDateToWords } from "~/utils/functions";
 
 import {
   getHours,
@@ -86,7 +87,7 @@ const Tablo: FC = ({}) => {
     "ДЕК",
   ];
 
-  function formatDate(date: Date) {
+  function formatDateForCard(date: Date) {
     const day = getDate(date);
     const monthIndex = date.getMonth();
     const month = monthAbbreviations[monthIndex];
@@ -305,7 +306,7 @@ const Tablo: FC = ({}) => {
         <>
           {/* {user ? (
         <> */}
-          <h1 className={styles.header}>Днешни срещи</h1>
+          <h1 className={styles.header}>{formatDateToWords(date.justDate)}</h1>
           <div className={styles.tabloCards}>
             {allAppointments.map((appointment, index) => (
               <div
@@ -330,7 +331,7 @@ const Tablo: FC = ({}) => {
                       )}
                     </h1>
 
-                    <p>{formatDate(new Date(appointment.date))}</p>
+                    <p>{formatDateForCard(new Date(appointment.date))}</p>
                     {appointment.type === "empty" ? (
                       <img
                         className={styles.novChas}
