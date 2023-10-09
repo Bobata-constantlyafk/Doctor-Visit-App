@@ -253,6 +253,8 @@ const Tablo: FC = ({}) => {
           Patients: [],
         };
         appointments.push(appointment);
+        console.log("todays: ", todaysAppointments);
+        console.log("isDuplicate: ", isDuplicate);
       }
     }
 
@@ -287,7 +289,6 @@ const Tablo: FC = ({}) => {
       patient_id: 0,
       Patients: [{ name: name, phone_nr: phoneNumber_parsed, missed: false }],
     };
-    console.log("patient", updatedAppointment.Patients);
 
     // Update the local state with the new appointment
     setAppointments((prevAppointments) => [
@@ -395,8 +396,10 @@ const Tablo: FC = ({}) => {
                   {showAdditionalInfo[index] && (
                     <div className={styles.lowerRow}>
                       <p className={styles.phone_nr}>
-                        {appointment.Patients &&
-                        "phone_nr" in appointment.Patients
+                        {appointment.patient_id === 0
+                          ? appointment.phone_nr ?? ""
+                          : appointment.Patients &&
+                            "phone_nr" in appointment.Patients
                           ? (appointment.Patients.phone_nr as number)
                           : ""}
                       </p>

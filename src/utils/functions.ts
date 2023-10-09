@@ -57,6 +57,7 @@ export async function createAppointmentFunc(
   phoneNumber: string
 ) {
   const formattedDate = format(dateTime, "yyyy-MM-dd HH:mm");
+  console.log(formattedDate);
   const patient_id = await createPatient(name, phoneNumber);
   (
     supabase.from("Appointments").insert([
