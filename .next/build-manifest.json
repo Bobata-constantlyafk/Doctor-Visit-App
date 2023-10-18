@@ -32,6 +32,11 @@
       "static/chunks/main.js",
       "static/chunks/pages/propusnati.js"
     ],
+    "/success": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/success.js"
+    ],
     "/tablo": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",

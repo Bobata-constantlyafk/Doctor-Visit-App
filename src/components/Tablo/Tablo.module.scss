@@ -68,6 +68,7 @@
                 .input {
                   display: none;
                 }
+                
               
                 .label {
                   position: relative;
@@ -163,6 +164,11 @@
       justify-content: center;
       align-content: center;
       height: 100%;
+
+      .nameFam{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+      }
   
       h2{
         margin-top: 3vw;
@@ -172,18 +178,23 @@
       }
   
       label{
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           color: white;
       }
   
       input{
-          font-size: 1rem;
+          font-size: 0.8rem;
           width: 100%;
           border: none;
           border-bottom: 2.5px solid black;
           background-color: transparent;
           outline: none;
       }
+
+      .firstNameInput{
+        width: 75%;
+      }
+
   
       input::placeholder {
         color: #c7ffe2;
@@ -236,5 +247,12 @@
   justify-content: center;
   align-items: center;
 
-  
+    .firstName,.lastName{
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .lastName{
+      justify-content: end;
+    }
 }

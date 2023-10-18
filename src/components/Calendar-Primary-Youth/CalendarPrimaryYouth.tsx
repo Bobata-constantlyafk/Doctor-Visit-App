@@ -106,21 +106,21 @@ const CalendarPrimaryYouth: FC = ({}) => {
       const isTimeTaken = existingAppointments.some((appointmentTime) =>
         isSameMinute(appointmentTime, i)
       );
-      const check1H = existingAppointments.some((appointment) =>
+      const check1H20 = existingAppointments.some((appointment) =>
         isSameMinute(appointment, oneHourTwentyAhead)
       );
-      const check1H20M = existingAppointments.some((appointment) =>
+      const check1H40 = existingAppointments.some((appointment) =>
         isSameMinute(appointment, oneHourFortyAhead)
       );
 
       let freeStatus = "non";
 
       switch (true) {
-        case !check1H:
-          freeStatus = "1h";
+        case !check1H40:
+          freeStatus = "1h40";
           break;
-        case !check1H20M:
-          freeStatus = "2h";
+        case !check1H20:
+          freeStatus = "1h20";
           break;
         default:
           break;
@@ -166,9 +166,9 @@ const CalendarPrimaryYouth: FC = ({}) => {
   const createAppointments = async (dateTime: Date, freeStatus: string) => {
     const patient_id = await createPatient();
     let appointmentTime;
-    if (freeStatus === "1h") {
+    if (freeStatus === "1h20") {
       appointmentTime = add(dateTime, { hours: 1, minutes: 20 });
-    } else if (freeStatus === "2h") {
+    } else if (freeStatus === "1h40") {
       appointmentTime = add(dateTime, { hours: 1, minutes: 40 });
     } else {
       // Handle other cases or throw an error if needed

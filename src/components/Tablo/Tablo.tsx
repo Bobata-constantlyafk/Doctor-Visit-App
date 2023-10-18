@@ -438,21 +438,39 @@ const Tablo: FC = ({}) => {
                   }}>
                   <div className={styles.modalContent}>
                     <h2>Запази час</h2>
-                    <div>
-                      <label htmlFor="name">Име:</label>
-                      <input
-                        type="text"
-                        ref={nameInputRef}
-                        placeholder="Име на пациента"
-                        id="name"
-                        value={name}
-                        onClick={handleNameInputClick}
-                        onChange={handleNameChange}
-                      />
+                    <div className={styles.nameFam}>
+                      <div className={styles.firstName}>
+                        <label htmlFor="name">Име:</label>
+                        <input
+                          className={styles.firstNameInput}
+                          type="text"
+                          ref={nameInputRef}
+                          placeholder="Име на пациента"
+                          id="name"
+                          value={name}
+                          onClick={handleNameInputClick}
+                          onChange={handleNameChange}
+                        />
+                      </div>
+
+                      <div className={styles.lastName}>
+                        <label htmlFor="name">Фамилия:</label>
+                        <input
+                          className={styles.lastNameInput}
+                          type="text"
+                          ref={nameInputRef}
+                          placeholder="Фамилия на пациента"
+                          id="name"
+                          value={name}
+                          onClick={handleNameInputClick}
+                          onChange={handleNameChange}
+                        />
+                      </div>
                     </div>
                     <div>
                       <label htmlFor="phoneNumber">Тел номер:</label>
                       <input
+                        className={styles.phoneNumberInput}
                         type="tel"
                         placeholder="Номера на пациента"
                         ref={phoneNumberInputRef}
