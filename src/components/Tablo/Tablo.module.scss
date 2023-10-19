@@ -18,6 +18,10 @@
     grid-template-columns: 1fr 5fr;
     margin-left: 5vw;
     margin-right: 5vw;
+    @media only screen and (max-width: 900px) {
+      margin-left: 0vw;
+      margin-right: 0vw;
+    }
 
     .tabloHours{
       display: grid;
@@ -27,6 +31,9 @@
 
       h1{
         font-weight: lighter;
+        @media only screen and (max-width: 900px) {
+        font-size: 1.6rem;
+        }
       }
     }
 
@@ -49,6 +56,14 @@
               display: grid;
               grid-template-rows: 1fr;
               width: 60vw;
+              @media only screen and (max-width: 900px) {
+                width: 70vw;
+
+                p{
+                  font-size: 0.9rem;
+                }
+              }
+
   
               .upperRow{
                 display: grid;
@@ -59,13 +74,17 @@
                     font-size: 1.5rem;
                 }
                 img{
-                  height: 1.8vw;
+                 height: 1.8vw;
                   width: 1.8vw;
                   justify-self: end;
                   background: rgb(255, 58, 58);
                   border-radius: 100%;
                   cursor:pointer;
-                }
+                  @media only screen and (max-width: 900px) {
+                    height: 5vw;
+                    width: 5vw;
+                  }
+                } 
                 .novChas{
                   background: #3fcf52;
                   padding: 2px;
@@ -83,6 +102,10 @@
                     display: block;
                     width: 50px;
                     height: 30px;
+                    @media only screen and (max-width: 900px) {
+                      width: 40px;
+                      height: 20px;
+                    }
                     background: #fff;
                     border-radius: 50px;
                     transition: 300ms linear;
@@ -96,6 +119,10 @@
                       display: block;
                       width: 25px;
                       height: 25px;
+                      @media only screen and (max-width: 900px) {
+                        width: 15px;
+                        height: 15px;
+                      }
                       background: #aaa;
                       border-radius: 50%;
                       transition: left 300ms linear;
@@ -263,8 +290,4 @@
     .lastName{
       justify-content: end;
     }
-}
-
-@media only screen and (max-width: 767px) {
-  
 }
