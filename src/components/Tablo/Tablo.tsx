@@ -26,6 +26,7 @@ import {
   CLOSING_MINUTES,
   INTERVAL,
 } from "~/constants/config";
+import { number } from "zod";
 
 interface Appointment {
   date: Date;
@@ -301,6 +302,11 @@ const Tablo: FC = ({}) => {
 
   const allAppointments: Appointment[] = createAppointments();
 
+  const getAllActiveHours: number[] = [];
+  for (let i = OPENING_HOURS; i <= CLOSING_HOURS; i++) {
+    getAllActiveHours.push(i);
+  }
+
   return (
     <div className={styles.tabloMain}>
       {date.justDate ? (
@@ -313,6 +319,9 @@ const Tablo: FC = ({}) => {
               <div
                 className={styles.appointmentCards}
                 key={appointment.date.toString()}>
+                {index % 3 === 0 && (
+                  <p className={styles.hour}>{getAllActiveHours[index / 3]}</p>
+                )}
                 <div
                   className={`${styles.appointmentCard} ${
                     appointment.Patients &&
@@ -332,17 +341,45 @@ const Tablo: FC = ({}) => {
                       )}
                     </h1>
 
-                    <p>{formatDateForCard(new Date(appointment.date))}</p>
                     {appointment.type === "empty" ? (
-                      <img
-                        className={styles.novChas}
-                        src="plus.png"
-                        alt="nov-chas"
-                        onClick={() => {
-                          setDateForApp(appointment.date);
-                          openModal();
-                        }}
-                      />
+                      <p>Празен</p>
+                    ) : (
+                      <React.Fragment>
+                        <p className={styles.name}>
+                          {appointment.patient_id === 0
+                            ? appointment.name ?? ""
+                            : appointment.Patients &&
+                              "name" in appointment.Patients
+                            ? (appointment.Patients.name as string)
+                            : ""}
+                        </p>
+                        <div className={styles.toggle}>
+                          <input
+                            type="checkbox"
+                            id={`toggle-btn-${index}`}
+                            className={styles.input}
+                          />
+                          <label
+                            htmlFor={`toggle-btn-${index}`}
+                            className={styles.label}
+                            onClick={() => toggleAdditionalInfo(index)}></label>
+                        </div>
+                      </React.Fragment>
+                    )}
+
+                    {appointment.type === "empty" ? (
+                      <React.Fragment>
+                        <p></p>
+                        <img
+                          className={styles.novChas}
+                          src="plus.png"
+                          alt="nov-chas"
+                          onClick={() => {
+                            setDateForApp(appointment.date);
+                            openModal();
+                          }}
+                        />
+                      </React.Fragment>
                     ) : (
                       <img
                         src="close.png"
@@ -358,21 +395,9 @@ const Tablo: FC = ({}) => {
                       />
                     )}
                   </div>
-                  {appointment.type === "empty" ? (
-                    <div className={styles.middleEmpty}>
-                      <p>Празен</p>
-                    </div>
-                  ) : (
-                    <div className={styles.middleRow}>
-                      <p className={styles.name}>
-                        {appointment.patient_id === 0
-                          ? appointment.name ?? ""
-                          : appointment.Patients &&
-                            "name" in appointment.Patients
-                          ? (appointment.Patients.name as string)
-                          : ""}
-                      </p>
 
+                  {showAdditionalInfo[index] && (
+                    <div className={styles.lowerRow}>
                       <p>
                         {appointment.type === "Purvichen"
                           ? "Първичен"
@@ -380,21 +405,6 @@ const Tablo: FC = ({}) => {
                           ? "Вторичен"
                           : ""}
                       </p>
-                      <div className={styles.toggle}>
-                        <input
-                          type="checkbox"
-                          id={`toggle-btn-${index}`}
-                          className={styles.input}
-                        />
-                        <label
-                          htmlFor={`toggle-btn-${index}`}
-                          className={styles.label}
-                          onClick={() => toggleAdditionalInfo(index)}></label>
-                      </div>
-                    </div>
-                  )}
-                  {showAdditionalInfo[index] && (
-                    <div className={styles.lowerRow}>
                       <p className={styles.phone_nr}>
                         {appointment.patient_id === 0
                           ? appointment.phone_nr ?? ""
