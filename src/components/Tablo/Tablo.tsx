@@ -314,237 +314,247 @@ const Tablo: FC = ({}) => {
           {/* {user ? (
         <> */}
           <h1 className={styles.header}>{formatDateToWords(date.justDate)}</h1>
-          <div className={styles.tabloCards}>
-            {allAppointments.map((appointment, index) => (
-              <div
-                className={styles.appointmentCards}
-                key={appointment.date.toString()}>
-                {index % 3 === 0 && (
-                  <p className={styles.hour}>{getAllActiveHours[index / 3]}</p>
-                )}
+          <div className={styles.appsAndHours}>
+            <div className={styles.tabloHours}>
+              {getAllActiveHours.map((hour) => (
+                <div key={hour}>
+                  <h1>{hour}</h1>
+                </div>
+              ))}
+            </div>
+            <div className={styles.tabloCards}>
+              {allAppointments.map((appointment, index) => (
                 <div
-                  className={`${styles.appointmentCard} ${
-                    appointment.Patients &&
-                    "missed" in appointment.Patients &&
-                    appointment.Patients.missed
-                      ? styles.missedAppointment
-                      : appointment.type === "empty"
-                      ? styles.emptyAppointment
-                      : ""
-                  }`}>
-                  <div className={styles.upperRow}>
-                    <h1 className={styles.hour}>
-                      {getHours(new Date(appointment.date))}:
-                      {String(getMinutes(new Date(appointment.date))).padStart(
-                        2,
-                        "0"
+                  className={styles.appointmentCards}
+                  key={appointment.date.toString()}>
+                  <div
+                    className={`${styles.appointmentCard} ${
+                      appointment.Patients &&
+                      "missed" in appointment.Patients &&
+                      appointment.Patients.missed
+                        ? styles.missedAppointment
+                        : appointment.type === "empty"
+                        ? styles.emptyAppointment
+                        : ""
+                    }`}>
+                    <div className={styles.upperRow}>
+                      <p>
+                        {getHours(new Date(appointment.date))}:
+                        {String(
+                          getMinutes(new Date(appointment.date))
+                        ).padStart(2, "0")}
+                      </p>
+
+                      {appointment.type === "empty" ? (
+                        <p>Празен</p>
+                      ) : (
+                        <React.Fragment>
+                          <p className={styles.name}>
+                            {appointment.patient_id === 0
+                              ? appointment.name ?? ""
+                              : appointment.Patients &&
+                                "name" in appointment.Patients
+                              ? (appointment.Patients.name as string)
+                              : ""}
+                          </p>
+                          <div className={styles.toggle}>
+                            <input
+                              type="checkbox"
+                              id={`toggle-btn-${index}`}
+                              className={styles.input}
+                            />
+                            <label
+                              htmlFor={`toggle-btn-${index}`}
+                              className={styles.label}
+                              onClick={() =>
+                                toggleAdditionalInfo(index)
+                              }></label>
+                          </div>
+                        </React.Fragment>
                       )}
-                    </h1>
 
-                    {appointment.type === "empty" ? (
-                      <p>Празен</p>
-                    ) : (
-                      <React.Fragment>
-                        <p className={styles.name}>
-                          {appointment.patient_id === 0
-                            ? appointment.name ?? ""
-                            : appointment.Patients &&
-                              "name" in appointment.Patients
-                            ? (appointment.Patients.name as string)
-                            : ""}
-                        </p>
-                        <div className={styles.toggle}>
-                          <input
-                            type="checkbox"
-                            id={`toggle-btn-${index}`}
-                            className={styles.input}
+                      {appointment.type === "empty" ? (
+                        <React.Fragment>
+                          <p></p>
+                          <img
+                            className={styles.novChas}
+                            src="plus.png"
+                            alt="nov-chas"
+                            onClick={() => {
+                              setDateForApp(appointment.date);
+                              openModal();
+                            }}
                           />
-                          <label
-                            htmlFor={`toggle-btn-${index}`}
-                            className={styles.label}
-                            onClick={() => toggleAdditionalInfo(index)}></label>
-                        </div>
-                      </React.Fragment>
-                    )}
-
-                    {appointment.type === "empty" ? (
-                      <React.Fragment>
-                        <p></p>
+                        </React.Fragment>
+                      ) : (
                         <img
-                          className={styles.novChas}
-                          src="plus.png"
-                          alt="nov-chas"
-                          onClick={() => {
-                            setDateForApp(appointment.date);
-                            openModal();
+                          src="close.png"
+                          alt=""
+                          onClick={(
+                            event: React.MouseEvent<
+                              HTMLImageElement,
+                              MouseEvent
+                            >
+                          ) => {
+                            event.preventDefault();
+                            handleDeleteAppointment(
+                              appointments.indexOf(appointment)
+                            );
                           }}
                         />
-                      </React.Fragment>
-                    ) : (
-                      <img
-                        src="close.png"
-                        alt=""
-                        onClick={(
-                          event: React.MouseEvent<HTMLImageElement, MouseEvent>
-                        ) => {
-                          event.preventDefault();
-                          handleDeleteAppointment(
-                            appointments.indexOf(appointment)
-                          );
-                        }}
-                      />
+                      )}
+                    </div>
+
+                    {showAdditionalInfo[index] && (
+                      <div className={styles.lowerRow}>
+                        <p>
+                          {appointment.type === "Purvichen"
+                            ? "Първичен"
+                            : appointment.type === "Vtorichen"
+                            ? "Вторичен"
+                            : ""}
+                        </p>
+                        <p className={styles.phone_nr}>
+                          {appointment.patient_id === 0
+                            ? appointment.phone_nr ?? ""
+                            : appointment.Patients &&
+                              "phone_nr" in appointment.Patients
+                            ? (appointment.Patients.phone_nr as number)
+                            : ""}
+                        </p>
+                        <p></p>
+                        <button
+                          className={styles.buttonche}
+                          disabled={
+                            appointment.Patients &&
+                            "missed" in appointment.Patients
+                              ? (appointment.Patients.missed as boolean)
+                              : false
+                          }
+                          onClick={() =>
+                            void handleMissedAppointment(
+                              appointment.patient_id,
+                              appointment.date
+                            )
+                          }>
+                          Пропуснат
+                        </button>
+                      </div>
                     )}
                   </div>
+                  <ReactModal
+                    className={styles.contactModal}
+                    isOpen={isModalOpen}
+                    overlayClassName={styles.modalOverlay}
+                    onRequestClose={closeModal}
+                    ariaHideApp={true}
+                    onAfterOpen={() => {
+                      if (focusedInput === "name") {
+                        nameInputRef.current?.focus();
+                      } else if (focusedInput === "phoneNumber") {
+                        phoneNumberInputRef.current?.focus();
+                      }
+                    }}>
+                    <div className={styles.modalContent}>
+                      <h2>Запази час</h2>
+                      <div className={styles.nameFam}>
+                        <div className={styles.firstName}>
+                          <label htmlFor="name">Име:</label>
+                          <input
+                            className={styles.firstNameInput}
+                            type="text"
+                            ref={nameInputRef}
+                            placeholder="Име на пациента"
+                            id="name"
+                            value={name}
+                            onClick={handleNameInputClick}
+                            onChange={handleNameChange}
+                          />
+                        </div>
 
-                  {showAdditionalInfo[index] && (
-                    <div className={styles.lowerRow}>
-                      <p>
-                        {appointment.type === "Purvichen"
-                          ? "Първичен"
-                          : appointment.type === "Vtorichen"
-                          ? "Вторичен"
-                          : ""}
-                      </p>
-                      <p className={styles.phone_nr}>
-                        {appointment.patient_id === 0
-                          ? appointment.phone_nr ?? ""
-                          : appointment.Patients &&
-                            "phone_nr" in appointment.Patients
-                          ? (appointment.Patients.phone_nr as number)
-                          : ""}
-                      </p>
-                      <p></p>
+                        <div className={styles.lastName}>
+                          <label htmlFor="name">Фамилия:</label>
+                          <input
+                            className={styles.lastNameInput}
+                            type="text"
+                            ref={nameInputRef}
+                            placeholder="Фамилия на пациента"
+                            id="name"
+                            value={name}
+                            onClick={handleNameInputClick}
+                            onChange={handleNameChange}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="phoneNumber">Тел номер:</label>
+                        <input
+                          className={styles.phoneNumberInput}
+                          type="tel"
+                          placeholder="Номера на пациента"
+                          ref={phoneNumberInputRef}
+                          id="phoneNumber"
+                          value={phoneNumber}
+                          pattern="[0-9]*"
+                          inputMode="tel"
+                          onClick={handlePhoneNumberInputClick}
+                          onChange={handlePhoneNumberChange}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="age_range">Възраст:</label>
+                        <select
+                          className="ageSelection"
+                          id="age_range"
+                          value={age_range}
+                          onChange={(e) => handleChoiceChange(e, setAge_range)}>
+                          <option value="" disabled>
+                            Изберете възрастова група
+                          </option>
+                          <option value="Pod">Под 25</option>
+                          <option value="Nad">Над 25</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="choiceType">Вид преглед:</label>
+                        <select
+                          className="examinationType"
+                          id="typeEye"
+                          value={typeEye}
+                          onChange={(e) => handleChoiceChange(e, setTypeEye)}>
+                          <option value="" disabled>
+                            Моля, изберете подходящият преглед
+                          </option>
+                          <option value="Purvichen">Първичен преглед</option>
+                          <option value="Vtorichen">Вторичен преглед</option>
+                        </select>
+                      </div>
                       <button
-                        className={styles.buttonche}
-                        disabled={
-                          appointment.Patients &&
-                          "missed" in appointment.Patients
-                            ? (appointment.Patients.missed as boolean)
-                            : false
-                        }
-                        onClick={() =>
-                          void handleMissedAppointment(
-                            appointment.patient_id,
-                            appointment.date
-                          )
-                        }>
-                        Пропуснат
+                        type="button"
+                        // disabled={!isFormValid()}
+                        onClick={() => {
+                          updateAppointmentFunc(
+                            dateForApp,
+                            age_range,
+                            typeEye,
+                            name,
+                            phoneNumber
+                          );
+                          void createAppointmentFunc(
+                            dateForApp,
+                            age_range,
+                            typeEye,
+                            name,
+                            phoneNumber
+                          );
+                        }}>
+                        Запази
                       </button>
                     </div>
-                  )}
+                  </ReactModal>
                 </div>
-                <ReactModal
-                  className={styles.contactModal}
-                  isOpen={isModalOpen}
-                  overlayClassName={styles.modalOverlay}
-                  onRequestClose={closeModal}
-                  ariaHideApp={true}
-                  onAfterOpen={() => {
-                    if (focusedInput === "name") {
-                      nameInputRef.current?.focus();
-                    } else if (focusedInput === "phoneNumber") {
-                      phoneNumberInputRef.current?.focus();
-                    }
-                  }}>
-                  <div className={styles.modalContent}>
-                    <h2>Запази час</h2>
-                    <div className={styles.nameFam}>
-                      <div className={styles.firstName}>
-                        <label htmlFor="name">Име:</label>
-                        <input
-                          className={styles.firstNameInput}
-                          type="text"
-                          ref={nameInputRef}
-                          placeholder="Име на пациента"
-                          id="name"
-                          value={name}
-                          onClick={handleNameInputClick}
-                          onChange={handleNameChange}
-                        />
-                      </div>
-
-                      <div className={styles.lastName}>
-                        <label htmlFor="name">Фамилия:</label>
-                        <input
-                          className={styles.lastNameInput}
-                          type="text"
-                          ref={nameInputRef}
-                          placeholder="Фамилия на пациента"
-                          id="name"
-                          value={name}
-                          onClick={handleNameInputClick}
-                          onChange={handleNameChange}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="phoneNumber">Тел номер:</label>
-                      <input
-                        className={styles.phoneNumberInput}
-                        type="tel"
-                        placeholder="Номера на пациента"
-                        ref={phoneNumberInputRef}
-                        id="phoneNumber"
-                        value={phoneNumber}
-                        pattern="[0-9]*"
-                        inputMode="tel"
-                        onClick={handlePhoneNumberInputClick}
-                        onChange={handlePhoneNumberChange}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="age_range">Възраст:</label>
-                      <select
-                        className="ageSelection"
-                        id="age_range"
-                        value={age_range}
-                        onChange={(e) => handleChoiceChange(e, setAge_range)}>
-                        <option value="" disabled>
-                          Изберете възрастова група
-                        </option>
-                        <option value="Pod">Под 25</option>
-                        <option value="Nad">Над 25</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="choiceType">Вид преглед:</label>
-                      <select
-                        className="examinationType"
-                        id="typeEye"
-                        value={typeEye}
-                        onChange={(e) => handleChoiceChange(e, setTypeEye)}>
-                        <option value="" disabled>
-                          Моля, изберете подходящият преглед
-                        </option>
-                        <option value="Purvichen">Първичен преглед</option>
-                        <option value="Vtorichen">Вторичен преглед</option>
-                      </select>
-                    </div>
-                    <button
-                      type="button"
-                      // disabled={!isFormValid()}
-                      onClick={() => {
-                        updateAppointmentFunc(
-                          dateForApp,
-                          age_range,
-                          typeEye,
-                          name,
-                          phoneNumber
-                        );
-                        void createAppointmentFunc(
-                          dateForApp,
-                          age_range,
-                          typeEye,
-                          name,
-                          phoneNumber
-                        );
-                      }}>
-                      Запази
-                    </button>
-                  </div>
-                </ReactModal>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           {/* </>
       ) : (

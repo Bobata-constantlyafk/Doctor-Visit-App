@@ -9,119 +9,141 @@
 
   .header{
         text-align: center;
-        margin-top: 5vw;
+        margin-top: 3vw;
+        margin-bottom: 5vw;
+        font-weight: 350;
    }
-  .tabloCards {
+   .appsAndHours{
     display: grid;
-    grid-template-rows: 1fr;
-    column-gap: 1vw;
-    justify-items: center;
-    padding: 1vw;
+    grid-template-columns: 1fr 5fr;
+    margin-left: 5vw;
+    margin-right: 5vw;
 
-      .appointmentCards{
-          margin-top: 0;
+    .tabloHours{
+      display: grid;
+      grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+      justify-items: end;
+      margin-right: 3vw;
 
-        .appointmentCard {
-            background-color: #9bd2ff;
-            border-radius: 8px;
-            padding-inline: 5%;
-            margin-bottom: 1.5vw;
-            display: grid;
-            grid-template-rows: 1fr;
-            width: 60vw;
+      h1{
+        font-weight: lighter;
+      }
+    }
 
-            .upperRow{
+
+    .tabloCards {
+      display: grid;
+      grid-template-columns: 1fr;
+      column-gap: 1vw;
+      justify-items: start;
+      padding: 1vw;
+  
+        .appointmentCards{
+            margin-top: 0;
+  
+          .appointmentCard {
+              background-color: #9bd2ff;
+              border-radius: 8px;
+              padding-inline: 5%;
+              margin-bottom: 1.5vw;
               display: grid;
-              grid-template-columns: 1fr 1fr 1fr 1fr;
-              align-items: center;
-              justify-self: space-between;
-              h1{
-                  font-size: 1.5rem;
-              }
-              img{
-                height: 1.8vw;
-                width: 1.8vw;
-                justify-self: end;
-                background: rgb(255, 58, 58);
-                border-radius: 100%;
-                cursor:pointer;
-              }
-              .novChas{
-                background: #3fcf52;
-                padding: 2px;
-              }
-              .toggle {
-                justify-self: start;
-                
-                .input {
-                  display: none;
-                }
-                
-                .label {
-                  position: relative;
-                  cursor: pointer;
-                  display: block;
-                  width: 50px;
-                  height: 30px;
-                  background: #fff;
-                  border-radius: 50px;
-                  transition: 300ms linear;
-              
-                  &:before {
-                    position: absolute;
-                    top: 50%;
-                    left: 2px;
-                    transform: translateY(-50%);
-                    content: "";
-                    display: block;
-                    width: 25px;
-                    height: 25px;
-                    background: #aaa;
-                    border-radius: 50%;
-                    transition: left 300ms linear;
-                  }
-                }
-              
-                .input:checked + .label {
-                  background: #000;
-              
-                  &:before {
-                    left: 23px;
-                  }
-                }
-                }
-            }
-
-            .lowerRow{
+              grid-template-rows: 1fr;
+              width: 60vw;
+  
+              .upperRow{
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr;
                 align-items: center;
                 justify-self: space-between;
-                .missed {
-                    color: red;}
-                button:disabled{
-                    background-color: #cccccc;
-                    cursor: not-allowed;}
+                h1{
+                    font-size: 1.5rem;
+                }
+                img{
+                  height: 1.8vw;
+                  width: 1.8vw;
+                  justify-self: end;
+                  background: rgb(255, 58, 58);
+                  border-radius: 100%;
+                  cursor:pointer;
+                }
+                .novChas{
+                  background: #3fcf52;
+                  padding: 2px;
+                }
+                .toggle {
+                  justify-self: start;
+                  
+                  .input {
+                    display: none;
+                  }
+                  
+                  .label {
+                    position: relative;
+                    cursor: pointer;
+                    display: block;
+                    width: 50px;
+                    height: 30px;
+                    background: #fff;
+                    border-radius: 50px;
+                    transition: 300ms linear;
+                
+                    &:before {
+                      position: absolute;
+                      top: 50%;
+                      left: 2px;
+                      transform: translateY(-50%);
+                      content: "";
+                      display: block;
+                      width: 25px;
+                      height: 25px;
+                      background: #aaa;
+                      border-radius: 50%;
+                      transition: left 300ms linear;
+                    }
+                  }
+                
+                  .input:checked + .label {
+                    background: #000;
+                
+                    &:before {
+                      left: 23px;
+                    }
+                  }
+                  }
               }
-        }
-
-        .buttonche{
-          border: none;
-          height: 1.8rem;
-          width: 5rem;
-          border-radius: 5px;
-          background-color: #ffffff;
-          cursor: pointer;
-          justify-self: end;}
-        
-        .missedAppointment {
-          background-color: rgb(249, 97, 97);
+  
+              .lowerRow{
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr 1fr;
+                  align-items: center;
+                  justify-self: space-between;
+                  .missed {
+                      color: red;}
+                  button:disabled{
+                      background-color: #cccccc;
+                      cursor: not-allowed;}
+                }
           }
-        .emptyAppointment {
-          background-color: #ccc;
-          }
+  
+          .buttonche{
+            border: none;
+            height: 1.8rem;
+            width: 5rem;
+            border-radius: 5px;
+            background-color: #ffffff;
+            cursor: pointer;
+            justify-self: end;}
+          
+          .missedAppointment {
+            background-color: rgb(249, 97, 97);
+            }
+          .emptyAppointment {
+            background-color: #ccc;
+            }
+      }
     }
-  }
+   }
+ 
 
     .log{
       text-align: center;
@@ -241,4 +263,8 @@
     .lastName{
       justify-content: end;
     }
+}
+
+@media only screen and (max-width: 767px) {
+  
 }
