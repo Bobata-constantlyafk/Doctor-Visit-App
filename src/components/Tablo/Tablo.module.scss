@@ -191,7 +191,12 @@
   justify-items: center;
   align-content: flex-start;
   width: 35vw;
-  height: 40vw;
+  height: 43vw;
+  @media only screen and (max-width: 900px) {
+    width: 80vw;
+    height: 110vw;
+    padding: 5vw;
+  }
   background-color: #1c5caa;
   color: white;
   border-radius: 8px;
@@ -206,9 +211,9 @@
       align-content: center;
       height: 100%;
 
-      .nameFam{
-        display:grid;
-        grid-template-columns: 1fr 1fr;
+      h2{
+        margin-top: 3vw;
+        text-align: center;
       }
   
       label{
@@ -225,11 +230,6 @@
           outline: none;
       }
 
-      .firstNameInput{
-        width: 75%;
-      }
-
-  
       input::placeholder {
         color: #c7ffe2;
       }
@@ -266,7 +266,6 @@
   }
 }
 
-
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -278,13 +277,4 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
-    .firstName,.lastName{
-      display: grid;
-      grid-template-rows: 1fr 1fr;
-    }
-
-    .lastName{
-      justify-content: end;
-    }
 }

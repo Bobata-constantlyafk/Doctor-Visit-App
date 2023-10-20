@@ -26,7 +26,6 @@ import {
   CLOSING_MINUTES,
   INTERVAL,
 } from "~/constants/config";
-import { number } from "zod";
 
 interface Appointment {
   date: Date;
@@ -34,8 +33,14 @@ interface Appointment {
   type?: string;
   phone_nr?: string;
   name?: string;
+  lastName?: string;
   patient_id: number;
-  Patients: { name: string; phone_nr: number; missed: boolean }[];
+  Patients: {
+    name: string;
+    lastName: string;
+    phone_nr: number;
+    missed: boolean;
+  }[];
 }
 interface DateType {
   justDate: Date | null;
@@ -50,19 +55,24 @@ const Tablo: FC = ({}) => {
     appointments.map(() => false)
   );
   const [name, setName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [typeEye, setTypeEye] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [age_range, setAge_range] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dateForApp, setDateForApp] = useState<Date>(new Date());
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const lastNameInputRef = useRef<HTMLInputElement>(null);
   const phoneNumberInputRef = useRef<HTMLInputElement>(null);
-  const [focusedInput, setFocusedInput] = useState("name"); // "name" or "phoneNumber"
+  const [focusedInput, setFocusedInput] = useState("name");
   const handlePhoneNumberInputClick = () => {
     setFocusedInput("phoneNumber");
   };
   const handleNameInputClick = () => {
     setFocusedInput("name");
+  };
+  const handleLastNameInputClick = () => {
+    setFocusedInput("lastName");
   };
 
   const openModal = () => {
@@ -106,6 +116,10 @@ const Tablo: FC = ({}) => {
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+  };
+
+  const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setLastName(event.target.value);
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -202,7 +216,7 @@ const Tablo: FC = ({}) => {
       const { data, error } = await supabase
         .from("Appointments")
         .select(
-          "date, age_range, type, patient_id, Patients(name, phone_nr, missed)"
+          "date, age_range, type, patient_id, Patients(name, lastName, phone_nr, missed)"
         )
         .order("date");
       console.log("Data: ", data);
@@ -277,6 +291,7 @@ const Tablo: FC = ({}) => {
     age_range: string,
     typeEye: string,
     name: string,
+    lastName: string,
     phoneNumber: string
   ) => {
     const phoneNumber_parsed = parseInt(phoneNumber, 10);
@@ -286,9 +301,17 @@ const Tablo: FC = ({}) => {
       age_range: age_range,
       type: typeEye,
       name: name,
+      lastName: lastName,
       phone_nr: phoneNumber,
       patient_id: 0,
-      Patients: [{ name: name, phone_nr: phoneNumber_parsed, missed: false }],
+      Patients: [
+        {
+          name: name,
+          lastName: lastName,
+          phone_nr: phoneNumber_parsed,
+          missed: false,
+        },
+      ],
     };
 
     // Update the local state with the new appointment
@@ -351,10 +374,27 @@ const Tablo: FC = ({}) => {
                         <React.Fragment>
                           <p className={styles.name}>
                             {appointment.patient_id === 0
-                              ? appointment.name ?? ""
+                              ? `${appointment.name ?? ""} ${
+                                  appointment.lastName ?? ""
+                                }`
                               : appointment.Patients &&
-                                "name" in appointment.Patients
-                              ? (appointment.Patients.name as string)
+                                "name" in appointment.Patients &&
+                                "lastName" in appointment.Patients
+                              ? `${
+                                  (
+                                    appointment.Patients as {
+                                      name: string;
+                                      lastName: string;
+                                    }
+                                  ).name
+                                } ${
+                                  (
+                                    appointment.Patients as {
+                                      name: string;
+                                      lastName: string;
+                                    }
+                                  ).lastName
+                                }`
                               : ""}
                           </p>
                           <div className={styles.toggle}>
@@ -409,9 +449,9 @@ const Tablo: FC = ({}) => {
                       <div className={styles.lowerRow}>
                         <p>
                           {appointment.type === "Purvichen"
-                            ? "Първичен"
+                            ? "Първ."
                             : appointment.type === "Vtorichen"
-                            ? "Вторичен"
+                            ? "Втор."
                             : ""}
                         </p>
                         <p className={styles.phone_nr}>
@@ -453,38 +493,38 @@ const Tablo: FC = ({}) => {
                         nameInputRef.current?.focus();
                       } else if (focusedInput === "phoneNumber") {
                         phoneNumberInputRef.current?.focus();
+                      } else if (focusedInput === "lastName") {
+                        lastNameInputRef.current?.focus();
                       }
                     }}>
                     <div className={styles.modalContent}>
                       <h2>Запази час</h2>
-                      <div className={styles.nameFam}>
-                        <div className={styles.firstName}>
-                          <label htmlFor="name">Име:</label>
-                          <input
-                            className={styles.firstNameInput}
-                            type="text"
-                            ref={nameInputRef}
-                            placeholder="Име на пациента"
-                            id="name"
-                            value={name}
-                            onClick={handleNameInputClick}
-                            onChange={handleNameChange}
-                          />
-                        </div>
+                      <div className={styles.firstName}>
+                        <label htmlFor="name">Име:</label>
+                        <input
+                          className={styles.firstNameInput}
+                          type="text"
+                          ref={nameInputRef}
+                          placeholder="Име на пациента"
+                          id="name"
+                          value={name}
+                          onClick={handleNameInputClick}
+                          onChange={handleNameChange}
+                        />
+                      </div>
 
-                        <div className={styles.lastName}>
-                          <label htmlFor="name">Фамилия:</label>
-                          <input
-                            className={styles.lastNameInput}
-                            type="text"
-                            ref={nameInputRef}
-                            placeholder="Фамилия на пациента"
-                            id="name"
-                            value={name}
-                            onClick={handleNameInputClick}
-                            onChange={handleNameChange}
-                          />
-                        </div>
+                      <div className={styles.lastName}>
+                        <label htmlFor="name">Фамилия:</label>
+                        <input
+                          className={styles.lastNameInput}
+                          type="text"
+                          ref={lastNameInputRef}
+                          placeholder="Фамилия на пациента"
+                          id="lastName"
+                          value={lastName}
+                          onClick={handleNameInputClick}
+                          onChange={handleLastNameChange}
+                        />
                       </div>
                       <div>
                         <label htmlFor="phoneNumber">Тел номер:</label>
@@ -538,6 +578,7 @@ const Tablo: FC = ({}) => {
                             age_range,
                             typeEye,
                             name,
+                            lastName,
                             phoneNumber
                           );
                           void createAppointmentFunc(
@@ -545,6 +586,7 @@ const Tablo: FC = ({}) => {
                             age_range,
                             typeEye,
                             name,
+                            lastName,
                             phoneNumber
                           );
                         }}>

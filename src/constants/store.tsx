@@ -8,14 +8,12 @@ import React, {
   useState,
 } from "react";
 
-type DataType = {
-  name: string;
-  phoneNumber: string;
-};
 
 interface ContextProps {
   name: string;
   setName: Dispatch<SetStateAction<string>>;
+  lastName: string;
+  setLastName: Dispatch<SetStateAction<string>>;
   phoneNumber: string;
   setPhoneNumber: Dispatch<SetStateAction<string>>;
   age_range: string;
@@ -27,6 +25,8 @@ interface ContextProps {
 const GlobalContext = createContext<ContextProps>({
   name: "",
   setName: (): string => "",
+  lastName: "",
+  setLastName: (): string => "",
   phoneNumber: "",
   setPhoneNumber: (): string => "",
   age_range: "",
@@ -41,6 +41,7 @@ export const GlobalContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [age_range, setAge_range] = useState("");
   const [typeEye, setTypeEye] = useState("");
@@ -49,6 +50,8 @@ export const GlobalContextProvider = ({
       value={{
         name,
         setName,
+        lastName,
+        setLastName,
         phoneNumber,
         setPhoneNumber,
         age_range,

@@ -20,12 +20,16 @@ interface Patient {
 //Functions
 //===========================================================================================
 
-const createPatient = async (name: string, phoneNumber: string) => {
+const createPatient = async (
+  name: string,
+  lastName: string,
+  phoneNumber: string
+) => {
   let patient_id = null;
   await (
     supabase
       .from("Patients")
-      .upsert([{ name: name, phone_nr: phoneNumber }], {
+      .upsert([{ name: name, lastName: lastName, phone_nr: phoneNumber }], {
         onConflict: "phone_nr",
       })
       .select("*") as unknown as Promise<{
@@ -54,11 +58,12 @@ export async function createAppointmentFunc(
   age_range: string,
   typeEye: string,
   name: string,
+  lastName: string,
   phoneNumber: string
 ) {
   const formattedDate = format(dateTime, "yyyy-MM-dd HH:mm");
   console.log(formattedDate);
-  const patient_id = await createPatient(name, phoneNumber);
+  const patient_id = await createPatient(name, lastName, phoneNumber);
   (
     supabase.from("Appointments").insert([
       {

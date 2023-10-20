@@ -29,12 +29,6 @@ interface Appointment {
   patient_id?: number;
 }
 
-interface Patient {
-  id: number;
-  name: string;
-  phone_nr: number;
-}
-
 const CalendarSecondary: FC = ({}) => {
   const [date, setDate] = useState<DateType>({
     justDate: null,
@@ -43,7 +37,8 @@ const CalendarSecondary: FC = ({}) => {
   const router = useRouter();
 
   // Global state variables
-  const { name, phoneNumber, age_range, typeEye } = useGlobalContext();
+  const { name, lastName, phoneNumber, age_range, typeEye } =
+    useGlobalContext();
 
   // State to store existing appointments for the selected date
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
@@ -113,10 +108,18 @@ const CalendarSecondary: FC = ({}) => {
     age_range: string,
     typeEye: string,
     name: string,
+    lastName: string,
     phoneNumber: string
   ) => {
     try {
-      await createAppointmentFunc(time, age_range, typeEye, name, phoneNumber);
+      await createAppointmentFunc(
+        time,
+        age_range,
+        typeEye,
+        name,
+        lastName,
+        phoneNumber
+      );
       void router.push(
         `/success?appointmentDate=${encodeURIComponent(time.toISOString())}`
       );
@@ -155,6 +158,7 @@ const CalendarSecondary: FC = ({}) => {
                         age_range,
                         typeEye,
                         name,
+                        lastName,
                         phoneNumber
                       );
                     }}

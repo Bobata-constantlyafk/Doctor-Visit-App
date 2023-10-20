@@ -13,6 +13,8 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
   const {
     name,
     setName,
+    lastName,
+    setLastName,
     phoneNumber,
     setPhoneNumber,
     age_range,
@@ -52,8 +54,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
 
   function logVars() {
     console.log("Name: ", name);
-    console.log("Numbah: ", phoneNumber);
-    console.log("Age: ", age_range);
+    console.log("Last Name: ", lastName);
   }
 
   return (
@@ -68,6 +69,16 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
             id="name"
             value={name}
             onChange={(e) => handleInputChange(e, setName)}
+          />
+        </div>
+        <div>
+          <label htmlFor="name">Фамилия:</label>
+          <input
+            type="text"
+            placeholder="Моля, въведете фамилията си"
+            id="lastName"
+            value={lastName}
+            onChange={(e) => handleInputChange(e, setLastName)}
           />
         </div>
         <div>
