@@ -86,8 +86,9 @@ const CalendarPrimaryYouth: FC = ({}) => {
 
   const getTimes = () => {
     if (!date.justDate) return;
-
+  
     const { justDate } = date;
+    const now = new Date(); // Get the current date and time
     const beginning = setMinutes(
       add(justDate, { hours: OPENING_HOURS }),
       OPENING_MINUTES
@@ -103,9 +104,12 @@ const CalendarPrimaryYouth: FC = ({}) => {
       const oneHourTwentyAhead = add(i, { minutes: 80 });
       const oneHourFortyAhead = add(i, { minutes: 100 });
 
-      const isTimeTaken = existingAppointments.some((appointmentTime) =>
-        isSameMinute(appointmentTime, i)
-      );
+      const hasPassed = i < now;
+      const isTimeTaken =
+        hasPassed ||
+        existingAppointments.some((appointmentTime) =>
+          isSameMinute(appointmentTime, i)
+        );
       const check1H20 = existingAppointments.some((appointment) =>
         isSameMinute(appointment, oneHourTwentyAhead)
       );
@@ -128,7 +132,7 @@ const CalendarPrimaryYouth: FC = ({}) => {
 
       times.push({ time: i, freeStatus, isTimeTaken });
     }
-
+  
     return times;
   };
 

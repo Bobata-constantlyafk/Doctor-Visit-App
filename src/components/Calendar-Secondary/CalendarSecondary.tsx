@@ -3,6 +3,7 @@ import ReactCalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 import {
   CLOSING_HOURS,
   INTERVAL,
@@ -80,6 +81,7 @@ const CalendarSecondary: FC = ({}) => {
     if (!date.justDate) return;
 
     const { justDate } = date;
+    const now = new Date();
     const beginning = setMinutes(
       add(justDate, { hours: OPENING_HOURS }),
       OPENING_MINUTES
@@ -92,9 +94,13 @@ const CalendarSecondary: FC = ({}) => {
 
     const times = [];
     for (let i = beginning; i <= end; i = add(i, { minutes: interval })) {
-      const isTimeTaken = existingAppointments.some((appointmentTime) =>
-        isSameMinute(appointmentTime, i)
-      );
+      // Check if the time has already passed
+      const hasPassed = i < now;
+      const isTimeTaken =
+        hasPassed ||
+        existingAppointments.some((appointmentTime) =>
+          isSameMinute(appointmentTime, i)
+        );
       times.push({ time: i, isTimeTaken });
     }
 

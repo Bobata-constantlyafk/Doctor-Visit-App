@@ -86,8 +86,9 @@ const CalendarPrimary: FC = ({}) => {
 
   const getTimes = () => {
     if (!date.justDate) return;
-
+  
     const { justDate } = date;
+    const now = new Date();
     const beginning = setMinutes(
       add(justDate, { hours: OPENING_HOURS }),
       OPENING_MINUTES
@@ -100,21 +101,22 @@ const CalendarPrimary: FC = ({}) => {
 
     const times = [];
     for (let i = beginning; i <= end; i = add(i, { minutes: interval })) {
-      const fortyMinutesAhead = add(i, { minutes: 40 }); // Updated to 40 minutes
-      // const isOneHourAheadAvailable = existingAppointments.some((appointment) =>
-      //   isSameMinute(appointment, oneHourAhead)
-      // );
-      const isFortyMinutesAheadAvailable = existingAppointments.some(
+      const fortyMinutesAhead = add(i, { minutes: 40 });
+
+      // Check if the time has already passed
+      const hasPassed = i < now;
+      const isFortyMinutesAheadAvailable = !existingAppointments.some(
         (appointment) => isSameMinute(appointment, fortyMinutesAhead)
       );
-
-      const isTimeTaken = existingAppointments.some((appointmentTime) =>
-        isSameMinute(appointmentTime, i)
-      );
+      const isTimeTaken =
+        hasPassed ||
+        existingAppointments.some((appointmentTime) =>
+          isSameMinute(appointmentTime, i)
+        );
 
       times.push({ time: i, isFortyMinutesAheadAvailable, isTimeTaken });
     }
-
+  
     return times;
   };
 
