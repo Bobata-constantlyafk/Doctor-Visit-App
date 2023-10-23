@@ -31,7 +31,7 @@ interface Appointment {
 interface Patient {
   id: number;
   name: string;
-  phone_nr: number;
+  phone_nr: string;
 }
 
 const CalendarPrimaryYouth: FC = ({}) => {

@@ -60,7 +60,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
   return (
     <div className={styles.infoMain}>
       <div className={styles.infoContainer}>
-        <h1>Информация</h1>
+        <h1>Запази час</h1>
         <div>
           <label htmlFor="name">Име:</label>
           <input

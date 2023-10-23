@@ -31,7 +31,7 @@ interface Appointment {
 interface Patient {
   id: number;
   name: string;
-  phone_nr: number;
+  phone_nr: string;
 }
 
 const CalendarPrimary: FC = ({}) => {
@@ -86,7 +86,7 @@ const CalendarPrimary: FC = ({}) => {
 
   const getTimes = () => {
     if (!date.justDate) return;
-  
+
     const { justDate } = date;
     const now = new Date();
     const beginning = setMinutes(
@@ -116,7 +116,7 @@ const CalendarPrimary: FC = ({}) => {
 
       times.push({ time: i, isFortyMinutesAheadAvailable, isTimeTaken });
     }
-  
+
     return times;
   };
 
@@ -224,7 +224,7 @@ const CalendarPrimary: FC = ({}) => {
                           console.error("Error creating appointment");
                         });
                     }}
-                    disabled={isTimeTaken || isFortyMinutesAheadAvailable}>
+                    disabled={isTimeTaken || !isFortyMinutesAheadAvailable}>
                     {format(time, "kk:mm")}
                   </button>
                 </div>

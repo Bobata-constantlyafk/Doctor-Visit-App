@@ -38,7 +38,7 @@ interface Appointment {
   Patients: {
     name: string;
     lastName: string;
-    phone_nr: number;
+    phone_nr: string;
     missed: boolean;
   }[];
 }
@@ -294,7 +294,6 @@ const Tablo: FC = ({}) => {
     lastName: string,
     phoneNumber: string
   ) => {
-    const phoneNumber_parsed = parseInt(phoneNumber, 10);
     console.log("Name:", name, "Number:", phoneNumber);
     const updatedAppointment = {
       date: date,
@@ -308,7 +307,7 @@ const Tablo: FC = ({}) => {
         {
           name: name,
           lastName: lastName,
-          phone_nr: phoneNumber_parsed,
+          phone_nr: phoneNumber,
           missed: false,
         },
       ],
@@ -336,7 +335,14 @@ const Tablo: FC = ({}) => {
         <>
           {/* {user ? (
         <> */}
-          <h1 className={styles.header}>{formatDateToWords(date.justDate)}</h1>
+          <div className={styles.header}>
+            <button
+              className={styles.buttonBack}
+              onClick={() => setDate({ justDate: null })}>
+              ← Назад
+            </button>
+            <h1>{formatDateToWords(date.justDate)}</h1>
+          </div>
           <div className={styles.appsAndHours}>
             <div className={styles.tabloHours}>
               {getAllActiveHours.map((hour) => (

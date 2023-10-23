@@ -1,11 +1,11 @@
 .calendarMain{
     display: grid;
-    height: 100vh;
+    height: 80vh;
     justify-items: center;
-    align-items: center;
+    align-items: start;
 
     .calendarSelf{
-        margin-top: -10vw;
+        margin-top: 5vw;
         width: 30vw;
         @media only screen and (max-width: 900px) {
             width:80vw
@@ -15,17 +15,14 @@
     .viewAvailableHoursHeading{
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        margin-bottom: 5vw;
         align-items: center;
         justify-items: center;
-        width: 80%;
     
         .buttonBack{
             border: none;
             border-radius: 5px;
             background-color: #a4a2a2;
             cursor: pointer;
-            font-weight: bold;
             height: 30%;
             width: 30%;
             justify-self: left;
@@ -42,9 +39,6 @@
         grid-template-columns: repeat(3, 1fr);
         row-gap: 1.5vw;
         column-gap: 5vw;
-        max-width: 80%;
-        justify-content: center;
-        padding-bottom: 10vw;
     
         button {
             background-color: white;
