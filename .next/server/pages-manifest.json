@@ -3,9 +3,7 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/tablo": "pages/tablo.js",
-  "/chasove": "pages/chasove.js",
-  "/successHours": "pages/successHours.js",
   "/propusnati": "pages/propusnati.js",
-  "/": "pages/index.js",
-  "/success": "pages/success.js"
+  "/chasove": "pages/chasove.js",
+  "/successHours": "pages/successHours.js"
 }
