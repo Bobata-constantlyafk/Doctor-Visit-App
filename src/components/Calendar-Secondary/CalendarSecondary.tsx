@@ -3,20 +3,15 @@ import ReactCalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
-import { utcToZonedTime } from "date-fns-tz";
-import {
-  CLOSING_HOURS,
-  INTERVAL,
-  OPENING_HOURS,
-  CLOSING_MINUTES,
-  OPENING_MINUTES,
-} from "~/constants/config";
 import supabase from "../../constants/supaClient.js";
-import { PostgrestSingleResponse, PostgrestError } from "@supabase/supabase-js";
+import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 import { useRouter } from "next/router";
-import { createAppointmentFunc } from "~/utils/functions";
-import { formatDateToWords } from "~/utils/functions";
+import {
+  createAppointmentFunc,
+  formatDateToWords,
+  getHoursManagementData,
+} from "~/utils/functions";
 
 interface DateType {
   justDate: Date | null;
@@ -44,6 +39,29 @@ const CalendarSecondary: FC = ({}) => {
   // State to store existing appointments for the selected date
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
 
+  // State to store opening and closing hours
+  const [openingHours, setOpeningHours] = useState<number>(0);
+  const [closingHours, setClosingHours] = useState<number>(0);
+  const [openingMinutes, setOpeningMinutes] = useState<number>(0);
+  const [closingMinutes, setClosingMinutes] = useState<number>(0);
+
+  async function fetchHourManagementData() {
+    try {
+      const hoursManagementData = await getHoursManagementData("secondary");
+      console.log("Data from HoursManagement table:", hoursManagementData);
+      if (hoursManagementData) {
+        setOpeningHours(hoursManagementData.openingHours);
+        setClosingHours(hoursManagementData.closingHours);
+        setOpeningMinutes(hoursManagementData.openingMinutes);
+        setClosingMinutes(hoursManagementData.closingMinutes);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  void fetchHourManagementData();
+
   // Fetch existing appointments for the selected date from the database
   useEffect(() => {
     const fetchExistingAppointments = async () => {
@@ -70,7 +88,7 @@ const CalendarSecondary: FC = ({}) => {
 
     fetchExistingAppointments()
       .then(() => {
-        console.log("We have the appointments!");
+        "fetched";
       })
       .catch((error) => {
         console.error("Error in fetchExistingAppointments:", error);
@@ -83,17 +101,16 @@ const CalendarSecondary: FC = ({}) => {
     const { justDate } = date;
     const now = new Date();
     const beginning = setMinutes(
-      add(justDate, { hours: OPENING_HOURS }),
-      OPENING_MINUTES
+      add(justDate, { hours: openingHours }),
+      openingMinutes
     );
     const end = setMinutes(
-      add(justDate, { hours: CLOSING_HOURS }),
-      CLOSING_MINUTES
+      add(justDate, { hours: closingHours }),
+      closingMinutes
     );
-    const interval = INTERVAL;
 
     const times = [];
-    for (let i = beginning; i <= end; i = add(i, { minutes: interval })) {
+    for (let i = beginning; i <= end; i = add(i, { minutes: 20 })) {
       // Check if the time has already passed
       const hasPassed = i < now;
       const isTimeTaken =

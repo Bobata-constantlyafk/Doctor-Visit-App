@@ -41,6 +41,7 @@ const Navbar: React.FC = () => {
               ) : null} */}
               <Link href="/tablo">Табло</Link>
               <Link href="/propusnati">Пропуснати</Link>
+              <Link href="/chasove">Работно време</Link>
             </li>
           </ul>
         </nav>

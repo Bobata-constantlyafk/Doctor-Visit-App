@@ -17,6 +17,13 @@ interface Patient {
   phone_nr: string;
 }
 
+interface HoursManagementData {
+  openingHours: number;
+  closingHours: number;
+  openingMinutes: number;
+  closingMinutes: number;
+}
+
 //Functions
 //===========================================================================================
 
@@ -103,6 +110,110 @@ export function formatDateToWords(date: Date) {
   );
 
   return `${day} ${month} (${dayName})`;
+}
+
+export async function getHoursManagementData(
+  type: string
+): Promise<HoursManagementData | null> {
+  try {
+    const { data, error } = await supabase
+      .from("HoursManagement")
+      .select("openingHours, closingHours, openingMinutes, closingMinutes")
+      .eq("id", 1)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+    if (data) {
+      if (type === "basic") {
+        return data ?? null;
+      }
+      if (type === "primary") {
+        const hoursForPrimary = {
+          ...data,
+          closingHours: data.closingHours - 1,
+        };
+        return hoursForPrimary ?? null;
+      }
+      if (type === "primaryYouth") {
+        let modifiedClosingMinutes: number = data.closingMinutes as number;
+        let modifiedClosingHours: number = data.closingHours as number;
+        switch (data.closingMinutes) {
+          case 30:
+            modifiedClosingMinutes = 50;
+            modifiedClosingHours = data.closingHours - 2;
+            break;
+          case 20:
+            modifiedClosingMinutes = 40;
+            modifiedClosingHours = data.closingHours - 2;
+            break;
+          case 10:
+            modifiedClosingMinutes = 30;
+            modifiedClosingHours = data.closingHours - 2;
+            break;
+          case 0:
+            modifiedClosingMinutes = 20;
+            modifiedClosingHours = data.closingHours - 2;
+            break;
+          case 50:
+            modifiedClosingMinutes = 10;
+            modifiedClosingHours = data.closingHours - 1;
+            break;
+          case 40:
+            modifiedClosingMinutes = 0;
+            modifiedClosingHours = data.closingHours - 1;
+            break;
+        }
+        switch (modifiedClosingMinutes) {
+          case 50:
+        }
+        const primaryYouth = {
+          ...data,
+          closingMinutes: modifiedClosingMinutes,
+          closingHours: modifiedClosingHours,
+        };
+        return primaryYouth ?? null;
+      }
+      if (type === "secondary") {
+        let modifiedClosingMinutes: number = data.closingMinutes as number;
+        let modifiedClosingHours: number = data.closingHours as number;
+        switch (data.closingMinutes) {
+          case 30:
+            modifiedClosingMinutes = 10;
+            break;
+          case 20:
+            modifiedClosingMinutes = 0;
+            break;
+          case 10:
+            modifiedClosingMinutes = 50;
+            break;
+          case 0:
+            modifiedClosingMinutes = 40;
+            break;
+          case 50:
+            modifiedClosingMinutes = 30;
+            break;
+          case 40:
+            modifiedClosingMinutes = 20;
+            break;
+        }
+        if (data.closingMinutes === 10 || data.closingMinutes === 20) {
+          modifiedClosingHours -= 1;
+        }
+        const hoursForSecondary = {
+          ...data,
+          closingMinutes: modifiedClosingMinutes,
+          closingHours: modifiedClosingHours,
+        };
+        return hoursForSecondary ?? null;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
 }
 
 

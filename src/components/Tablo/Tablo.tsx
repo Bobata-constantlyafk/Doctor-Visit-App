@@ -6,26 +6,17 @@ import ReactModal from "react-modal";
 import { createAppointmentFunc } from "~/utils/functions";
 import ReactCalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { formatDateToWords } from "~/utils/functions";
+import { formatDateToWords, getHoursManagementData } from "~/utils/functions";
 
 import {
   getHours,
   getMinutes,
-  getDate,
   isSameDay,
   isSameMinute,
   setMinutes,
   setHours,
   addMinutes,
-  format,
 } from "date-fns";
-import {
-  OPENING_HOURS,
-  OPENING_MINUTES,
-  CLOSING_HOURS,
-  CLOSING_MINUTES,
-  INTERVAL,
-} from "~/constants/config";
 
 interface Appointment {
   date: Date;
@@ -59,12 +50,20 @@ const Tablo: FC = ({}) => {
   const [typeEye, setTypeEye] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [age_range, setAge_range] = useState<string>("");
+
+  const [openingHours, setOpeningHours] = useState<number>(0);
+  const [closingHours, setClosingHours] = useState<number>(0);
+  const [openingMinutes, setOpeningMinutes] = useState<number>(0);
+  const [closingMinutes, setClosingMinutes] = useState<number>(0);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dateForApp, setDateForApp] = useState<Date>(new Date());
+
   const nameInputRef = useRef<HTMLInputElement>(null);
   const lastNameInputRef = useRef<HTMLInputElement>(null);
   const phoneNumberInputRef = useRef<HTMLInputElement>(null);
   const [focusedInput, setFocusedInput] = useState("name");
+
   const handlePhoneNumberInputClick = () => {
     setFocusedInput("phoneNumber");
   };
@@ -82,29 +81,6 @@ const Tablo: FC = ({}) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  const monthAbbreviations = [
-    "ЯН",
-    "ФЕВ",
-    "МАР",
-    "АПР",
-    "МАЙ",
-    "ЮНИ",
-    "ЮЛИ",
-    "АВГ",
-    "СЕП",
-    "ОКТ",
-    "НОЕМ",
-    "ДЕК",
-  ];
-
-  function formatDateForCard(date: Date) {
-    const day = getDate(date);
-    const monthIndex = date.getMonth();
-    const month = monthAbbreviations[monthIndex];
-
-    return `${day} ${month}`;
-  }
 
   const toggleAdditionalInfo = (index: number) => {
     const updatedInfo = [...showAdditionalInfo];
@@ -133,6 +109,23 @@ const Tablo: FC = ({}) => {
   ) => {
     setState(event.target.value);
   };
+
+  async function fetchHourManagementData() {
+    try {
+      const hoursManagementData = await getHoursManagementData("basic");
+      console.log("Data from HoursManagement table:", hoursManagementData);
+      if (hoursManagementData) {
+        setOpeningHours(hoursManagementData.openingHours);
+        setClosingHours(hoursManagementData.closingHours);
+        setOpeningMinutes(hoursManagementData.openingMinutes);
+        setClosingMinutes(hoursManagementData.closingMinutes);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  void fetchHourManagementData();
 
   // Update the "missed" field in the "Patients" table for the specified patient
   const handleMissedAppointment = async (
@@ -243,18 +236,18 @@ const Tablo: FC = ({}) => {
     const appointments: Appointment[] = [];
 
     const openingTime = setMinutes(
-      setHours(date.justDate, OPENING_HOURS),
-      OPENING_MINUTES
+      setHours(date.justDate, openingHours),
+      openingMinutes
     );
     const closingTime = setMinutes(
-      setHours(date.justDate, CLOSING_HOURS),
-      CLOSING_MINUTES
+      setHours(date.justDate, closingHours),
+      closingMinutes
     );
 
     for (
       let time = openingTime;
       time <= closingTime;
-      time = addMinutes(time, INTERVAL)
+      time = addMinutes(time, 20)
     ) {
       const isDuplicate = todaysAppointments.some((todayAppt) =>
         isSameMinute(new Date(time), new Date(todayAppt.date))
@@ -325,7 +318,7 @@ const Tablo: FC = ({}) => {
   const allAppointments: Appointment[] = createAppointments();
 
   const getAllActiveHours: number[] = [];
-  for (let i = OPENING_HOURS; i <= CLOSING_HOURS; i++) {
+  for (let i = openingHours; i <= closingHours; i++) {
     getAllActiveHours.push(i);
   }
 
@@ -528,7 +521,7 @@ const Tablo: FC = ({}) => {
                           placeholder="Фамилия на пациента"
                           id="lastName"
                           value={lastName}
-                          onClick={handleNameInputClick}
+                          onClick={handleLastNameInputClick}
                           onChange={handleLastNameChange}
                         />
                       </div>

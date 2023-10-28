@@ -1,18 +1,20 @@
 .missedMain{
     height: 100vh;
     width: 100%;
-
+    
     h1{
         text-align: center;
         margin-bottom: 5vw;
         font-size: 2.5vw;
+        @media only screen and (max-width: 1000px) {
+            font-size: 10vw;
+          }
     }
 
     .infoMain{
-
         margin-left: 10vw;
         margin-right: 10vw;
-
+      
         .infoHeader{
             display: grid;
             grid-template-columns: 15rem 15rem 15rem 5rem;
@@ -27,6 +29,9 @@
             display: grid;
             grid-template-columns: 15rem 15rem 15rem 5rem;
             justify-content: space-between;
+            @media only screen and (max-width: 1000px) {
+                grid-template-rows: 1fr  1fr 1fr 1fr;
+              }
 
             button{
                 border: none;

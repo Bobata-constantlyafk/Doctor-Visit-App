@@ -4,7 +4,7 @@
   .calendarSelf{
     display: grid;
     justify-content: center;
-    margin-top: 10vw;
+    margin-top: 5vw;
 }
 
   .header{
@@ -31,6 +31,12 @@
       cursor: pointer;
       height: 40%;
       width: 30%;
+      @media only screen and (max-width: 900px) {
+        height: 20%;
+        width: 60%;
+        align-self: center;
+        margin-top: -15vw;
+      }
       font-size: 0.9rem;
       justify-self: center;
       align-self: center;

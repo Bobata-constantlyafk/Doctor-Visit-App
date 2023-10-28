@@ -52,6 +52,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
     );
   };
 
+  //Can be deleted
   function logVars() {
     console.log("Name: ", name);
     console.log("Last Name: ", lastName);
@@ -129,7 +130,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
             //   logVars();
             //   onFormSubmit();
             // }
-            onFormSubmit(typeEye, age_range), logVars();
+            onFormSubmit(typeEye, age_range);
           }}>
           Напред →
         </button>

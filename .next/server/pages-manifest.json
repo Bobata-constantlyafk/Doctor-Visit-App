@@ -2,7 +2,10 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/success": "pages/success.js",
+  "/tablo": "pages/tablo.js",
+  "/chasove": "pages/chasove.js",
+  "/successHours": "pages/successHours.js",
+  "/propusnati": "pages/propusnati.js",
   "/": "pages/index.js",
-  "/tablo": "pages/tablo.js"
+  "/success": "pages/success.js"
 }
