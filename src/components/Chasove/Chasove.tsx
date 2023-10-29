@@ -139,13 +139,13 @@ const Chasove: FC = () => {
         </button>
       </div>
       <div className={styles.currentHours}>
-        <h1>Сегашнo работнo време:</h1>
-        <h2>
+        <h2>Сегашнo работнo време:</h2>
+        <h3>
           От {hoursManagementData.openingHours}:
-          {hoursManagementData.openingMinutes} до
+          {hoursManagementData.openingMinutes} до&nbsp;
           {hoursManagementData.closingHours}:
           {hoursManagementData.closingMinutes}
-        </h2>
+        </h3>
       </div>
     </div>
   );

@@ -1,6 +1,9 @@
 .ChasoveMain{
-    margin-top: 3vw;
     padding-inline: 5vw;
+    margin-top: 3vw;
+    @media screen and (max-width: 900px) {
+        margin-top: 15vw;
+    }
 
     
     .openingClosing{
@@ -64,11 +67,15 @@
         justify-content: center;
         text-align: center;
         margin-top: 5vw;
-        h1{
+        h2{
             font-weight: 500;
             margin-bottom: 0vw;
+            margin-top: 3vw;
+            @media screen and (max-width: 900px) {
+                margin-top: 25vw;
+            }
         }
-        h2{
+        h3{
             font-weight: 400;
         }
     }

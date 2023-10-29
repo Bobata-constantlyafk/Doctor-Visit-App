@@ -2,8 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/tablo": "pages/tablo.js",
-  "/propusnati": "pages/propusnati.js",
-  "/chasove": "pages/chasove.js",
-  "/successHours": "pages/successHours.js"
+  "/chasove": "pages/chasove.js"
 }
