@@ -7,7 +7,11 @@ import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 import { useRouter } from "next/router";
-import { formatDateToWords, getHoursManagementData } from "~/utils/functions";
+import {
+  createAppointmentFunc,
+  formatDateToWords,
+  getHoursManagementData,
+} from "~/utils/functions";
 
 interface DateType {
   justDate: Date | null;
@@ -20,13 +24,6 @@ interface Appointment {
   type?: string;
   patient_id?: number;
 }
-
-interface Patient {
-  id: number;
-  name: string;
-  phone_nr: string;
-}
-
 const CalendarPrimary: FC = ({}) => {
   const [date, setDate] = useState<DateType>({
     justDate: null,
@@ -35,7 +32,8 @@ const CalendarPrimary: FC = ({}) => {
   const router = useRouter();
 
   // Global state variables
-  const { name, phoneNumber, age_range, typeEye } = useGlobalContext();
+  const { name, lastName, phoneNumber, age_range, typeEye } =
+    useGlobalContext();
 
   // State to store existing appointments for the selected date
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
@@ -137,72 +135,30 @@ const CalendarPrimary: FC = ({}) => {
 
   const times = getTimes();
 
-  const createPatient = async () => {
-    let patient_id = null;
-    await (
-      supabase
-        .from("Patients")
-        .upsert([{ name: name, phone_nr: phoneNumber }], {
-          onConflict: "phone_nr",
-        })
-        .select("*") as unknown as Promise<{
-        data: Patient[];
-        error: Error;
-      }>
-    )
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("Error with creating the patient:", error);
-          return null;
-        } else {
-          const patient = data[0]?.id;
-          console.log("Patient id form createPatient:", data);
-          patient_id = patient;
-        }
-      })
-      .catch((error) => {
-        console.error("Error with creating the patient:", error);
-      });
-    return patient_id;
-  };
-
-  const createAppointments = async (dateTime: Date) => {
-    const patient_id = await createPatient();
-    const fortyMinutesAhead = add(dateTime, { minutes: 40 });
-    (
-      supabase.from("Appointments").upsert([
-        {
-          date: dateTime,
-          age_range: age_range,
-          type: typeEye,
-          patient_id: patient_id,
-        },
-        {
-          date: fortyMinutesAhead,
-          age_range: age_range,
-          type: typeEye,
-          patient_id: patient_id,
-        },
-      ]) as unknown as Promise<{
-        data: Appointment;
-        error: Error;
-      }>
-    )
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("Error creating appointment:", error);
-        } else {
-          console.log("Appointment created successfully:", data);
-          void router.push(
-            `/success?appointmentDate=${encodeURIComponent(
-              dateTime.toISOString()
-            )}`
-          );
-        }
-      })
-      .catch((error) => {
-        console.error("Error creating appointment:", error);
-      });
+  const handleAppointmentCreation = async (
+    time: Date,
+    age_range: string,
+    typeEye: string,
+    name: string,
+    lastName: string,
+    phoneNumber: string
+  ) => {
+    try {
+      await createAppointmentFunc(
+        time,
+        age_range,
+        typeEye,
+        name,
+        lastName,
+        phoneNumber
+      );
+      void router.push(
+        `/success?appointmentDate=${encodeURIComponent(time.toISOString())}`
+      );
+    } catch (error) {
+      console.error("Appointment creation failed:", error);
+      // Handle the error as needed, e.g., show an error message to the user.
+    }
   };
 
   return (
@@ -231,13 +187,14 @@ const CalendarPrimary: FC = ({}) => {
                     type="button"
                     onClick={() => {
                       setDate((prev) => ({ ...prev, dateTime: time }));
-                      createAppointments(time)
-                        .then(() => {
-                          console.log("Appointment created successfully");
-                        })
-                        .catch(() => {
-                          console.error("Error creating appointment");
-                        });
+                      void handleAppointmentCreation(
+                        time,
+                        age_range,
+                        typeEye,
+                        name,
+                        lastName,
+                        phoneNumber
+                      );
                     }}
                     disabled={isTimeTaken || !isFortyMinutesAheadAvailable}>
                     {format(time, "kk:mm")}
@@ -255,6 +212,16 @@ const CalendarPrimary: FC = ({}) => {
           onClickDay={(date) =>
             setDate((prev) => ({ ...prev, justDate: date }))
           }
+          tileDisabled={({ date, view }) => {
+            // Disable Saturdays (6) and Sundays (0)
+            if (
+              view === "month" &&
+              (date.getDay() === 6 || date.getDay() === 0)
+            ) {
+              return true;
+            }
+            return false;
+          }}
         />
       )}
     </div>

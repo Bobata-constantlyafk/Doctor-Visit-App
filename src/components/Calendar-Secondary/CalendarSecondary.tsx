@@ -201,6 +201,16 @@ const CalendarSecondary: FC = ({}) => {
           onClickDay={(date) =>
             setDate((prev) => ({ ...prev, justDate: date }))
           }
+          tileDisabled={({ date, view }) => {
+            // Disable Saturdays (6) and Sundays (0)
+            if (
+              view === "month" &&
+              (date.getDay() === 6 || date.getDay() === 0)
+            ) {
+              return true;
+            }
+            return false;
+          }}
         />
       )}
     </div>

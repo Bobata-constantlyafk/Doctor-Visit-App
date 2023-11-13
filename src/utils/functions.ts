@@ -1,6 +1,6 @@
 import supabase from "~/constants/supaClient";
 import { PostgrestError } from "@supabase/supabase-js";
-import { format } from "date-fns";
+import { add, format } from "date-fns";
 
 //Interfaces
 //===========================================================================================
@@ -61,25 +61,87 @@ const createPatient = async (
 };
 
 export async function createAppointmentFunc(
-  dateTime: Date,
+  appointmentTime: Date,
   age_range: string,
   typeEye: string,
   name: string,
   lastName: string,
-  phoneNumber: string
+  phoneNumber: string,
+  timeBetweenNextAppointment?: string
 ) {
-  const formattedDate = format(dateTime, "yyyy-MM-dd HH:mm");
-  console.log(formattedDate);
+  const formattedDate = format(appointmentTime, "yyyy-MM-dd HH:mm");
+
   const patient_id = await createPatient(name, lastName, phoneNumber);
+
+  let appointmentData: any;
+
+  //If the appointment type is primary, then a second appointment will be created.
+  //The exact time of the second appointment depends on a two thing:
+  //1.The age range of the patient (under or over 25)
+  //2.Only if they are under 25, the time between the appointments of other patients
+  switch (typeEye) {
+    case "primary":
+      let nextAppointmentDate = new Date();
+      switch (age_range) {
+        case "nad":
+          nextAppointmentDate = add(appointmentTime, { minutes: 40 });
+          break;
+        case "pod":
+          switch (timeBetweenNextAppointment) {
+            case "1h20":
+              nextAppointmentDate = add(appointmentTime, {
+                hours: 1,
+                minutes: 20,
+              });
+              break;
+            case "1h40":
+              nextAppointmentDate = add(appointmentTime, {
+                hours: 1,
+                minutes: 40,
+              });
+              break;
+            default:
+              console.error("Invalid freestatus");
+              return;
+          }
+          break;
+      }
+      appointmentData = [
+        {
+          date: appointmentTime,
+          age_range: age_range,
+          type: typeEye,
+          patient_id: patient_id,
+        },
+        {
+          date: nextAppointmentDate,
+          age_range: age_range,
+          type: typeEye,
+          patient_id: patient_id,
+        },
+      ];
+      break;
+
+    case "secondary":
+      appointmentData = [
+        {
+          date: formattedDate,
+          age_range: age_range,
+          type: typeEye,
+          patient_id: patient_id,
+        },
+      ];
+      break;
+
+    default:
+      console.error("Invalid appointment type");
+      return;
+  }
+
   (
-    supabase.from("Appointments").insert([
-      {
-        date: formattedDate,
-        age_range: age_range,
-        type: typeEye,
-        patient_id: patient_id,
-      },
-    ]) as unknown as Promise<{
+    supabase
+      .from("Appointments")
+      .upsert(appointmentData) as unknown as Promise<{
       data: Appointment;
       error: Error;
     }>
