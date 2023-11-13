@@ -5,10 +5,10 @@ import { add, format } from "date-fns";
 //Interfaces
 //===========================================================================================
 interface Appointment {
-  date: string;
+  date: Date;
   age_range?: string;
   type?: string;
-  patient_id?: number;
+  patient_id?: number | null;
 }
 
 interface Patient {
@@ -73,7 +73,7 @@ export async function createAppointmentFunc(
 
   const patient_id = await createPatient(name, lastName, phoneNumber);
 
-  let appointmentData: any;
+  let appointmentData: Appointment[];
 
   //If the appointment type is primary, then a second appointment will be created.
   //The exact time of the second appointment depends on a two thing:
@@ -125,7 +125,7 @@ export async function createAppointmentFunc(
     case "secondary":
       appointmentData = [
         {
-          date: formattedDate,
+          date: appointmentTime,
           age_range: age_range,
           type: typeEye,
           patient_id: patient_id,
