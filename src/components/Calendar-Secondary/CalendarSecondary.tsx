@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from "react";
-import ReactCalendar from "react-calendar";
+import CalendarBase from "../Calendar-Base";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
@@ -203,23 +203,10 @@ const CalendarSecondary: FC = ({}) => {
           </div>
         </>
       ) : (
-        <ReactCalendar
-          minDate={new Date()}
-          className={`${styles.calendarSelf} REACT-CALENDAR`}
-          view="month"
-          onClickDay={(date) =>
-            setDate((prev) => ({ ...prev, justDate: date }))
+        <CalendarBase
+          onSelectDate={(selectedDate) =>
+            setDate({ justDate: selectedDate, dateTime: null })
           }
-          tileDisabled={({ date, view }) => {
-            // Disable Saturdays (6) and Sundays (0)
-            if (
-              view === "month" &&
-              (date.getDay() === 6 || date.getDay() === 0)
-            ) {
-              return true;
-            }
-            return false;
-          }}
         />
       )}
     </div>

@@ -76,8 +76,6 @@ export async function createAppointmentFunc(
   phoneNumber: string,
   timeBetweenNextAppointment?: string
 ) {
-  const formattedDate = format(appointmentTime, "yyyy-MM-dd HH:mm");
-
   const patient_id = await createPatient(name, lastName, phoneNumber);
 
   let appointmentData: Appointment[];

@@ -4,7 +4,7 @@ import supabase from "../../constants/supaClient.js";
 import { User } from "@supabase/supabase-js";
 import ReactModal from "react-modal";
 import { createAppointmentFunc } from "~/utils/functions";
-import ReactCalendar from "react-calendar";
+import CalendarBase from "../Calendar-Base";
 import "react-calendar/dist/Calendar.css";
 import { formatDateToWords, getHoursManagementData } from "~/utils/functions";
 
@@ -604,13 +604,8 @@ const Tablo: FC = ({}) => {
         </>
       ) : (
         <div className={styles.calendarSelf}>
-          <ReactCalendar
-            minDate={new Date()}
-            className={`REACT-CALENDAR`}
-            view="month"
-            onClickDay={(date) =>
-              setDate((prev) => ({ ...prev, justDate: date }))
-            }
+          <CalendarBase
+            onSelectDate={(selectedDate) => setDate({ justDate: selectedDate })}
           />
         </div>
       )}
