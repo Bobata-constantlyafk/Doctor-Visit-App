@@ -1,0 +1,66 @@
+.calendarMain{
+    display: grid;
+    height: 80vh;
+    justify-items: center;
+    align-items: start;
+
+    .calendarSelf{
+        margin-top: 5vw;
+        width: 30vw;
+        @media only screen and (max-width: 900px) {
+            width:80vw
+        }
+    }
+    
+    .viewAvailableHoursHeading{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+        justify-items: center;
+    
+        .buttonBack{
+            border: none;
+            border-radius: 5px;
+            background-color: #a4a2a2;
+            cursor: pointer;
+            height: 30%;
+            width: 30%;
+            justify-self: left;
+            font-size: 1.2rem;
+        }
+
+        h1,h3{
+            text-align: center;
+        }
+    }
+    
+    .buttonContainer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 1.5vw;
+        column-gap: 5vw;
+        padding-bottom: 10vw;
+    
+        button {
+            background-color: white;
+            padding: 0.5em;
+            padding-left: 4em;
+            padding-right: 4em;
+            border: 2px solid black;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:disabled{
+            background-color: #a4a2a2;
+            cursor: not-allowed;
+        }
+    }
+}
+
+
+
+
+  
+  

@@ -45,7 +45,7 @@ const CalendarSecondary: FC = ({}) => {
   const [openingMinutes, setOpeningMinutes] = useState<number>(0);
   const [closingMinutes, setClosingMinutes] = useState<number>(0);
 
-  async function fetchHourManagementData() {
+  async function fetchOpeningClosingHours() {
     try {
       const hoursManagementData = await getHoursManagementData("secondary");
       console.log("Data from HoursManagement table:", hoursManagementData);
@@ -60,7 +60,7 @@ const CalendarSecondary: FC = ({}) => {
     }
   }
 
-  void fetchHourManagementData();
+  void fetchOpeningClosingHours();
 
   // Fetch existing appointments for the selected date from the database
   useEffect(() => {
@@ -95,36 +95,45 @@ const CalendarSecondary: FC = ({}) => {
       });
   }, [date.justDate]);
 
-  const getTimes = () => {
+  const generateAppointments = () => {
     if (!date.justDate) return;
 
     const { justDate } = date;
-    const now = new Date();
-    const beginning = setMinutes(
+
+    const currentDateTime = new Date();
+
+    const openingHoursMinutes = setMinutes(
       add(justDate, { hours: openingHours }),
       openingMinutes
     );
-    const end = setMinutes(
+
+    const closingHoursMinutes = setMinutes(
       add(justDate, { hours: closingHours }),
       closingMinutes
     );
 
-    const times = [];
-    for (let i = beginning; i <= end; i = add(i, { minutes: 20 })) {
+    const appointments = [];
+    for (
+      let i = openingHoursMinutes;
+      i <= closingHoursMinutes;
+      i = add(i, { minutes: 20 })
+    ) {
       // Check if the time has already passed
-      const hasPassed = i < now;
+      const hasPassed = i < currentDateTime;
+
       const isTimeTaken =
         hasPassed ||
         existingAppointments.some((appointmentTime) =>
           isSameMinute(appointmentTime, i)
         );
-      times.push({ time: i, isTimeTaken });
+
+      appointments.push({ time: i, isTimeTaken });
     }
 
-    return times;
+    return appointments;
   };
 
-  const times = getTimes();
+  const appointments = generateAppointments();
 
   const handleAppointmentCreation = async (
     time: Date,
@@ -168,7 +177,7 @@ const CalendarSecondary: FC = ({}) => {
             </div>
           </div>
           <div className={styles.buttonContainer}>
-            {times?.map((timeObj, i) => {
+            {appointments?.map((timeObj, i) => {
               const { time, isTimeTaken } = timeObj;
               return (
                 <div key={`time-${i}`} className="hour">

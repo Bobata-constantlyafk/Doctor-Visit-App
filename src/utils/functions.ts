@@ -23,10 +23,8 @@ interface HoursManagementData {
   openingMinutes: number;
   closingMinutes: number;
 }
-
-//Functions
+//Non-exportable functions
 //===========================================================================================
-
 const createPatient = async (
   name: string,
   lastName: string,
@@ -60,6 +58,15 @@ const createPatient = async (
   return patient_id;
 };
 
+const capitalizeFirstLetter = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+//Functions
+//===========================================================================================
+
+
+
 export async function createAppointmentFunc(
   appointmentTime: Date,
   age_range: string,
@@ -80,13 +87,13 @@ export async function createAppointmentFunc(
   //1.The age range of the patient (under or over 25)
   //2.Only if they are under 25, the time between the appointments of other patients
   switch (typeEye) {
-    case "primary":
+    case "Purvichen":
       let nextAppointmentDate = new Date();
       switch (age_range) {
-        case "nad":
+        case "Nad":
           nextAppointmentDate = add(appointmentTime, { minutes: 40 });
           break;
-        case "pod":
+        case "Pod":
           switch (timeBetweenNextAppointment) {
             case "1h20":
               nextAppointmentDate = add(appointmentTime, {
@@ -122,7 +129,7 @@ export async function createAppointmentFunc(
       ];
       break;
 
-    case "secondary":
+    case "Vtorichen":
       appointmentData = [
         {
           date: appointmentTime,
@@ -158,9 +165,7 @@ export async function createAppointmentFunc(
     });
 }
 
-const capitalizeFirstLetter = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
+
 
 export function formatDateToWords(date: Date) {
   const day = date.getDate();
