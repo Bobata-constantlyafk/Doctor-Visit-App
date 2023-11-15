@@ -7,7 +7,6 @@ import { createAppointmentFunc } from "~/utils/functions";
 import CalendarBase from "../Calendar-Base";
 import "react-calendar/dist/Calendar.css";
 import { formatDateToWords, getHoursManagementData } from "~/utils/functions";
-
 import {
   getHours,
   getMinutes,
@@ -82,20 +81,20 @@ const Tablo: FC = ({}) => {
     setIsModalOpen(false);
   };
 
-  const toggleAdditionalInfo = (index: number) => {
-    const updatedInfo = [...showAdditionalInfo];
-
-    updatedInfo[index] = !updatedInfo[index];
-
-    setShowAdditionalInfo(updatedInfo);
-  };
-
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
   const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setLastName(event.target.value);
+  };
+
+  const toggleAdditionalInfo = (index: number) => {
+    const updatedInfo = [...showAdditionalInfo];
+
+    updatedInfo[index] = !updatedInfo[index];
+
+    setShowAdditionalInfo(updatedInfo);
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -279,6 +278,8 @@ const Tablo: FC = ({}) => {
     return sortedAppointments;
   };
 
+  const allAppointments: Appointment[] = createAppointments();
+
   const updateAppointmentFunc = (
     date: Date,
     age_range: string,
@@ -314,8 +315,6 @@ const Tablo: FC = ({}) => {
 
     closeModal();
   };
-
-  const allAppointments: Appointment[] = createAppointments();
 
   const getAllActiveHours: number[] = [];
   for (let i = openingHours; i <= closingHours; i++) {

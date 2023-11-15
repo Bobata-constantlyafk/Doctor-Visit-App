@@ -1,5 +1,4 @@
 "use client";
-
 import React, { ChangeEvent } from "react";
 import styles from "./InfoForm.module.scss";
 import { useGlobalContext } from "~/constants/store";
@@ -51,12 +50,6 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
       !!name && isValidPhoneNumber(phoneNumber) && !!age_range && !!typeEye
     );
   };
-
-  //Can be deleted
-  function logVars() {
-    console.log("Name: ", name);
-    console.log("Last Name: ", lastName);
-  }
 
   return (
     <div className={styles.infoMain}>
