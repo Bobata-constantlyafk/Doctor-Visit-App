@@ -1,6 +1,7 @@
 import supabase from "~/constants/supaClient";
 import { PostgrestError } from "@supabase/supabase-js";
-import { add, format } from "date-fns";
+import { add } from "date-fns";
+import { toast } from "react-toastify";
 
 //Interfaces
 //===========================================================================================
@@ -62,10 +63,15 @@ const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+const appointmentsOverlapNotification = () =>
+  toast.error("Избраният час не е свободен", {
+    position: "top-center",
+    autoClose: 4000,
+    pauseOnHover: false,
+  });
+
 //Functions
 //===========================================================================================
-
-
 
 export async function createAppointmentFunc(
   appointmentTime: Date,
@@ -103,6 +109,12 @@ export async function createAppointmentFunc(
               nextAppointmentDate = add(appointmentTime, {
                 hours: 1,
                 minutes: 40,
+              });
+              break;
+            case undefined:
+              nextAppointmentDate = add(appointmentTime, {
+                hours: 1,
+                minutes: 20,
               });
               break;
             default:
@@ -154,6 +166,7 @@ export async function createAppointmentFunc(
     .then(({ data, error }) => {
       if (error) {
         console.error("Error creating appointment:", error);
+        appointmentsOverlapNotification();
       } else {
         console.log("Appointment created successfully:", data);
       }

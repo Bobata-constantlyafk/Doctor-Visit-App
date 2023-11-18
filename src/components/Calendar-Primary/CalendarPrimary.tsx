@@ -7,6 +7,8 @@ import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 import { useRouter } from "next/router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   createAppointmentFunc,
   formatDateToWords,
@@ -203,6 +205,7 @@ const CalendarPrimary: FC = ({}) => {
                     disabled={isTimeTaken || !isFortyMinutesAheadAvailable}>
                     {format(time, "kk:mm")}
                   </button>
+                  <ToastContainer />
                 </div>
               );
             })}

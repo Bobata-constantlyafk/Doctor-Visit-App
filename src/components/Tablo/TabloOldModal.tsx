@@ -2,11 +2,12 @@ import React, { useState, useEffect, FC, ChangeEvent, useRef } from "react";
 import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
 import { User } from "@supabase/supabase-js";
-import InfoFormBase from "../InfoFormBase";
+import ReactModal from "react-modal";
+import InfoForm from "../InfoForm";
+import { createAppointmentFunc } from "~/utils/functions";
 import CalendarBase from "../Calendar-Base";
+import "react-calendar/dist/Calendar.css";
 import { formatDateToWords, getHoursManagementData } from "~/utils/functions";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import {
   getHours,
   getMinutes,
@@ -35,7 +36,7 @@ interface Appointment {
 interface DateType {
   justDate: Date | null;
 }
-const Tablo: FC = ({}) => {
+const TabloOldModal: FC = ({}) => {
   const [date, setDate] = useState<DateType>({
     justDate: null,
   });
@@ -44,6 +45,11 @@ const Tablo: FC = ({}) => {
   const [showAdditionalInfo, setShowAdditionalInfo] = useState<boolean[]>(
     appointments.map(() => false)
   );
+  const [name, setName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [typeEye, setTypeEye] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [age_range, setAge_range] = useState<string>("");
 
   const [openingHours, setOpeningHours] = useState<number>(0);
   const [closingHours, setClosingHours] = useState<number>(0);
@@ -52,13 +58,37 @@ const Tablo: FC = ({}) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dateForApp, setDateForApp] = useState<Date>(new Date());
-  const openModal = (date: Date) => {
+
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const lastNameInputRef = useRef<HTMLInputElement>(null);
+  const phoneNumberInputRef = useRef<HTMLInputElement>(null);
+  const [focusedInput, setFocusedInput] = useState("name");
+
+  const handlePhoneNumberInputClick = () => {
+    setFocusedInput("phoneNumber");
+  };
+  const handleNameInputClick = () => {
+    setFocusedInput("name");
+  };
+  const handleLastNameInputClick = () => {
+    setFocusedInput("lastName");
+  };
+
+  const openModal = () => {
     setIsModalOpen(true);
   };
 
-  function closeModal() {
+  const closeModal = () => {
     setIsModalOpen(false);
-  }
+  };
+
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setLastName(event.target.value);
+  };
 
   const toggleAdditionalInfo = (index: number) => {
     const updatedInfo = [...showAdditionalInfo];
@@ -68,15 +98,22 @@ const Tablo: FC = ({}) => {
     setShowAdditionalInfo(updatedInfo);
   };
 
-  const todaysAppointments = date.justDate
-    ? appointments.filter((appointment) =>
-        isSameDay(new Date(appointment.date), date.justDate!)
-      )
-    : [];
+  const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumber(event.target.value);
+  };
+
+  // Handle changes for dropdowns
+  const handleChoiceChange = (
+    event: ChangeEvent<HTMLSelectElement>,
+    setState: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    setState(event.target.value);
+  };
 
   async function fetchHourManagementData() {
     try {
       const hoursManagementData = await getHoursManagementData("basic");
+      console.log("Data from HoursManagement table:", hoursManagementData);
       if (hoursManagementData) {
         setOpeningHours(hoursManagementData.openingHours);
         setClosingHours(hoursManagementData.closingHours);
@@ -87,6 +124,7 @@ const Tablo: FC = ({}) => {
       console.error("Error:", error);
     }
   }
+
   void fetchHourManagementData();
 
   // Update the "missed" field in the "Patients" table for the specified patient
@@ -150,20 +188,6 @@ const Tablo: FC = ({}) => {
       });
   };
 
-  async function fetchAppointments() {
-    const { data, error } = await supabase
-      .from("Appointments")
-      .select(
-        "date, age_range, type, patient_id, Patients(name, lastName, phone_nr, missed)"
-      )
-      .order("date");
-    if (error) {
-      console.error("Error fetching appointments:", error);
-    } else {
-      setAppointments(data);
-    }
-  }
-
   useEffect(() => {
     async function getUserData() {
       await supabase.auth
@@ -181,8 +205,29 @@ const Tablo: FC = ({}) => {
     }
     void getUserData();
 
+    async function fetchAppointments() {
+      const { data, error } = await supabase
+        .from("Appointments")
+        .select(
+          "date, age_range, type, patient_id, Patients(name, lastName, phone_nr, missed)"
+        )
+        .order("date");
+      console.log("Data: ", data);
+      if (error) {
+        console.error("Error fetching appointments:", error);
+      } else {
+        setAppointments(data);
+      }
+    }
+
     void fetchAppointments();
   }, []);
+
+  const todaysAppointments = date.justDate
+    ? appointments.filter((appointment) =>
+        isSameDay(new Date(appointment.date), date.justDate!)
+      )
+    : [];
 
   const createAppointments = (): Appointment[] => {
     if (date.justDate === null) {
@@ -216,6 +261,8 @@ const Tablo: FC = ({}) => {
           Patients: [],
         };
         appointments.push(appointment);
+        console.log("todays: ", todaysAppointments);
+        console.log("isDuplicate: ", isDuplicate);
       }
     }
 
@@ -233,6 +280,42 @@ const Tablo: FC = ({}) => {
   };
 
   const allAppointments: Appointment[] = createAppointments();
+
+  const updateAppointmentLocalState = (
+    date: Date,
+    age_range: string,
+    typeEye: string,
+    name: string,
+    lastName: string,
+    phoneNumber: string
+  ) => {
+    console.log("Name:", name, "Number:", phoneNumber);
+    const updatedAppointment = {
+      date: date,
+      age_range: age_range,
+      type: typeEye,
+      name: name,
+      lastName: lastName,
+      phone_nr: phoneNumber,
+      patient_id: 0,
+      Patients: [
+        {
+          name: name,
+          lastName: lastName,
+          phone_nr: phoneNumber,
+          missed: false,
+        },
+      ],
+    };
+
+    // Update the local state with the new appointment
+    setAppointments((prevAppointments) => [
+      ...prevAppointments,
+      updatedAppointment,
+    ]);
+
+    closeModal();
+  };
 
   const getAllActiveHours: number[] = [];
   for (let i = openingHours; i <= closingHours; i++) {
@@ -262,8 +345,6 @@ const Tablo: FC = ({}) => {
               ))}
             </div>
             <div className={styles.tabloCards}>
-              <ToastContainer />
-              {/* Info form will be shown when the plus button on an empty appointment is clicked */}
               {isModalOpen ? (
                 <div className={styles.infoForm}>
                   <div className={styles.modal}>
@@ -271,10 +352,17 @@ const Tablo: FC = ({}) => {
                       onClick={() => setIsModalOpen(false)}
                       className={styles.overlay}></div>
                     <div className={styles.modalContent}>
-                      <InfoFormBase
-                        appoinmentDateTime={dateForApp}
-                        fetchAppointments={() => fetchAppointments()}
-                        closeModal={() => closeModal()}
+                      <InfoForm
+                        onFormSubmit={(choiceType, age_range) =>
+                          updateAppointmentLocalState(
+                            dateForApp,
+                            age_range,
+                            choiceType,
+                            name,
+                            lastName,
+                            phoneNumber
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -356,7 +444,7 @@ const Tablo: FC = ({}) => {
                             alt="nov-chas"
                             onClick={() => {
                               setDateForApp(appointment.date);
-                              openModal(appointment.date);
+                              openModal();
                             }}
                           />
                         </React.Fragment>
@@ -416,6 +504,119 @@ const Tablo: FC = ({}) => {
                       </div>
                     )}
                   </div>
+                  {/* <ReactModal
+                    className={styles.contactModal}
+                    isOpen={isModalOpen}
+                    overlayClassName={styles.modalOverlay}
+                    onRequestClose={closeModal}
+                    ariaHideApp={true}
+                    onAfterOpen={() => {
+                      if (focusedInput === "name") {
+                        nameInputRef.current?.focus();
+                      } else if (focusedInput === "phoneNumber") {
+                        phoneNumberInputRef.current?.focus();
+                      } else if (focusedInput === "lastName") {
+                        lastNameInputRef.current?.focus();
+                      }
+                    }}> */}
+                  {/* <div className={styles.modalContent}>
+                      <h2>Запази час</h2>
+                      <div className={styles.firstName}>
+                        <label htmlFor="name">Име:</label>
+                        <input
+                          className={styles.firstNameInput}
+                          type="text"
+                          ref={nameInputRef}
+                          placeholder="Име на пациента"
+                          id="name"
+                          value={name}
+                          onClick={handleNameInputClick}
+                          onChange={handleNameChange}
+                        />
+                      </div>
+
+                      <div className={styles.lastName}>
+                        <label htmlFor="name">Фамилия:</label>
+                        <input
+                          className={styles.lastNameInput}
+                          type="text"
+                          ref={lastNameInputRef}
+                          placeholder="Фамилия на пациента"
+                          id="lastName"
+                          value={lastName}
+                          onClick={handleLastNameInputClick}
+                          onChange={handleLastNameChange}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="phoneNumber">Тел номер:</label>
+                        <input
+                          className={styles.phoneNumberInput}
+                          type="tel"
+                          placeholder="Номера на пациента"
+                          ref={phoneNumberInputRef}
+                          id="phoneNumber"
+                          value={phoneNumber}
+                          pattern="[0-9]*"
+                          inputMode="tel"
+                          onClick={handlePhoneNumberInputClick}
+                          onChange={handlePhoneNumberChange}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="age_range">Възраст:</label>
+                        <select
+                          className="ageSelection"
+                          id="age_range"
+                          value={age_range}
+                          onChange={(e) => handleChoiceChange(e, setAge_range)}>
+                          <option value="" disabled>
+                            Изберете възрастова група
+                          </option>
+                          <option value="Pod">Под 25</option>
+                          <option value="Nad">Над 25</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="choiceType">Вид преглед:</label>
+                        <select
+                          className="examinationType"
+                          id="typeEye"
+                          value={typeEye}
+                          onChange={(e) => handleChoiceChange(e, setTypeEye)}>
+                          <option value="" disabled>
+                            Моля, изберете подходящият преглед
+                          </option>
+                          <option value="Purvichen">Първичен преглед</option>
+                          <option value="Vtorichen">Вторичен преглед</option>
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        // disabled={!isFormValid()}
+                        onClick={() => {
+                          updateAppointmentLocalState(
+                            dateForApp,
+                            age_range,
+                            typeEye,
+                            name,
+                            lastName,
+                            phoneNumber
+                          );
+                          void createAppointmentFunc(
+                            dateForApp,
+                            age_range,
+                            typeEye,
+                            name,
+                            lastName,
+                            phoneNumber
+                          );
+                        }}>
+                        Запази
+                      </button>
+                    </div> */}
+
+                  {/* </ReactModal> */}
                 </div>
               ))}
             </div>
@@ -436,4 +637,4 @@ const Tablo: FC = ({}) => {
   );
 };
 
-export default Tablo;
+export default TabloOldModal;
