@@ -21,26 +21,39 @@
 
         .opening, .closing{
             display: grid;
-            grid-template-columns: 10rem 5rem;
+            grid-template-columns: 10rem 10rem;
             align-items: center;
             margin-top: 2vw;
+            justify-items: center;
 
             input{
                 height: 35px;
-                width: 30px;
+                width: 3rem;
                 font-size: 1.2rem;
                 appearance: textfield;
             }
-            
+
+            /* Chrome, Safari, Edge, Opera */
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+            }
+
+            /* Firefox */
+            input[type=number] {
+            appearance: textfield;
+            -moz-appearance: textfield;
+            }
         }
 
         button{
         text-align: center;
-        margin-top: 4vw;
+        margin-top: 8vw;
         background-color: #3fcf8e;
         border: none;
         border-radius: 5px;
-        width: 15rem;
+        width: 22rem;
         height: 2.5vw;
         @media only screen and (max-width: 900px) {
             margin-top: 10vw;

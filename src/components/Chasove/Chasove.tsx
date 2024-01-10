@@ -73,10 +73,10 @@ const Chasove: FC = () => {
 
   const areAllFieldsFilled = () => {
     return (
-      openingHoursUpdated > 0 &&
-      closingHoursUpdated > 0 &&
-      openingMinutesUpdated > 0 &&
-      closingMinutesUpdated > 0
+      openingHoursUpdated >= 0 &&
+      closingHoursUpdated >= 0 &&
+      openingMinutesUpdated >= 0 &&
+      closingMinutesUpdated >= 0
     );
   };
 
@@ -91,7 +91,7 @@ const Chasove: FC = () => {
   return (
     <div className={styles.ChasoveMain}>
       <div className={styles.openingClosing}>
-        <h1> Обновяване:</h1>
+        <h1> Ново работно време:</h1>
         <div className={styles.opening}>
           <h2>Отваряне:</h2>
           <div className={styles.right}>
@@ -102,9 +102,13 @@ const Chasove: FC = () => {
               onChange={(e) => handleInputChange(e, setOpeningHoursUpdated)}
             />
             <input
-              className={styles.minutes}
               type="number"
-              placeholder={`${hoursManagementData.openingMinutes}`}
+              placeholder={`${hoursManagementData.openingMinutes.toLocaleString(
+                undefined,
+                {
+                  minimumIntegerDigits: 2,
+                }
+              )}`}
               onChange={(e) => handleInputChange(e, setOpeningMinutesUpdated)}
             />
           </div>
@@ -118,9 +122,13 @@ const Chasove: FC = () => {
               onChange={(e) => handleInputChange(e, setClosingHoursUpdated)}
             />
             <input
-              className={styles.minutes}
               type="number"
-              placeholder={`${hoursManagementData.closingMinutes}`}
+              placeholder={`${hoursManagementData.closingMinutes.toLocaleString(
+                undefined,
+                {
+                  minimumIntegerDigits: 2,
+                }
+              )}`}
               onChange={(e) => handleInputChange(e, setClosingMinutesUpdated)}
             />
           </div>
@@ -142,9 +150,14 @@ const Chasove: FC = () => {
         <h3>Сегашнo работнo време:</h3>
         <h4>
           От {hoursManagementData.openingHours}:
-          {hoursManagementData.openingMinutes} до&nbsp;
+          {hoursManagementData.openingMinutes.toLocaleString(undefined, {
+            minimumIntegerDigits: 2,
+          })}{" "}
+          до&nbsp;
           {hoursManagementData.closingHours}:
-          {hoursManagementData.closingMinutes}
+          {hoursManagementData.closingMinutes.toLocaleString(undefined, {
+            minimumIntegerDigits: 2,
+          })}
         </h4>
       </div>
     </div>
