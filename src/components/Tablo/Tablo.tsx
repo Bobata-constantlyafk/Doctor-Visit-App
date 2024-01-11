@@ -4,7 +4,12 @@ import supabase from "../../constants/supaClient.js";
 import { User } from "@supabase/supabase-js";
 import InfoFormBase from "../InfoFormBase";
 import CalendarBase from "../Calendar-Base";
-import { formatDateToWords, getHoursManagementData } from "~/utils/functions";
+import {
+  formatDateToWords,
+  getHoursManagementData,
+  setAppointmentAsMissed,
+  deleteAppointment,
+} from "~/utils/functions";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -68,13 +73,15 @@ const Tablo: FC = ({}) => {
     setShowAdditionalInfo(updatedInfo);
   };
 
-  const todaysAppointments = date.justDate
+  // Filter for appointments with selected date
+  const appointmentsForSelectedDate = date.justDate
     ? appointments.filter((appointment) =>
         isSameDay(new Date(appointment.date), date.justDate!)
       )
     : [];
 
-  async function fetchHourManagementData() {
+  // Fetches the opening and closing hours and minutes from the database
+  async function getOpeningClosingHours() {
     try {
       const hoursManagementData = await getHoursManagementData("basic");
       if (hoursManagementData) {
@@ -87,70 +94,25 @@ const Tablo: FC = ({}) => {
       console.error("Error:", error);
     }
   }
-  void fetchHourManagementData();
+  void getOpeningClosingHours();
 
-  // Update the "missed" field in the "Patients" table for the specified patient
-  const handleMissedAppointment = async (
-    patientId: number,
-    missed_date: Date
-  ): Promise<void> => {
-    try {
-      const { data, error } = await supabase
-        .from("Patients")
-        .update({ missed: true, missed_date: missed_date })
-        .eq("id", patientId);
+  // Get all active hours into usable variable
+  const getAllActiveHours: number[] = [];
+  for (let i = openingHours; i <= closingHours; i++) {
+    getAllActiveHours.push(i);
+  }
 
-      if (error) {
-        console.error("Error updating missed status:", error);
-      } else {
-        console.log("Missed status updated successfully");
-      }
-    } catch (error) {
-      console.error("Error updating missed status:", error);
-    }
+  // UDelete appointment from Supabase and update local state
+  const handleDeleteAppointment = async (index: number) => {
+    await deleteAppointment(index, appointments);
+
+    // Remove the appointment from the state
+    const updatedAppointments = [...appointments];
+    updatedAppointments.splice(index, 1);
+    setAppointments(updatedAppointments);
   };
 
-  // Update the database to delete the specified appointment
-  const handleDeleteAppointment = (index: number) => {
-    // Get the appointment to be deleted
-    const appointmentToDelete = appointments[index];
-
-    if (!appointmentToDelete) {
-      console.error("Appointment to delete is undefined");
-      return;
-    }
-    const utcDateToDelete = appointmentToDelete.date.toISOString();
-
-    (
-      supabase
-        .from("Appointments")
-        .delete()
-        .eq("date", utcDateToDelete) as unknown as Promise<{
-        data: Appointment;
-        error: Error;
-      }>
-    )
-      .then(({ error }) => {
-        if (error) {
-          console.error("Error deleting appointment:", error);
-          console.log(
-            "Date before sending to Supabase:",
-            appointmentToDelete.date
-          );
-        } else {
-          // Remove the appointment from the state
-          const updatedAppointments = [...appointments];
-          updatedAppointments.splice(index, 1);
-          setAppointments(updatedAppointments);
-          console.log("Appointment deleted successfully");
-        }
-      })
-      .catch((error) => {
-        console.error("Error deleting appointment:", error);
-      });
-  };
-
-  async function fetchAppointments() {
+  async function getAllAppointments() {
     const { data, error } = await supabase
       .from("Appointments")
       .select(
@@ -164,6 +126,7 @@ const Tablo: FC = ({}) => {
     }
   }
 
+  //Get the patient data from Supabase
   useEffect(() => {
     async function getUserData() {
       await supabase.auth
@@ -171,7 +134,7 @@ const Tablo: FC = ({}) => {
         .then((value) => {
           if (value.data?.user) {
             setUser(value.data.user);
-            void fetchAppointments();
+            void getAllAppointments();
             console.log("User: ", value.data.user);
           }
         })
@@ -181,15 +144,18 @@ const Tablo: FC = ({}) => {
     }
     void getUserData();
 
-    void fetchAppointments();
+    void getAllAppointments();
   }, []);
 
-  const createAppointments = (): Appointment[] => {
+  // Creates an array of appointments with the opening and closing hours and minutes
+  // This is used to filter out appointments that are outside of the opening and closing hours and to show them in the frontend
+  const createLocalAppointments = (): Appointment[] => {
     if (date.justDate === null) {
       return [];
     }
     const appointments: Appointment[] = [];
 
+    //Define opening and closing times
     const openingTime = setMinutes(
       setHours(date.justDate, openingHours),
       openingMinutes
@@ -199,12 +165,13 @@ const Tablo: FC = ({}) => {
       closingMinutes
     );
 
+    // Create an array of appointments within the opening and closing times
     for (
       let time = openingTime;
       time <= closingTime;
       time = addMinutes(time, 20)
     ) {
-      const isDuplicate = todaysAppointments.some((todayAppt) =>
+      const isDuplicate = appointmentsForSelectedDate.some((todayAppt) =>
         isSameMinute(new Date(time), new Date(todayAppt.date))
       );
 
@@ -219,7 +186,10 @@ const Tablo: FC = ({}) => {
       }
     }
 
-    const mergedAppointments = [...appointments, ...todaysAppointments];
+    const mergedAppointments = [
+      ...appointments,
+      ...appointmentsForSelectedDate,
+    ];
     mergedAppointments.forEach((appointment) => {
       if (typeof appointment.date === "string") {
         appointment.date = new Date(appointment.date);
@@ -232,12 +202,7 @@ const Tablo: FC = ({}) => {
     return sortedAppointments;
   };
 
-  const allAppointments: Appointment[] = createAppointments();
-
-  const getAllActiveHours: number[] = [];
-  for (let i = openingHours; i <= closingHours; i++) {
-    getAllActiveHours.push(i);
-  }
+  const allAppointments: Appointment[] = createLocalAppointments();
 
   return (
     <div className={styles.tabloMain}>
@@ -273,7 +238,7 @@ const Tablo: FC = ({}) => {
                     <div className={styles.modalContent}>
                       <InfoFormBase
                         appoinmentDateTime={dateForApp}
-                        fetchAppointments={() => fetchAppointments()}
+                        getAllAppointments={() => getAllAppointments()}
                         closeModal={() => closeModal()}
                       />
                     </div>
@@ -371,7 +336,7 @@ const Tablo: FC = ({}) => {
                             >
                           ) => {
                             event.preventDefault();
-                            handleDeleteAppointment(
+                            void handleDeleteAppointment(
                               appointments.indexOf(appointment)
                             );
                           }}
@@ -406,7 +371,7 @@ const Tablo: FC = ({}) => {
                               : false
                           }
                           onClick={() =>
-                            void handleMissedAppointment(
+                            void setAppointmentAsMissed(
                               appointment.patient_id,
                               appointment.date
                             )

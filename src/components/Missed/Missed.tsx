@@ -12,8 +12,9 @@ interface Patient {
 
 const Missed: FC = () => {
   const [missedPatients, setMissedPatients] = useState<Patient[]>([]);
-  // const [user, setUser] = useState<any>(null);
 
+  // Fetch patients with missed appointments.
+  // Defined by the "missed" field in the "Patients" table
   useEffect(() => {
     async function fetchMissedPatients() {
       const { data, error } = await supabase
@@ -28,25 +29,12 @@ const Missed: FC = () => {
       }
     }
 
-    // async function getUserData() {
-    //   await supabase.auth
-    //     .getUser()
-    //     .then((value) => {
-    //       if (value.data?.user) {
-    //         setUser(value.data.user);
-    //         void fetchMissedPatients();
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error fetching user data:", error);
-    //     });
-    // }
-
     void fetchMissedPatients();
-    // getUserData();
   }, []);
 
-  const setAppointmentAsPaid = async (patientId: number) => {
+  // Update the "missed" field to false in the "Patients" table for the specified patient
+  // When a patient has settled his fee, because an appointment was missed, the doctor will click the "Решен" button and the patient will no longer have a missed appointment status
+  const setMissedAsFalse = async (patientId: number) => {
     try {
       const { data, error } = await supabase
         .from("Patients")
@@ -66,6 +54,7 @@ const Missed: FC = () => {
     }
   };
 
+  //Custom format for date (Day/Month/Year Hours:Minutes)
   const formatDateAndHour = (date: string) => {
     const dateObj = new Date(date);
     const day = dateObj.getDate();
@@ -93,7 +82,7 @@ const Missed: FC = () => {
               <p>{patient.name}</p>
               <p>{patient.phone_nr}</p>
               <p>{formatDateAndHour(patient.missed_date)}</p>
-              <button onClick={() => void setAppointmentAsPaid(patient.id)}>
+              <button onClick={() => void setMissedAsFalse(patient.id)}>
                 Решен
               </button>
             </div>

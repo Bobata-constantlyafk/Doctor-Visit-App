@@ -5,13 +5,13 @@ import { createAppointmentFunc } from "~/utils/functions";
 interface InfoFormBaseProps {
   appoinmentDateTime: Date;
   closeModal: () => void;
-  fetchAppointments: () => Promise<void>;
+  getAllAppointments: () => Promise<void>;
 }
 
 const InfoFormBase: React.FC<InfoFormBaseProps> = ({
   appoinmentDateTime,
   closeModal,
-  fetchAppointments,
+  getAllAppointments,
 }) => {
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -50,7 +50,7 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    await fetchAppointments();
+    await getAllAppointments();
   };
 
   return (

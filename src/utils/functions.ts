@@ -16,6 +16,8 @@ interface Patient {
   id: number;
   name: string;
   phone_nr: string;
+  missed?: boolean;
+  missed_date?: Date;
 }
 
 interface HoursManagementData {
@@ -73,6 +75,7 @@ const appointmentsOverlapNotification = () =>
 //Functions
 //===========================================================================================
 
+//Creates an appointment
 export async function createAppointmentFunc(
   appointmentTime: Date,
   age_range: string,
@@ -176,8 +179,7 @@ export async function createAppointmentFunc(
     });
 }
 
-
-
+// Formats date to words
 export function formatDateToWords(date: Date) {
   const day = date.getDate();
   const month = capitalizeFirstLetter(
@@ -190,6 +192,7 @@ export function formatDateToWords(date: Date) {
   return `${day} ${month} (${dayName})`;
 }
 
+//Gets data for opening and closing hours and minutes
 export async function getHoursManagementData(
   type: string
 ): Promise<HoursManagementData | null> {
@@ -294,4 +297,53 @@ export async function getHoursManagementData(
   }
 }
 
+// Update the "missed" field in the "Patients" table for the specified patient
+export async function setAppointmentAsMissed(
+  patientId: number,
+  missed_date: Date
+): Promise<void> {
+  try {
+    const { data, error } = await supabase
+      .from("Patients")
+      .update({ missed: true, missed_date: missed_date })
+      .eq("id", patientId);
 
+    if (error) {
+      console.error("Error updating missed status:", error);
+    } else {
+      console.log("Missed status updated successfully");
+    }
+  } catch (error) {
+    console.error("Error updating missed status:", error);
+  }
+}
+
+// Update the database to delete the specified appointment
+export async function deleteAppointment(
+  index: number,
+  appointments: Appointment[]
+): Promise<void> {
+  const appointmentToDelete = appointments[index];
+
+  if (!appointmentToDelete) {
+    console.error("Appointment to delete is undefined");
+    return;
+  }
+  const utcDateToDelete = appointmentToDelete.date.toISOString();
+
+  try {
+    const { error } = await supabase
+      .from("Appointments")
+      .delete()
+      .eq("date", utcDateToDelete);
+
+    if (error) {
+      console.error("Error deleting appointment:", error);
+      console.log("Date before sending to Supabase:", appointmentToDelete.date);
+    } else {
+      console.log("Appointment deleted successfully");
+    }
+  } catch (error) {
+    console.error("Error deleting appointment:", error);
+  }
+}
