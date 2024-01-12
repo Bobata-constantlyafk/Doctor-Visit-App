@@ -26,14 +26,10 @@ interface AppointmentCardProps {
   toggleAdditionalInfo: (index: number) => void;
   handleDeleteAppointment: (index: number) => Promise<void>;
   showAdditionalInfo: boolean[];
+  onMakeNewAppointment: (newDate: Date) => void;
+  openModal: (date: Date) => void;
 }
 
-const [dateForApp, setDateForApp] = useState<Date>(new Date());
-const [isModalOpen, setIsModalOpen] = useState(false);
-
-const openModal = (date: Date) => {
-  setIsModalOpen(true);
-};
 const AppointmentCard: React.FC<AppointmentCardProps> = ({
   appointments,
   appointment,
@@ -41,6 +37,8 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   toggleAdditionalInfo,
   handleDeleteAppointment,
   showAdditionalInfo,
+  onMakeNewAppointment,
+  openModal,
 }) => {
   return (
     <div
@@ -108,7 +106,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
               src="plus.png"
               alt="nov-chas"
               onClick={() => {
-                setDateForApp(appointment.date);
+                onMakeNewAppointment(appointment.date);
                 openModal(appointment.date);
               }}
             />
