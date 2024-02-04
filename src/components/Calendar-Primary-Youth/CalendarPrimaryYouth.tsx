@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from "react";
 import CalendarBase from "../Calendar-Base";
 import "react-calendar/dist/Calendar.css";
-import styles from "./Calendar.module.scss";
+import styles from "../Calendar-Primary/Calendar.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
 import supabase from "../../constants/supaClient.js";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
@@ -189,6 +189,11 @@ const CalendarPrimaryYouth: FC = ({}) => {
     }
   };
 
+  const getAllActiveHours: number[] = [];
+  for (let i = openingHours; i <= closingHours; i++) {
+    getAllActiveHours.push(i);
+  }
+
   return (
     <div className={styles.calendarMain}>
       {date.justDate ? (
@@ -205,33 +210,43 @@ const CalendarPrimaryYouth: FC = ({}) => {
             </div>
           </div>
           <div className={styles.buttonContainer}>
-            {appointments?.map((timeObj, i) => {
-              const { time, timeBetweenNextAppointment, isTimeTaken } = timeObj;
-
-              return (
-                <div key={`time-${i}`} className="hour">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDate((prev) => ({ ...prev, dateTime: time }));
-                      void handleAppointmentCreation(
-                        time,
-                        age_range,
-                        typeEye,
-                        name,
-                        lastName,
-                        phoneNumber,
-                        timeBetweenNextAppointment
-                      );
-                    }}
-                    disabled={
-                      isTimeTaken || timeBetweenNextAppointment === "non"
-                    }>
-                    {format(time, "kk:mm")}
-                  </button>
+            <div className={styles.calendarHours}>
+              {getAllActiveHours.map((hour) => (
+                <div className={styles.calendarHour} key={hour}>
+                  <h1>{hour}</h1>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+            <div>
+              {appointments?.map((timeObj, i) => {
+                const { time, timeBetweenNextAppointment, isTimeTaken } =
+                  timeObj;
+
+                return (
+                  <div key={`time-${i}`} className="hour">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDate((prev) => ({ ...prev, dateTime: time }));
+                        void handleAppointmentCreation(
+                          time,
+                          age_range,
+                          typeEye,
+                          name,
+                          lastName,
+                          phoneNumber,
+                          timeBetweenNextAppointment
+                        );
+                      }}
+                      disabled={
+                        isTimeTaken || timeBetweenNextAppointment === "non"
+                      }>
+                      {format(time, "kk:mm")}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </>
       ) : (

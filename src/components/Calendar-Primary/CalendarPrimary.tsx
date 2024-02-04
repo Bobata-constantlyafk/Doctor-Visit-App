@@ -167,6 +167,11 @@ const CalendarPrimary: FC = ({}) => {
     }
   };
 
+  const getAllActiveHours: number[] = [];
+  for (let i = openingHours; i <= closingHours; i++) {
+    getAllActiveHours.push(i);
+  }
+
   return (
     <div className={styles.calendarMain}>
       {date.justDate ? (
@@ -183,32 +188,41 @@ const CalendarPrimary: FC = ({}) => {
             </div>
           </div>
           <div className={styles.buttonContainer}>
-            {appointments?.map((timeObj, i) => {
-              const { time, isFortyMinutesAheadAvailable, isTimeTaken } =
-                timeObj;
-
-              return (
-                <div key={`time-${i}`} className="hour">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDate((prev) => ({ ...prev, dateTime: time }));
-                      void handleAppointmentCreation(
-                        time,
-                        age_range,
-                        typeEye,
-                        name,
-                        lastName,
-                        phoneNumber
-                      );
-                    }}
-                    disabled={isTimeTaken || !isFortyMinutesAheadAvailable}>
-                    {format(time, "kk:mm")}
-                  </button>
-                  <ToastContainer />
+            <div className={styles.calendarHours}>
+              {getAllActiveHours.map((hour) => (
+                <div className={styles.calendarHour} key={hour}>
+                  <h1>{hour}</h1>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+
+            <div>
+              {appointments?.map((timeObj, i) => {
+                const { time, isFortyMinutesAheadAvailable, isTimeTaken } =
+                  timeObj;
+                return (
+                  <div key={`time-${i}`} className="hour">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDate((prev) => ({ ...prev, dateTime: time }));
+                        void handleAppointmentCreation(
+                          time,
+                          age_range,
+                          typeEye,
+                          name,
+                          lastName,
+                          phoneNumber
+                        );
+                      }}
+                      disabled={isTimeTaken || !isFortyMinutesAheadAvailable}>
+                      {format(time, "kk:mm")}
+                    </button>
+                    <ToastContainer />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </>
       ) : (

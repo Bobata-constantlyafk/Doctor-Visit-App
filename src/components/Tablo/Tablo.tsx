@@ -109,12 +109,16 @@ const Tablo: FC = ({}) => {
 
   // UDelete appointment from Supabase and update local state
   const handleDeleteAppointment = async (index: number) => {
-    await deleteAppointment(index, appointments);
-
-    // Remove the appointment from the state
-    const updatedAppointments = [...appointments];
-    updatedAppointments.splice(index, 1);
-    setAppointments(updatedAppointments);
+    const shouldDelete = window.confirm(
+      "Сигурни ли сте, че искате да изтриете тази среща?"
+    );
+    if (shouldDelete) {
+      await deleteAppointment(index, appointments);
+      // Remove the appointment from the state
+      const updatedAppointments = [...appointments];
+      updatedAppointments.splice(index, 1);
+      setAppointments(updatedAppointments);
+    }
   };
 
   async function getAllAppointments() {
