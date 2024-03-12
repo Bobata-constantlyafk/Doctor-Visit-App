@@ -101,27 +101,32 @@ export async function createAppointmentFunc(
           nextAppointmentDate = add(appointmentTime, { minutes: 40 });
           break;
         case "Pod":
+          console.log("time from function: " + timeBetweenNextAppointment);
           switch (timeBetweenNextAppointment) {
             case "1h20":
               nextAppointmentDate = add(appointmentTime, {
                 hours: 1,
                 minutes: 20,
               });
+              console.log("function case: 1h20");
               break;
             case "1h40":
               nextAppointmentDate = add(appointmentTime, {
                 hours: 1,
                 minutes: 40,
               });
+              console.log("function case: 1h40");
               break;
             case undefined:
               nextAppointmentDate = add(appointmentTime, {
                 hours: 1,
                 minutes: 20,
               });
+              console.log("Appointment ending time is undefined");
               break;
             default:
-              console.error("Invalid freestatus");
+              console.error("Invalid appointment ending time");
+              console.log("case default");
               return;
           }
           break;
@@ -245,9 +250,6 @@ export async function getHoursManagementData(
             modifiedClosingMinutes = 0;
             modifiedClosingHours = data.closingHours - 1;
             break;
-        }
-        switch (modifiedClosingMinutes) {
-          case 50:
         }
         const primaryYouth = {
           ...data,

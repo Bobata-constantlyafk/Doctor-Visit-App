@@ -25,10 +25,19 @@ const Navbar: React.FC = () => {
     void fetchUser(); // Call the fetchUser function
   }, []);
 
+  const handleLogoClick = () => {
+    window.location.reload();
+  };
+
   return (
     <header className={styles.global}>
       <div className={styles.navbarHeader}>
-        <img className={styles.logo} src="ocho.png" alt="logo " />
+        <img
+          className={styles.logo}
+          src="ocho.png"
+          alt="ЛОГО"
+          onClick={handleLogoClick}
+        />
         <nav className={styles.navbarContainer}>
           <ul className={styles.nav__links}>
             <li>

@@ -3,7 +3,7 @@ import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
 import { User } from "@supabase/supabase-js";
 import InfoFormBase from "../InfoFormBase";
-import CalendarBase from "../Calendar-Base";
+import CalendarBase from "../Calendar";
 import AppointmentCard from "./AppointmentCard";
 import {
   formatDateToWords,
@@ -101,13 +101,13 @@ const Tablo: FC = ({}) => {
   }
   void getOpeningClosingHours();
 
-  // Get all active hours into usable variable
+  // Create a constant for all active hours
   const getAllActiveHours: number[] = [];
   for (let i = openingHours; i <= closingHours; i++) {
     getAllActiveHours.push(i);
   }
 
-  // UDelete appointment from Supabase and update local state
+  // Update local state when appointment is deleted from Supabase.
   const handleDeleteAppointment = async (index: number) => {
     const shouldDelete = window.confirm(
       "Сигурни ли сте, че искате да изтриете тази среща?"

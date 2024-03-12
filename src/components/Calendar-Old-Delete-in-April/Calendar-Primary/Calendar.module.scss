@@ -1,0 +1,93 @@
+.calendarMain{
+    display: grid;
+    height: 80vh;
+    justify-items: center;
+    align-items: start;
+    
+    .viewAvailableHoursHeading{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+        justify-items: center;
+    
+        .buttonBack{
+            border: none;
+            border-radius: 5px;
+            background-color: #a4a2a2;
+            cursor: pointer;
+            height: 30%;
+            width: 30%;
+            justify-self: left;
+            font-size: 1.2rem;
+        }
+
+        h1,h3{
+            text-align: center;
+        }
+    }
+    
+    .buttonContainer {
+        display:grid;
+        grid-template-columns: 1fr 1fr 1fr;
+
+        margin-top: 6vw;
+        padding-bottom: 6vw;
+        justify-self: center;
+
+        .calendarHours{
+            display: grid;
+            grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+            justify-items: end;
+            margin-right: 3vw;
+            margin-top: -2vw;
+
+            .calendarHour{
+                margin-bottom: 7vw;
+            }
+      
+            h1{
+              font-weight: lighter;
+              @media only screen and (max-width: 900px) {
+              font-size: 1.6rem;
+              font-weight: 350;
+              }
+            }
+          }
+        
+        button {
+            display: grid;
+            grid-template-rows: 1fr;
+            justify-items: center;
+
+            margin-bottom: 1.5vw;
+
+            border-radius: 8px;
+            padding-inline: 5%;
+            width: 54vw;
+        
+            background-color: white;
+            padding: 0.7em;
+            border: 2px solid black;
+            font-size: 1.1rem;
+            cursor: pointer;
+
+            @media only screen and (max-width: 900px) {
+                width: 75vw;
+                p{
+                    font-size: 1.1rem;
+                }
+            }
+        }
+
+        button:disabled{
+            background-color: #a4a2a2;
+            cursor: not-allowed;
+        }
+    }
+}
+
+
+
+
+  
+  
