@@ -2,23 +2,7 @@ import supabase from "~/constants/supaClient";
 import { PostgrestError } from "@supabase/supabase-js";
 import { add } from "date-fns";
 import { toast } from "react-toastify";
-
-//Interfaces
-//===========================================================================================
-interface Appointment {
-  date: Date;
-  age_range?: string;
-  type?: string;
-  patient_id?: number | null;
-}
-
-interface Patient {
-  id: number;
-  name: string;
-  phone_nr: string;
-  missed?: boolean;
-  missed_date?: Date;
-}
+import { Appointment, Patient } from "./interfaces";
 
 interface HoursManagementData {
   openingHours: number;

@@ -14,17 +14,11 @@ import {
   formatDateToWords,
   getHoursManagementData,
 } from "~/utils/functions";
+import { Appointment } from "~/utils/interfaces";
 
 interface DateType {
   justDate: Date | null;
   dateTime: Date | null;
-}
-
-interface Appointment {
-  date: string;
-  age_range?: string;
-  type?: string;
-  patient_id?: number;
 }
 
 const DateBookingManager: FC = ({}) => {
@@ -116,7 +110,7 @@ const DateBookingManager: FC = ({}) => {
           console.error("Error fetching existing appointments:", error);
         } else {
           const existingDates = data.map(
-            (appointment: { date: string }) => new Date(appointment.date)
+            (appointment: { date: Date }) => new Date(appointment.date)
           );
           setExistingAppointments(existingDates);
         }

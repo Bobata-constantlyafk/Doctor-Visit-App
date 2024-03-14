@@ -1,14 +1,7 @@
 import React, { useEffect, useState, FC } from "react";
 import supabase from "../../constants/supaClient.js";
 import styles from "./Missed.module.scss";
-
-interface Patient {
-  id: number;
-  name: string;
-  phone_nr: string;
-  missed: boolean;
-  missed_date: string;
-}
+import { Patient } from "~/utils/interfaces.js";
 
 const Missed: FC = () => {
   const [missedPatients, setMissedPatients] = useState<Patient[]>([]);
@@ -55,7 +48,7 @@ const Missed: FC = () => {
   };
 
   //Custom format for date (Day/Month/Year Hours:Minutes)
-  const formatDateAndHour = (date: string) => {
+  const formatDateAndHour = (date: Date) => {
     const dateObj = new Date(date);
     const day = dateObj.getDate();
     const month = dateObj.getMonth() + 1;

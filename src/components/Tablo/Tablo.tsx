@@ -8,14 +8,12 @@ import AppointmentCard from "./AppointmentCard";
 import {
   formatDateToWords,
   getHoursManagementData,
-  setAppointmentAsMissed,
   deleteAppointment,
 } from "~/utils/functions";
+import { AppointmentForTablo } from "~/utils/interfaces";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  getHours,
-  getMinutes,
   isSameDay,
   isSameMinute,
   setMinutes,
@@ -23,29 +21,17 @@ import {
   addMinutes,
 } from "date-fns";
 
-interface Appointment {
-  date: Date;
-  age_range?: string;
-  type?: string;
-  phone_nr?: string;
-  name?: string;
-  lastName?: string;
-  patient_id: number;
-  Patients: {
-    name: string;
-    lastName: string;
-    phone_nr: string;
-    missed: boolean;
-  }[];
-}
 interface DateType {
   justDate: Date | null;
 }
+
+const justDate = new Date();
+
 const Tablo: FC = ({}) => {
   const [date, setDate] = useState<DateType>({
     justDate: null,
   });
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentForTablo[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState<boolean[]>(
     appointments.map(() => false)
@@ -158,11 +144,11 @@ const Tablo: FC = ({}) => {
 
   // Creates an array of appointments with the opening and closing hours and minutes
   // This is used to filter out appointments that are outside of the opening and closing hours and to show them in the frontend
-  const createLocalAppointments = (): Appointment[] => {
+  const createLocalAppointments = (): AppointmentForTablo[] => {
     if (date.justDate === null) {
       return [];
     }
-    const appointments: Appointment[] = [];
+    const appointments: AppointmentForTablo[] = [];
 
     //Define opening and closing times
     const openingTime = setMinutes(
@@ -185,7 +171,7 @@ const Tablo: FC = ({}) => {
       );
 
       if (!isDuplicate) {
-        const appointment: Appointment = {
+        const appointment: AppointmentForTablo = {
           date: time,
           type: "empty",
           patient_id: 0,
@@ -211,7 +197,7 @@ const Tablo: FC = ({}) => {
     return sortedAppointments;
   };
 
-  const allAppointments: Appointment[] = createLocalAppointments();
+  const allAppointments: AppointmentForTablo[] = createLocalAppointments();
 
   return (
     <div className={styles.tabloMain}>
