@@ -1,9 +1,9 @@
 export interface Appointment {
+  id?: number;
   date: Date;
   age_range?: string;
   type?: string;
   patient_id?: number | null;
-  pair_appointment_id?: number | null;
 }
 
 export interface AppointmentForTablo {

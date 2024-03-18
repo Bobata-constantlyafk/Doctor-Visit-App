@@ -305,7 +305,37 @@ export async function setAppointmentAsMissed(
 }
 
 // Update the database to delete the specified appointment
+
 export async function deleteAppointment(
+  index: number,
+  appointments: Appointment[]
+): Promise<void> {
+  const appointmentToDelete = appointments[index];
+
+  if (!appointmentToDelete) {
+    console.error("Appointment to delete is undefined");
+    return;
+  }
+
+  try {
+    switch (appointmentToDelete.type) {
+      case "Purvichen":
+        await deletePurvichenAppointment(index, appointments);
+        break;
+
+      case "Vtorichen":
+        await deleteVtorichenAppointment(index, appointments);
+      default:
+        console.error("Unknown appointment type:", appointmentToDelete.type);
+        return;
+        break;
+    }
+  } catch (error) {
+    console.error("Error deleting appointment:", error);
+  }
+}
+
+export async function deleteVtorichenAppointment(
   index: number,
   appointments: Appointment[]
 ): Promise<void> {
@@ -331,5 +361,81 @@ export async function deleteAppointment(
     }
   } catch (error) {
     console.error("Error deleting appointment:", error);
+  }
+}
+
+export async function deletePurvichenAppointment(
+  index: number,
+  appointments: Appointment[]
+): Promise<void> {
+  const appointmentToDelete = appointments[index];
+
+  if (!appointmentToDelete) {
+    console.error("Appointment to delete is undefined");
+    return;
+  }
+  try {
+    const appointmentsToDelete = await getPairAppointmentsToDelete(
+      appointmentToDelete
+    );
+
+    for (const appointment of appointmentsToDelete) {
+      const { error } = await supabase
+        .from("Appointments")
+        .delete()
+        .eq("id", appointment.id);
+
+      if (error) {
+        console.error("Error deleting appointment:", error);
+      } else {
+        console.log("Appointment deleted successfully");
+      }
+    }
+  } catch (error) {
+    console.error("Error deleting appointment:", error);
+  }
+}
+
+// Function to get appointments to delete
+async function getPairAppointmentsToDelete(
+  appointmentToDelete: Appointment
+): Promise<Appointment[]> {
+  const dateToDelete = new Date(appointmentToDelete.date);
+  const year = dateToDelete.getFullYear();
+  const month = dateToDelete.getMonth();
+  const day = dateToDelete.getDate();
+
+  const utcStartOfDay = new Date(Date.UTC(year, month, day));
+  const utcEndOfDay = new Date(Date.UTC(year, month, day + 1));
+
+  try {
+    // Fetch appointments for the given date
+    const { data: appointmentsOnDate, error: fetchError } = await supabase
+      .from("Appointments")
+      .select()
+      .gte("date", utcStartOfDay.toISOString())
+      .lt("date", utcEndOfDay.toISOString());
+
+    if (fetchError) {
+      console.error("Error fetching appointments:", fetchError);
+      return [];
+    }
+
+    // The whole purpose of this is type gynmastics
+    const typedAppointmentsOnDate: Appointment[] =
+      (appointmentsOnDate as Appointment[]) || [];
+
+    // Filter appointments with the same patient ID for that day
+    const appointmentsToDelete = typedAppointmentsOnDate.filter(
+      (appointment) =>
+        appointment.patient_id === appointmentToDelete.patient_id &&
+        appointment.type === "Purvichen" &&
+        appointment.id !== appointmentToDelete.id // Exclude the appointment to delete itself
+    );
+
+    return appointmentsToDelete;
+  } catch (error) {
+    console.error("Error getting appointments to delete:", error);
+    return [];
   }
 }

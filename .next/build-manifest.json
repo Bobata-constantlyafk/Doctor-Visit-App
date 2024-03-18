@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/Y7seQZR7tzB63j_bzIhSm/_buildManifest.js",
-    "static/Y7seQZR7tzB63j_bzIhSm/_ssgManifest.js"
+    "static/j9ueFzEDcOBQWP-cGABtq/_buildManifest.js",
+    "static/j9ueFzEDcOBQWP-cGABtq/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
@@ -18,7 +18,7 @@
       "static/chunks/691-ec72f70e4e770f31.js",
       "static/chunks/742-720f0bb79e7b273c.js",
       "static/css/7be29b1b75f1f774.css",
-      "static/chunks/pages/index-58b5a3cb22917316.js"
+      "static/chunks/pages/index-9b7ef3598bbda7c6.js"
     ],
     "/_app": [
       "static/chunks/webpack-87b3a303122f2f0d.js",
@@ -39,7 +39,7 @@
       "static/chunks/main-daf67cc10f8a009e.js",
       "static/chunks/578-aa6e884e70b6cea3.js",
       "static/css/6a5223edca1a49d3.css",
-      "static/chunks/pages/chasove-442afc4555accfb3.js"
+      "static/chunks/pages/chasove-05d1ce395eee1423.js"
     ],
     "/izhod": [
       "static/chunks/webpack-87b3a303122f2f0d.js",
@@ -84,7 +84,7 @@
       "static/chunks/578-aa6e884e70b6cea3.js",
       "static/chunks/691-ec72f70e4e770f31.js",
       "static/css/d2e5a36c582eaa9e.css",
-      "static/chunks/pages/tablo-67e0f8fbb7c94837.js"
+      "static/chunks/pages/tablo-09fd055906922466.js"
     ],
     "/test": [
       "static/chunks/webpack-87b3a303122f2f0d.js",
