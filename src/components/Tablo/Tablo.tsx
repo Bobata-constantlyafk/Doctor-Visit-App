@@ -21,16 +21,9 @@ import {
   addMinutes,
 } from "date-fns";
 
-interface DateType {
-  justDate: Date | null;
-}
-
-const justDate = new Date();
-
 const Tablo: FC = ({}) => {
-  const [date, setDate] = useState<DateType>({
-    justDate: null,
-  });
+  const [date, setDate] = useState<Date | null>(null);
+
   const [appointments, setAppointments] = useState<AppointmentForTablo[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState<boolean[]>(
@@ -65,9 +58,9 @@ const Tablo: FC = ({}) => {
   };
 
   // Filter for appointments with selected date
-  const appointmentsForSelectedDate = date.justDate
+  const appointmentsForSelectedDate = date
     ? appointments.filter((appointment) =>
-        isSameDay(new Date(appointment.date), date.justDate!)
+        isSameDay(new Date(appointment.date), date)
       )
     : [];
 
@@ -145,18 +138,18 @@ const Tablo: FC = ({}) => {
   // Creates an array of appointments with the opening and closing hours and minutes
   // This is used to filter out appointments that are outside of the opening and closing hours and to show them in the frontend
   const createLocalAppointments = (): AppointmentForTablo[] => {
-    if (date.justDate === null) {
+    if (date === null) {
       return [];
     }
     const appointments: AppointmentForTablo[] = [];
 
     //Define opening and closing times
     const openingTime = setMinutes(
-      setHours(date.justDate, openingHours),
+      setHours(date, openingHours),
       openingMinutes
     );
     const closingTime = setMinutes(
-      setHours(date.justDate, closingHours),
+      setHours(date, closingHours),
       closingMinutes
     );
 
@@ -201,17 +194,15 @@ const Tablo: FC = ({}) => {
 
   return (
     <div className={styles.tabloMain}>
-      {date.justDate ? (
+      {date ? (
         <>
           {/* {user ? (
         <> */}
           <div className={styles.header}>
-            <button
-              className={styles.buttonBack}
-              onClick={() => setDate({ justDate: null })}>
+            <button className={styles.buttonBack} onClick={() => setDate(null)}>
               ← Назад
             </button>
-            <h1>{formatDateToWords(date.justDate)}</h1>
+            <h1>{formatDateToWords(date)}</h1>
           </div>
           <div className={styles.appsAndHours}>
             <div className={styles.tabloHours}>
@@ -266,7 +257,7 @@ const Tablo: FC = ({}) => {
       ) : (
         <div className={styles.calendarSelf}>
           <CalendarBase
-            onSelectDate={(selectedDate) => setDate({ justDate: selectedDate })}
+            onSelectDate={(selectedDate) => setDate(selectedDate)}
           />
         </div>
       )}

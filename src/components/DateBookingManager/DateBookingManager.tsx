@@ -3,8 +3,6 @@ import Calendar from "../Calendar";
 import "react-calendar/dist/Calendar.css";
 import styles from "./DateBookingManager.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
-import supabase from "../../constants/supaClient.js";
-import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { useGlobalContext } from "~/constants/store";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
@@ -13,19 +11,11 @@ import {
   createAppointmentFunc,
   formatDateToWords,
   getHoursManagementData,
+  getExistingAppointments,
 } from "~/utils/functions";
-import { Appointment } from "~/utils/interfaces";
-
-interface DateType {
-  justDate: Date | null;
-  dateTime: Date | null;
-}
 
 const DateBookingManager: FC = ({}) => {
-  const [date, setDate] = useState<DateType>({
-    justDate: null,
-    dateTime: null,
-  });
+  const [date, setDate] = useState<Date | null>(null);
 
   const router = useRouter();
 
@@ -90,57 +80,31 @@ const DateBookingManager: FC = ({}) => {
   }
   void fetchOpeningClosingHours();
 
-  // Fetch existing appointments for the selected date from the database
   useEffect(() => {
     getDataForAppointmentType();
-    const fetchExistingAppointments = async () => {
-      if (!date.justDate) return;
+    if (!date) return;
 
-      const formattedSelectedDate = format(date.justDate, "yyyy-MM-dd");
-
-      try {
-        const { data, error }: PostgrestSingleResponse<Appointment[]> =
-          await supabase
-            .from("Appointments")
-            .select("date")
-            .gte("date", formattedSelectedDate)
-            .order("date");
-
-        if (error) {
-          console.error("Error fetching existing appointments:", error);
-        } else {
-          const existingDates = data.map(
-            (appointment: { date: Date }) => new Date(appointment.date)
-          );
-          setExistingAppointments(existingDates);
-        }
-      } catch (error) {
-        console.error("Error in fetchExistingAppointments:", error);
-      }
-    };
-
-    fetchExistingAppointments()
-      .then(() => {
-        console.log("Existing appointmnents fetched");
+    getExistingAppointments(date, typeEye, age_range)
+      .then((existingAppointments) => {
+        setExistingAppointments(existingAppointments);
+        console.log("Existing appointments fetched");
       })
       .catch((error) => {
         console.error("Error in fetchExistingAppointments:", error);
       });
-  }, [date.justDate, typeEye, age_range]);
+  }, [date, typeEye, age_range]);
 
   const generateAppointments = () => {
-    if (!date.justDate) return;
-
-    const { justDate } = date;
+    if (!date) return;
 
     const currentDateTime = new Date();
 
     const openingHoursMinutes = setMinutes(
-      add(justDate, { hours: openingHours }),
+      add(date, { hours: openingHours }),
       openingMinutes
     );
     const closingHoursMinutes = setMinutes(
-      add(justDate, { hours: closingHours }),
+      add(date, { hours: closingHours }),
       closingMinutes
     );
 
@@ -272,16 +236,14 @@ const DateBookingManager: FC = ({}) => {
 
   return (
     <div className={styles.calendarMain}>
-      {date.justDate ? (
+      {date ? (
         <>
           <div className={styles.viewAvailableHoursHeading}>
-            <button
-              className={styles.buttonBack}
-              onClick={() => setDate({ justDate: null, dateTime: null })}>
+            <button className={styles.buttonBack} onClick={() => setDate(null)}>
               ← Назад
             </button>
             <div>
-              <h1>{formatDateToWords(date.justDate)}</h1>
+              <h1>{formatDateToWords(date)}</h1>
               <h3> {title} </h3>
             </div>
           </div>
@@ -307,7 +269,7 @@ const DateBookingManager: FC = ({}) => {
                     <button
                       type="button"
                       onClick={() => {
-                        setDate((prev) => ({ ...prev, dateTime: time }));
+                        setDate(date);
                         void handleAppointmentCreation(
                           time,
                           age_range,
@@ -329,14 +291,9 @@ const DateBookingManager: FC = ({}) => {
           </div>
         </>
       ) : (
-        <Calendar
-          onSelectDate={(selectedDate) =>
-            setDate({ justDate: selectedDate, dateTime: null })
-          }
-        />
+        <Calendar onSelectDate={(selectedDate) => setDate(selectedDate)} />
       )}
     </div>
   );
 };
-
 export default DateBookingManager;

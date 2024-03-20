@@ -1,6 +1,6 @@
 import supabase from "~/constants/supaClient";
-import { PostgrestError } from "@supabase/supabase-js";
-import { add } from "date-fns";
+import { PostgrestError, PostgrestSingleResponse } from "@supabase/supabase-js";
+import { add, format } from "date-fns";
 import { toast } from "react-toastify";
 import { Appointment, Patient } from "./interfaces";
 
@@ -58,6 +58,37 @@ const appointmentsOverlapNotification = () =>
 
 //Functions
 //===========================================================================================
+
+// Feteches appointments that are in the database
+export async function getExistingAppointments(
+  date: Date,
+  typeEye: string,
+  age_range: string
+): Promise<Date[]> {
+  const formattedSelectedDate = format(date, "yyyy-MM-dd");
+
+  try {
+    const { data, error }: PostgrestSingleResponse<Appointment[]> =
+      await supabase
+        .from("Appointments")
+        .select("date")
+        .gte("date", formattedSelectedDate)
+        .order("date");
+
+    if (error) {
+      console.error("Error fetching existing appointments:", error);
+      return [];
+    } else {
+      const existingDates = data.map(
+        (appointment: { date: Date }) => new Date(appointment.date)
+      );
+      return existingDates;
+    }
+  } catch (error) {
+    console.error("Error in fetchExistingAppointments:", error);
+    return [];
+  }
+}
 
 //Creates an appointment
 export async function createAppointmentFunc(
