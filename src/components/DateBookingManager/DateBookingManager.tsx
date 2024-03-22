@@ -35,6 +35,7 @@ const DateBookingManager: FC = ({}) => {
   const [appointmentType, setAppointmentType] = useState<string>("empty");
   const [title, setTitle] = useState<string>("Запазване на час");
   const [minutesAheadInterval, setMinutesAheadInterval] = useState<number>(0);
+  // Try to make extraminutesAheadInterval to be minutesAheadInterval + 20;
   const [extraMinutesAheadInterval, setExtraMinutesAheadInterval] =
     useState<number>(0);
 

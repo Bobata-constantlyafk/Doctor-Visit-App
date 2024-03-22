@@ -1,6 +1,9 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import styles from "./InfoFormBase.module.scss";
-import { createAppointmentFunc } from "~/utils/functions";
+import {
+  createAppointmentFunc,
+  getExistingAppointments,
+} from "~/utils/functions";
 
 interface InfoFormBaseProps {
   appoinmentDateTime: Date;
@@ -18,6 +21,26 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [age_range, setAge_range] = useState<string>("");
   const [typeEye, setTypeEye] = useState<string>("");
+  // A-1 Ask GPT why the set won't work
+  // A-2 Add filtering to only do this for under 25 parvichen appointments? Maybe idk if I even need to do this.
+  // A-3 Add comments
+  // A-4 use minutes ahead and extra minutes ahead
+  // const [timeBetweenNextAppointment, setTimeBetweenNextAppointment] =
+  //   useState<string>("nuthin");
+  let timeBetweenNextAppointment: string = "nuthin";
+  const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
+  const addMinutesAhead = 80;
+  const addExtraMinutesAhead = addMinutesAhead + 20;
+
+  useEffect(() => {
+    getExistingAppointments(appoinmentDateTime, typeEye, age_range)
+      .then((existingAppointments) => {
+        setExistingAppointments(existingAppointments);
+      })
+      .catch((error) => {
+        console.error("Error in fetchExistingAppointments:", error);
+      });
+  }, [appoinmentDateTime, typeEye, age_range]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -37,13 +60,16 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
     typeEye: string,
     age_range: string
   ): Promise<void> => {
+    await getTimeBetween();
+    console.log("Time Between Next App: " + timeBetweenNextAppointment);
     void createAppointmentFunc(
       appoinmentDateTime,
       age_range,
       typeEye,
       name,
       lastName,
-      phoneNumber
+      phoneNumber,
+      timeBetweenNextAppointment
     );
 
     closeModal();
@@ -52,6 +78,41 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
 
     await getAllAppointments();
   };
+
+  function getTimeBetween() {
+    const check1H20 = existingAppointments.some((existingAppointment) => {
+      const timeDifference =
+        existingAppointment.getTime() - appoinmentDateTime.getTime();
+      const minutesDifference = timeDifference / (1000 * 60); // Convert milliseconds to minutes
+      return minutesDifference === addMinutesAhead;
+    });
+
+    const check1H40 = existingAppointments.some((existingAppointment) => {
+      const timeDifference =
+        existingAppointment.getTime() - appoinmentDateTime.getTime();
+      const minutesDifference = timeDifference / (1000 * 60); // Convert milliseconds to minutes
+      return minutesDifference === addExtraMinutesAhead;
+    });
+
+    switch (true) {
+      case !check1H20:
+        timeBetweenNextAppointment = "1h20";
+        break;
+
+      case !check1H40:
+        timeBetweenNextAppointment = "1h40";
+        break;
+
+      case check1H20 && check1H40:
+        timeBetweenNextAppointment = "both";
+        break;
+
+      default:
+        timeBetweenNextAppointment = "none";
+        console.log("none");
+        break;
+    }
+  }
 
   return (
     <div className={styles.infoContainer}>
