@@ -27,7 +27,7 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
   // A-4 use minutes ahead and extra minutes ahead
   // const [timeBetweenNextAppointment, setTimeBetweenNextAppointment] =
   //   useState<string>("nuthin");
-  let timeBetweenNextAppointment: string = "nuthin";
+  let timeBetweenNextAppointment = "nuthin";
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
   const addMinutesAhead = 80;
   const addExtraMinutesAhead = addMinutesAhead + 20;
@@ -60,7 +60,7 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
     typeEye: string,
     age_range: string
   ): Promise<void> => {
-    await getTimeBetween();
+    getTimeBetween();
     console.log("Time Between Next App: " + timeBetweenNextAppointment);
     void createAppointmentFunc(
       appoinmentDateTime,
