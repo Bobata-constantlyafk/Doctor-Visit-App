@@ -21,16 +21,10 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [age_range, setAge_range] = useState<string>("");
   const [typeEye, setTypeEye] = useState<string>("");
-  // A-1 Ask GPT why the set won't work
-  // A-2 Add filtering to only do this for under 25 parvichen appointments? Maybe idk if I even need to do this.
-  // A-3 Add comments
-  // A-4 use minutes ahead and extra minutes ahead
-  // const [timeBetweenNextAppointment, setTimeBetweenNextAppointment] =
-  //   useState<string>("nuthin");
-  let timeBetweenNextAppointment = "nuthin";
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
   const addMinutesAhead = 80;
   const addExtraMinutesAhead = addMinutesAhead + 20;
+  let timeBetweenNextAppointment = "nuthin";
 
   useEffect(() => {
     getExistingAppointments(appoinmentDateTime, typeEye, age_range)
@@ -61,7 +55,6 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
     age_range: string
   ): Promise<void> => {
     getTimeBetween();
-    console.log("Time Between Next App: " + timeBetweenNextAppointment);
     void createAppointmentFunc(
       appoinmentDateTime,
       age_range,
@@ -79,7 +72,16 @@ const InfoFormBase: React.FC<InfoFormBaseProps> = ({
     await getAllAppointments();
   };
 
+  // Booking a primary appointment will create two appoinments, via the functions.ts file.
+  // One starting at a selected date and time and another ending either 80 or 100 minutes after. 80 is the priority.
+  // We loop through the array of appointments for the selected date and check if 80 or 100 minutes ahead are available.
+  // Then we return a string (for the backend) indicating when to book the ending appointment: "1h20" for 80 minutes, "1h40" for 100 minutes, or a message if neither is available.
   function getTimeBetween() {
+    // Making sure this code only runs for Primary "Purvichen" appointments with patients under 25 (age range = "Pod").
+    if (typeEye !== "Purvichen" || age_range !== "Pod") {
+      return;
+    }
+
     const check1H20 = existingAppointments.some((existingAppointment) => {
       const timeDifference =
         existingAppointment.getTime() - appoinmentDateTime.getTime();
