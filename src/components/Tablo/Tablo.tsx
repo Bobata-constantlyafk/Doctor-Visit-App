@@ -114,7 +114,7 @@ const Tablo: FC = ({}) => {
     }
   }
 
-  //Get the patient data from Supabase
+  //Get the patient data from Supabase, when the application runs
   useEffect(() => {
     async function getUserData() {
       await supabase.auth

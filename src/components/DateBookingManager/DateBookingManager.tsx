@@ -3,7 +3,7 @@ import Calendar from "../Calendar";
 import "react-calendar/dist/Calendar.css";
 import styles from "./DateBookingManager.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
-import { useGlobalContext } from "~/constants/store";
+import { useGlobalContext } from "~/utils/store";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

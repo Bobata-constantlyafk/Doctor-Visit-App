@@ -1,7 +1,7 @@
 "use client";
 import React, { ChangeEvent } from "react";
 import styles from "./InfoForm.module.scss";
-import { useGlobalContext } from "~/constants/store";
+import { useGlobalContext } from "~/utils/store";
 
 interface InfoFormProps {
   onFormSubmit: (choiceType: string, age_range: string) => void;
