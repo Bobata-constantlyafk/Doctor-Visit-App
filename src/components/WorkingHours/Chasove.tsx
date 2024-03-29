@@ -12,13 +12,12 @@ const Chasove: FC = () => {
     openingMinutes: 0,
     closingMinutes: 0,
   });
-
   const [openingHoursUpdated, setOpeningHoursUpdated] = useState<number>(0);
   const [closingHoursUpdated, setClosingHoursUpdated] = useState<number>(0);
   const [openingMinutesUpdated, setOpeningMinutesUpdated] = useState<number>(0);
   const [closingMinutesUpdated, setClosingMinutesUpdated] = useState<number>(0);
-
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const successType = "hours";
 
   useEffect(() => {
     async function fetchHourManagementData() {
@@ -57,12 +56,13 @@ const Chasove: FC = () => {
       } else {
         console.log("Data updated successfully:", data);
         void router.push({
-          pathname: "/successHours",
+          pathname: "/success",
           query: {
             openingHoursUpdated,
             closingHoursUpdated,
             openingMinutesUpdated,
             closingMinutesUpdated,
+            successType,
           },
         });
       }

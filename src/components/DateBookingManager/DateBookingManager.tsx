@@ -18,6 +18,7 @@ const DateBookingManager: FC = ({}) => {
   const [date, setDate] = useState<Date | null>(null);
 
   const router = useRouter();
+  const successType = "appointment";
 
   // Global state variables
   const { name, lastName, phoneNumber, age_range, typeEye } =
@@ -35,7 +36,6 @@ const DateBookingManager: FC = ({}) => {
   const [appointmentType, setAppointmentType] = useState<string>("empty");
   const [title, setTitle] = useState<string>("Запазване на час");
   const [minutesAheadInterval, setMinutesAheadInterval] = useState<number>(0);
-  // Try to make extraminutesAheadInterval to be minutesAheadInterval + 20;
   const [extraMinutesAheadInterval, setExtraMinutesAheadInterval] =
     useState<number>(0);
 
@@ -221,12 +221,18 @@ const DateBookingManager: FC = ({}) => {
         phoneNumber,
         timeBetweenNextAppointment
       );
-      void router.push(
-        `/success?appointmentDate=${encodeURIComponent(time.toISOString())}`
-      );
+      // void router.push(
+      //   `/success?appointmentDate=${encodeURIComponent(time.toISOString())}`
+      // );
+      void router.push({
+        pathname: "/success",
+        query: {
+          time: time.toISOString(),
+          successType,
+        },
+      });
     } catch (error) {
       console.error("Appointment creation failed:", error);
-      // Handle the error as needed, e.g., show an error message to the user.
     }
   };
 
