@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import ReactCalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styles from "./Calendar.module.scss";
+//toshu kykata beshe tuk
 
 interface CalendarBaseProps {
   onSelectDate: (date: Date) => void;

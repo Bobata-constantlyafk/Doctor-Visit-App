@@ -2,7 +2,7 @@ import React, { useState, useEffect, FC } from "react";
 import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
 import { User } from "@supabase/supabase-js";
-import InfoFormBase from "../InfoFormBase";
+import InfoFormModal from "../InfoFormModal";
 import CalendarBase from "../Calendar";
 import AppointmentCard from "./AppointmentCard";
 import {
@@ -114,7 +114,7 @@ const Tablo: FC = ({}) => {
     }
   }
 
-  //Get the patient data from Supabase
+  //Get the patient data from Supabase, when the application runs
   useEffect(() => {
     async function getUserData() {
       await supabase.auth
@@ -222,7 +222,7 @@ const Tablo: FC = ({}) => {
                       onClick={() => setIsModalOpen(false)}
                       className={styles.overlay}></div>
                     <div className={styles.modalContent}>
-                      <InfoFormBase
+                      <InfoFormModal
                         appoinmentDateTime={dateForApp}
                         getAllAppointments={() => getAllAppointments()}
                         closeModal={() => closeModal()}
