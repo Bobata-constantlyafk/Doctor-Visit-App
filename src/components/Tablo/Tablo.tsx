@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC, ChangeEvent, useRef } from "react";
+import React, { useState, useEffect, FC } from "react";
 import styles from "./Tablo.module.scss";
 import supabase from "../../constants/supaClient.js";
 import { User } from "@supabase/supabase-js";
