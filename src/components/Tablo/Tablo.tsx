@@ -38,6 +38,30 @@ const Tablo: FC = ({}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dateForApp, setDateForApp] = useState<Date>(new Date());
 
+
+
+  //Get the patient data from Supabase, when the application runs
+  useEffect(() => {
+    void getOpeningClosingHours();
+    async function getUserData() {
+      await supabase.auth
+        .getUser()
+        .then((value) => {
+          if (value.data?.user) {
+            setUser(value.data.user);
+            void getAllAppointments();
+            console.log("User: ", value.data.user);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    }
+    void getUserData();
+    
+    void getAllAppointments();
+  }, []);
+
   const handleSetDateForApp = (newDate: Date) => {
     setDateForApp(newDate);
   };
@@ -78,7 +102,7 @@ const Tablo: FC = ({}) => {
       console.error("Error:", error);
     }
   }
-  void getOpeningClosingHours();
+  
 
   // Create a constant for all active hours
   const getAllActiveHours: number[] = [];
@@ -114,26 +138,7 @@ const Tablo: FC = ({}) => {
     }
   }
 
-  //Get the patient data from Supabase, when the application runs
-  useEffect(() => {
-    async function getUserData() {
-      await supabase.auth
-        .getUser()
-        .then((value) => {
-          if (value.data?.user) {
-            setUser(value.data.user);
-            void getAllAppointments();
-            console.log("User: ", value.data.user);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        });
-    }
-    void getUserData();
-
-    void getAllAppointments();
-  }, []);
+  
 
   // Creates an array of appointments with the opening and closing hours and minutes
   // This is used to filter out appointments that are outside of the opening and closing hours and to show them in the frontend

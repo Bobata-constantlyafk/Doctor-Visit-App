@@ -1,30 +1,60 @@
 // components/Navbar.tsx
 
 import Link from "next/link";
-import styles from "./Navbar.module.scss";
+import styles from "./Sidebar.module.scss";
+import navStyles from "src/components/Navigation/Navbar/Navbar.module.scss";
+import { handleLogoClick,fetchUser,handleMenuClick,getSidebarStyle } from "~/utils/functions";
+import { User } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 
-const Navbar: React.FC = () => {
+
+
+
+const Sidebar: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarStyle = getSidebarStyle(isSidebarOpen);
+
+  useEffect(() => {
+    void fetchUser(setUser);
+  },[]);
+  
   return (
-    <nav className={styles.navbar}>
-      <div className={styles.logo}>
-        <Link href="/">
-          {/* <a>Logo</a> */}
-          <p>pi</p>
-        </Link>
-      </div>
-      <ul className={styles.navLinks}>
-        <li>
-          <Link href="/about">{/* <a>About</a> */}</Link>
+    <header className={navStyles.global}>
+    <div className={styles.navbarHeader}>
+    <img
+          className={styles.logo}
+          src="ocho.png"
+          alt="ЛОГО"
+          onClick={handleLogoClick}
+        />
+        
+        <img className={styles.navMenu}
+        id="menuBtn"
+        src="menu.png"
+        alt="МЕНЮ"
+        onClick={() => handleMenuClick(setIsSidebarOpen)}
+        />
+    </div>
+    <nav className={styles.sidebarMain} style={sidebarStyle} id="sidebar">
+    <ul>
+      <li>
+          <Link href="/" onClick={() => setIsSidebarOpen(false)}>Главна Страница</Link>
         </li>
         <li>
-          <Link href="/services">{/* <a>Services</a> */}</Link>
+          <Link href="/tablo" onClick={() => setIsSidebarOpen(false)}>Табло</Link>
         </li>
         <li>
-          <Link href="/contact">{/* <a>Contact</a> */}</Link>
+          <Link href="/propusnati" onClick={() => setIsSidebarOpen(false)}>Пропуснати</Link>
+        </li>
+        <li>
+          <Link href="/chasove" onClick={() => setIsSidebarOpen(false)}>Работно време</Link>
         </li>
       </ul>
-    </nav>
+      </nav>
+    
+    </header>
   );
 };
 
-export default Navbar;
+export default Sidebar;

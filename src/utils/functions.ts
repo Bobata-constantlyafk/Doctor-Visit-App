@@ -1,8 +1,10 @@
 import supabase from "~/constants/supaClient";
-import { PostgrestError, PostgrestSingleResponse } from "@supabase/supabase-js";
+import { PostgrestError, PostgrestSingleResponse, User } from "@supabase/supabase-js";
 import { add, format } from "date-fns";
 import { toast } from "react-toastify";
 import { Appointment, Patient } from "./interfaces";
+import { Dispatch, SetStateAction } from "react";
+import { useState, useEffect } from "react";
 
 interface HoursManagementData {
   openingHours: number;
@@ -470,3 +472,31 @@ async function getPairAppointmentsToDelete(
     return [];
   }
 }
+
+export function handleLogoClick() {
+  return window.location.reload();
+}
+
+export function handleMenuClick(setIsSidebarOpen: Dispatch<SetStateAction<boolean>>) {
+  setIsSidebarOpen(prevState => !prevState);
+};
+
+export function getSidebarStyle(isSidebarOpen: boolean) {
+  return {
+    display: isSidebarOpen ? 'block' : 'none',
+  };
+};
+
+
+export async function fetchUser(setUser: Dispatch<SetStateAction<User | null>>):Promise<void> {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error("Error fetching user:", error);
+  } else {
+    setUser(user);
+  }
+};
