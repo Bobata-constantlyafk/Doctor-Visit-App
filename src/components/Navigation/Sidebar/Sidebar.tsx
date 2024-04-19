@@ -8,8 +8,6 @@ import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
 
-
-
 const Sidebar: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
