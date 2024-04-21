@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
 
-
-
-
-
 .sidebarMain{
     width: 100%;
     min-height: 100vh;
@@ -11,6 +7,7 @@
     position: absolute;
     background-color: white;
     display: none;
+    z-index: 10;
 
     ul{
         padding-inline-start: 0;

@@ -2,12 +2,17 @@
 import React, { ChangeEvent } from "react";
 import styles from "./InfoForm.module.scss";
 import { useGlobalContext } from "~/utils/store";
+import supabase from "../../constants/supaClient.js";
+import { useEffect,useState } from "react";
+import { el } from "date-fns/locale";
 
 interface InfoFormProps {
   onFormSubmit: (choiceType: string, age_range: string) => void;
 }
 
 const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
+
+  const [secAppointmentActive, setSecAppointmentActive] = useState(true);
   // State variables for form inputs
   const {
     name,
@@ -50,7 +55,22 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
       !!name && isValidPhoneNumber(phoneNumber) && !!age_range && !!typeEye
     );
   };
+  
+  async function getPatientId() {
+    const patientId = await supabase.rpc("check_if_customer_is_present_in_db", {phone_number_input: phoneNumber});
+    const lastMonthDataNum = await supabase.rpc("get_primary_appointments_count_for_the_last_30_days", {patient_id_input: patientId.data});
 
+    if(lastMonthDataNum.data > 0){
+      setSecAppointmentActive(false)
+    } else {
+      setSecAppointmentActive(true)
+    }
+    
+  }
+  useEffect(() => {
+    getPatientId()
+  })
+  
   return (
     <div className={styles.infoMain}>
       <div className={styles.infoContainer}>
@@ -112,7 +132,8 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
               Моля, изберете подходящият преглед
             </option>
             <option value="Purvichen">Първичен преглед</option>
-            <option value="Vtorichen">Вторичен преглед</option>
+            {secAppointmentActive ? <option value="Vtorichen">Вторичен преглед</option>
+              : <option value="Vtorichen" disabled>Вторичен преглед</option>}
           </select>
         </div>
         <button
