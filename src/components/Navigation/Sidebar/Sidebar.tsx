@@ -19,38 +19,46 @@ const Sidebar: React.FC = () => {
   
   return (
     <header className={navStyles.global}>
-    <div className={styles.navbarHeader}>
-    <img
+      <div className={styles.navbarHeader}>
+        <img
           className={styles.logo}
           src="ocho.png"
           alt="ЛОГО"
           onClick={handleLogoClick}
         />
-        
-        <img className={styles.navMenu}
-        id="menuBtn"
-        src="menu.png"
-        alt="МЕНЮ"
-        onClick={() => handleMenuClick(setIsSidebarOpen)}
+
+        <img
+          className={styles.navMenu}
+          id="menuBtn"
+          src="menu.png"
+          alt="МЕНЮ"
+          onClick={() => handleMenuClick(setIsSidebarOpen)}
         />
-    </div>
-    <nav className={styles.sidebarMain} style={sidebarStyle} id="sidebar">
-    <ul>
-      <li>
-          <Link href="/" onClick={() => setIsSidebarOpen(false)}>Главна Страница</Link>
-        </li>
-        <li>
-          <Link href="/tablo" onClick={() => setIsSidebarOpen(false)}>Табло</Link>
-        </li>
-        <li>
-          <Link href="/propusnati" onClick={() => setIsSidebarOpen(false)}>Пропуснати</Link>
-        </li>
-        <li>
-          <Link href="/chasove" onClick={() => setIsSidebarOpen(false)}>Работно време</Link>
-        </li>
-      </ul>
+      </div>
+      <nav className={styles.sidebarMain} style={sidebarStyle} id="sidebar">
+        <ul>
+          <li>
+            <Link href="/" onClick={() => setIsSidebarOpen(false)}>
+              Главна Страница
+            </Link>
+          </li>
+          <li>
+            <Link href="/tablo" onClick={() => setIsSidebarOpen(false)}>
+              Табло
+            </Link>
+          </li>
+          <li>
+            <Link href="/propusnati" onClick={() => setIsSidebarOpen(false)}>
+              Пропуснати
+            </Link>
+          </li>
+          <li className={styles.borderBottom}>
+            <Link href="/chasove" onClick={() => setIsSidebarOpen(false)}>
+              Работно време
+            </Link>
+          </li>
+        </ul>
       </nav>
-    
     </header>
   );
 };
