@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./AppointmentCard.module.scss";
 import { getHours, getMinutes } from "date-fns";
 import { setAppointmentAsMissed } from "~/utils/functions";
