@@ -58,7 +58,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
   
   
   useEffect(() => {
-    checkPatientAppointments(phoneNumber,setSecAppointmentActive);
+   void checkPatientAppointments(phoneNumber,setSecAppointmentActive);
   })
   
   return (

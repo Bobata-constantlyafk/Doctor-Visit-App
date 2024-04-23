@@ -27,16 +27,6 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/chasove": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/chasove.js"
-    ],
-    "/propusnati": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/propusnati.js"
-    ],
     "/success": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
