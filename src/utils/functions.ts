@@ -500,3 +500,14 @@ export async function fetchUser(setUser: Dispatch<SetStateAction<User | null>>):
     setUser(user);
   }
 };
+
+export async function checkPatientAppointments(phoneNumberInput: string,setSecAppointmentActive: React.Dispatch<React.SetStateAction<boolean>>) {
+  const patientId = await supabase.rpc("check_if_customer_is_present_in_db", {phone_number_input: phoneNumberInput});
+  const lastMonthDataNum = await supabase.rpc("get_primary_appointments_count_for_the_last_30_days", {patient_id_input: patientId.data});
+
+  if(lastMonthDataNum.data > 0){
+    setSecAppointmentActive(true)
+  } else {
+    setSecAppointmentActive(false)
+  }
+}

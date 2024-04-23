@@ -2,9 +2,9 @@
 import React, { ChangeEvent } from "react";
 import styles from "./InfoForm.module.scss";
 import { useGlobalContext } from "~/utils/store";
-import supabase from "../../constants/supaClient.js";
+import { checkPatientAppointments } from "~/utils/functions";
 import { useEffect,useState } from "react";
-import { el } from "date-fns/locale";
+
 
 interface InfoFormProps {
   onFormSubmit: (choiceType: string, age_range: string) => void;
@@ -12,7 +12,7 @@ interface InfoFormProps {
 
 const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
 
-  const [secAppointmentActive, setSecAppointmentActive] = useState(true);
+  const [secAppointmentActive, setSecAppointmentActive] = useState(false);
   // State variables for form inputs
   const {
     name,
@@ -56,19 +56,9 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
     );
   };
   
-  async function getPatientId() {
-    const patientId = await supabase.rpc("check_if_customer_is_present_in_db", {phone_number_input: phoneNumber});
-    const lastMonthDataNum = await supabase.rpc("get_primary_appointments_count_for_the_last_30_days", {patient_id_input: patientId.data});
-
-    if(lastMonthDataNum.data > 0){
-      setSecAppointmentActive(false)
-    } else {
-      setSecAppointmentActive(true)
-    }
-    
-  }
+  
   useEffect(() => {
-    getPatientId()
+    checkPatientAppointments(phoneNumber,setSecAppointmentActive);
   })
   
   return (
@@ -99,7 +89,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
           <label htmlFor="phoneNumber">Тел номер:</label>
           <input
             type="tel"
-            placeholder="Моля, въведете телефонен номер "
+            placeholder="Моля, въведете телефонен номер"
             id="phoneNumber"
             value={phoneNumber}
             pattern="[0-9]*"

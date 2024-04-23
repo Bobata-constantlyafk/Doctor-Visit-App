@@ -19,7 +19,6 @@ import {
   setMinutes,
   setHours,
   addMinutes,
-  set,
 } from "date-fns";
 
 const Tablo: FC = ({}) => {
@@ -31,9 +30,6 @@ const Tablo: FC = ({}) => {
     appointments.map(() => false)
   );
 
-  const [lastMonthDataNum, setLastMonthDataNum] = useState<number>(0);
-  const [patientId, setPatientId] = useState<number>(0);
-
   const [openingHours, setOpeningHours] = useState<number>(0);
   const [closingHours, setClosingHours] = useState<number>(0);
   const [openingMinutes, setOpeningMinutes] = useState<number>(0);
@@ -42,22 +38,9 @@ const Tablo: FC = ({}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dateForApp, setDateForApp] = useState<Date>(new Date());
 
-  async function getLastMonthDataNum() {
-    const query = await supabase.rpc("get_primary_appointments_count_for_the_last_30_days", {patient_id_input: patientId});
-    setLastMonthDataNum(query.data);
-  }
-  async function getPatientId() {
-    const query = await supabase.rpc("check_if_customer_is_present_in_db", {phone_number_input: 88});
-    setPatientId(query.data);
-  }
-
-  console.log(lastMonthDataNum);
-
 
   //Get the patient data from Supabase, when the application runs
   useEffect(() => {
-    void getLastMonthDataNum();
-    void getPatientId();
     void getOpeningClosingHours();
     async function getUserData() {
       await supabase.auth
@@ -152,8 +135,7 @@ const Tablo: FC = ({}) => {
     } else {
       setAppointments(data);
     }
-  }
-  
+  }  
 
   // Creates an array of appointments with the opening and closing hours and minutes
   // This is used to filter out appointments that are outside of the opening and closing hours and to show them in the frontend
