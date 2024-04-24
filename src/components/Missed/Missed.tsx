@@ -67,7 +67,7 @@ const Missed: FC = () => {
           <h2>Име</h2>
           <h2>Телефон</h2>
           <h2>Дата</h2>
-          <h2 className={styles.paid}>Статус</h2>
+          <h2 className={styles.paidStatus}>Статус</h2>
         </div>
         {missedPatients.map((patient) => (
           <React.Fragment key={patient.id}>
