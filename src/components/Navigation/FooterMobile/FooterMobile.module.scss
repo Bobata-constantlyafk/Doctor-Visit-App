@@ -1,0 +1,34 @@
+.footer{
+    color: white;
+    width: 100%;
+    background-color: black;
+
+    @media only screen and (max-width: 900px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items:end;
+        height: 7rem;
+        text-align: start;
+
+        .phoneNr{
+            display: grid;
+            justify-self: center;
+        }
+    }
+}
+
+// Alternative style, where they are one under another
+// .footer{
+//     color: white;
+//     height: 7rem;
+//     width: 100%;
+//     background-color: black;
+
+//     @media only screen and (max-width: 900px) {
+//         display: grid;
+//         grid-template-rows: 1fr 1fr;
+//         align-items: center;
+//         height: 11rem;
+//         text-align: center;
+//     }
+// }

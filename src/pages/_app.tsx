@@ -6,20 +6,21 @@ import Navbar from "~/components/Navigation/Navbar/Navbar";
 import Sidebar from "~/components/Navigation/Sidebar/Sidebar";
 import { useState, useEffect } from "react";
 import Footer from "~/components/Navigation/Footer/Footer";
+import FooterMobile from "~/components/Navigation/FooterMobile/FooterMobile";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    if(typeof window !== "undefined" && window.screen.width < 900) {
+    if (typeof window !== "undefined" && window.screen.width < 900) {
       setIsMobile(true);
-  }
-  },[]);
-  
+    }
+  }, []);
+
   return (
     <>
-    {isMobile ? <Sidebar></Sidebar> : <Navbar></Navbar> }
+      {isMobile ? <Sidebar></Sidebar> : <Navbar></Navbar>}
       <Component {...pageProps} />
-      <Footer />
+      {isMobile ? <FooterMobile /> : <Footer />}
     </>
   );
 };
