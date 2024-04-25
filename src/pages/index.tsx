@@ -1,19 +1,20 @@
 import Head from "next/head";
 import DateBookingManager from "~/components/DateBookingManager";
 import InfoForm from "~/components/InfoForm";
+import OfficeSelector from "~/components/OfficeSelector";
 import { useState } from "react";
 import { GlobalContextProvider } from "~/utils/store";
 
 export default function Home() {
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedAge, setSelectedAge] = useState("");
+  // const [showCalendar, setShowCalendar] = useState(false);
+  // const [selectedType, setSelectedType] = useState("");
+  // const [selectedAge, setSelectedAge] = useState("");
 
-  const handleFormSubmission = (choiceType: string, choiceAge: string) => {
-    setShowCalendar(true);
-    setSelectedType(choiceType);
-    setSelectedAge(choiceAge);
-  };
+  // const handleFormSubmission = (choiceType: string, choiceAge: string) => {
+  //   setShowCalendar(true);
+  //   setSelectedType(choiceType);
+  //   setSelectedAge(choiceAge);
+  // };
 
   return (
     <>
@@ -28,11 +29,12 @@ export default function Home() {
 
       <GlobalContextProvider>
         <main>
-          {showCalendar ? (
+          <OfficeSelector />
+          {/* {showCalendar ? (
             <DateBookingManager />
           ) : (
             <InfoForm onFormSubmit={handleFormSubmission} />
-          )}
+          )} */}
         </main>
       </GlobalContextProvider>
     </>

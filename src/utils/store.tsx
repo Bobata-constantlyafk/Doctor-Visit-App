@@ -20,6 +20,10 @@ interface ContextProps {
   setAge_range: Dispatch<SetStateAction<string>>;
   typeEye: string;
   setTypeEye: Dispatch<SetStateAction<string>>;
+  calendarState: number;
+  setCalendarState: Dispatch<SetStateAction<number>>;
+  isSelectionMade: boolean;
+  setIsSelectionMade: Dispatch<SetStateAction<boolean>>;
 }
 
 const GlobalContext = createContext<ContextProps>({
@@ -33,6 +37,10 @@ const GlobalContext = createContext<ContextProps>({
   setAge_range: (): string => "",
   typeEye: "",
   setTypeEye: (): string => "",
+  calendarState: 0,
+  setCalendarState: (): number => 0,
+  isSelectionMade: false,
+  setIsSelectionMade: (): boolean => false,
 });
 
 export const GlobalContextProvider = ({
@@ -45,6 +53,8 @@ export const GlobalContextProvider = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [age_range, setAge_range] = useState("");
   const [typeEye, setTypeEye] = useState("");
+  const [calendarState, setCalendarState] = useState(0);
+  const [isSelectionMade, setIsSelectionMade] = useState(false);
   return (
     <GlobalContext.Provider
       value={{
@@ -58,6 +68,10 @@ export const GlobalContextProvider = ({
         setAge_range,
         typeEye,
         setTypeEye,
+        calendarState,
+        setCalendarState,
+        isSelectionMade,
+        setIsSelectionMade,
       }}>
       {children}
     </GlobalContext.Provider>
