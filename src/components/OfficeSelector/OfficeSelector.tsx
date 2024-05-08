@@ -5,16 +5,12 @@ import DateBookingManager from "~/components/DateBookingManager";
 import InfoForm from "~/components/InfoForm";
 import styles from "./OfficeSelector.module.scss";
 
-
-
 const OfficeSelector: React.FC = () => {
     const {calendarState, setCalendarState, isSelectionMade, setIsSelectionMade} = useGlobalContext();
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedType, setSelectedType] = useState("");
     const [selectedAge, setSelectedAge] = useState("");
-
-    console.log("office: " + calendarState);
-    console.log("selection made: " + isSelectionMade);
+    
     const handleFormSubmission = (choiceType: string, choiceAge: string) => {
         setShowCalendar(true);
         setSelectedType(choiceType);
