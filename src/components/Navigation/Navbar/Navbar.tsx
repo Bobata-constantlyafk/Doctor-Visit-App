@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     // Use useEffect to fetch user info when the component mounts
-    void fetchUser(setUser); // Call the fetchUser function
+    // void fetchUser(setUser);
   }, []);
 
   return (

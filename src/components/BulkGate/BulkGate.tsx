@@ -1,6 +1,10 @@
-import React, { FC, FormEvent } from "react";
+import React, { FC, FormEvent, useEffect } from "react";
 import { useState } from "react";
 import useBulkGate from "../../../bulkGate";
+import {
+  getAppointmentsForTomorrow,
+  getPhoneNumbersById,
+} from "~/utils/functions";
 import styles from "./BulkGate.module.scss";
 
 const BulkGate: FC = () => {
@@ -25,6 +29,17 @@ const BulkGate: FC = () => {
       console.error("Failed to send message", error as Error);
     }
   };
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const themDates = await getAppointmentsForTomorrow();
+      console.log("them dates mane: ", themDates);
+      const themNumbers = await getPhoneNumbersById(themDates);
+      console.log("them numbers mane: ", themNumbers);
+    };
+
+    fetchAppointments();
+  }, []);
 
   return (
     <>
