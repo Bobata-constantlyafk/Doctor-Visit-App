@@ -24,6 +24,9 @@ next-env.d.ts
 # production
 /build
 
+# Ignore everything in .next
+.next
+
 # misc
 .DS_Store
 *.pem
