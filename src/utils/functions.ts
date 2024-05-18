@@ -6,6 +6,7 @@ import { Appointment, Patient } from "./interfaces";
 import { Dispatch, SetStateAction } from "react";
 import { useState, useEffect } from "react";
 import { any } from "zod";
+import internal from "stream";
 
 interface HoursManagementData {
   openingHours: number;
@@ -524,6 +525,23 @@ export async function checkPatientAppointments(
     setSecAppointmentActive(false);
   }
 }
+
+export async function getAppointments() {
+  try {
+    const { data, error } = await supabase.from("Appointments").select("*");
+
+    if (error) {
+      console.error("Error fetching appointments:", error.message);
+      return [];
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return [];
+  }
+}
+
 export async function getAppointmentsForTomorrow() {
   const today = new Date();
   const tomorrow = new Date(today);
@@ -550,22 +568,6 @@ export async function getAppointmentsForTomorrow() {
   }
 }
 
-export async function getAppointments() {
-  try {
-    const { data, error } = await supabase.from("Appointments").select("*");
-
-    if (error) {
-      console.error("Error fetching appointments:", error.message);
-      return [];
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching appointments:", error);
-    return [];
-  }
-}
-
 export async function getPhoneNumbersById(patientIds: Array<BigInteger>) {
   try {
     const { data, error } = await supabase
@@ -584,4 +586,19 @@ export async function getPhoneNumbersById(patientIds: Array<BigInteger>) {
     console.error("Error fetching phone numbers:", error);
     return [];
   }
+}
+
+export async function formatAsInternationalNumber(
+  numbers: string[]
+): Promise<string[]> {
+  return numbers.map((number) => {
+    if (number.startsWith("08")) {
+      return "00359" + number.substring(1);
+    } else if (number.startsWith("+")) {
+      return "00" + number.substring(1);
+    } else {
+      console.log("Invalid phone number format for number:", number);
+      return "Invalid phone number, please format with '+' (example: +31620101010) | Невалиден телефонен номер, моля форматирайте с '+' (пример: +359899100200)";
+    }
+  });
 }

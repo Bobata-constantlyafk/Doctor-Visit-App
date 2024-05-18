@@ -4,13 +4,13 @@ import useBulkGate from "../../../bulkGate";
 import {
   getAppointmentsForTomorrow,
   getPhoneNumbersById,
+  formatAsInternationalNumber,
 } from "~/utils/functions";
 import styles from "./BulkGate.module.scss";
 
 const BulkGate: FC = () => {
   const [number, setNumber] = useState("");
   const [message, setMessage] = useState("");
-  let count = 1;
 
   const { mutate, isLoading, isError, error } = useBulkGate();
 
@@ -33,11 +33,13 @@ const BulkGate: FC = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const themDates = await getAppointmentsForTomorrow();
-      const themNumbers = await getPhoneNumbersById(themDates);
-      // console.log("them numbers mane: ", themNumbers);
-      console.log(count);
-      count = count + 1;
+      const tomorrowAppointments = await getAppointmentsForTomorrow();
+      const numbersToBeTexted = await getPhoneNumbersById(tomorrowAppointments);
+      const formattedNumbers = await formatAsInternationalNumber(
+        numbersToBeTexted
+      );
+      console.log("them numbers mane: ", numbersToBeTexted);
+      console.log(formattedNumbers);
     };
 
     fetchAppointments();
