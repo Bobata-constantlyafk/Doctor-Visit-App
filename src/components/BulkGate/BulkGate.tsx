@@ -10,6 +10,7 @@ import styles from "./BulkGate.module.scss";
 const BulkGate: FC = () => {
   const [number, setNumber] = useState("");
   const [message, setMessage] = useState("");
+  let count = 1;
 
   const { mutate, isLoading, isError, error } = useBulkGate();
 
@@ -33,9 +34,10 @@ const BulkGate: FC = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       const themDates = await getAppointmentsForTomorrow();
-      console.log("them dates mane: ", themDates);
       const themNumbers = await getPhoneNumbersById(themDates);
-      console.log("them numbers mane: ", themNumbers);
+      // console.log("them numbers mane: ", themNumbers);
+      console.log(count);
+      count = count + 1;
     };
 
     fetchAppointments();
