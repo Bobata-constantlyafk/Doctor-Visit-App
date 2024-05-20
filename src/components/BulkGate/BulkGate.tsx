@@ -11,20 +11,29 @@ import styles from "./BulkGate.module.scss";
 const BulkGate: FC = () => {
   const [number, setNumber] = useState("");
   const [message, setMessage] = useState("");
+  const [formattedNumbers, setFormattedNumbers] = useState<string[]>([]);
 
   const { mutate, isLoading, isError, error } = useBulkGate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await mutate({
-        application_id: "32502",
-        application_token: "yBCg91fjSoPhUai76v5Kb2BnIWwTlTQeG66qdURgrRzkS1bmGw",
-        number: "00359878940259",
-        text: message,
-        sender_id: "gText",
-        sender_id_value: "Dr Pravchev",
-      });
+      console.log("BulkGate, in the handleSubmit");
+      if (formattedNumbers.length === 0) {
+        console.warn("No numbers to send messages to.");
+        return;
+      }
+      for (const number of formattedNumbers) {
+        await mutate({
+          application_id: "32502",
+          application_token:
+            "yBCg91fjSoPhUai76v5Kb2BnIWwTlTQeG66qdURgrRzkS1bmGw",
+          number: number,
+          text: "Testing messages",
+          sender_id: "gText",
+          sender_id_value: "Dr Pravchev",
+        });
+      }
       console.log("Message sent successfully");
     } catch (error) {
       console.error("Failed to send message", error as Error);
@@ -35,11 +44,12 @@ const BulkGate: FC = () => {
     const fetchAppointments = async () => {
       const tomorrowAppointments = await getAppointmentsForTomorrow();
       const numbersToBeTexted = await getPhoneNumbersById(tomorrowAppointments);
-      const formattedNumbers = await formatAsInternationalNumber(
+      const getFormattedNumbers = await formatAsInternationalNumber(
         numbersToBeTexted
       );
-      console.log("them numbers mane: ", numbersToBeTexted);
-      console.log(formattedNumbers);
+      setFormattedNumbers(getFormattedNumbers);
+      console.log("get numbers to be texted: ", getFormattedNumbers);
+      console.log("numbers to be texted: ", formattedNumbers);
     };
 
     fetchAppointments();
