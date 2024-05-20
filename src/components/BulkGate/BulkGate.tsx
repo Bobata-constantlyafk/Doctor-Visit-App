@@ -15,7 +15,7 @@ const BulkGate: FC = () => {
 
   const { mutate, isLoading, isError, error } = useBulkGate();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       console.log("BulkGate, in the handleSubmit");
@@ -24,7 +24,7 @@ const BulkGate: FC = () => {
         return;
       }
       for (const number of formattedNumbers) {
-        await mutate({
+        mutate({
           application_id: "32502",
           application_token:
             "yBCg91fjSoPhUai76v5Kb2BnIWwTlTQeG66qdURgrRzkS1bmGw",
@@ -42,17 +42,18 @@ const BulkGate: FC = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const tomorrowAppointments = await getAppointmentsForTomorrow();
-      const numbersToBeTexted = await getPhoneNumbersById(tomorrowAppointments);
-      const getFormattedNumbers = await formatAsInternationalNumber(
-        numbersToBeTexted
+      const tomorrowAppointments: BigInteger[] =
+        await getAppointmentsForTomorrow();
+      const numbersToBeTexted: string[] = await getPhoneNumbersById(
+        tomorrowAppointments
       );
+      const getFormattedNumbers: string[] =
+        formatAsInternationalNumber(numbersToBeTexted);
       setFormattedNumbers(getFormattedNumbers);
       console.log("get numbers to be texted: ", getFormattedNumbers);
-      console.log("numbers to be texted: ", formattedNumbers);
     };
 
-    fetchAppointments();
+    void fetchAppointments();
   }, []);
 
   return (

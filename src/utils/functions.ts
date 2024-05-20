@@ -526,7 +526,7 @@ export async function checkPatientAppointments(
   }
 }
 
-export async function getAppointments() {
+export async function getAppointments(): Promise<Appointment[]> {
   try {
     const { data, error } = await supabase.from("Appointments").select("*");
 
@@ -535,14 +535,14 @@ export async function getAppointments() {
       return [];
     }
 
-    return data;
+    return data as Appointment[];
   } catch (error) {
     console.error("Error fetching appointments:", error);
     return [];
   }
 }
 
-export async function getAppointmentsForTomorrow() {
+export async function getAppointmentsForTomorrow(): Promise<BigInteger[]> {
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -559,8 +559,14 @@ export async function getAppointmentsForTomorrow() {
       return [];
     }
 
-    const patientIds = data.map((appointment) => appointment.patient_id);
-    const patientIdsNoDuplicates = [...new Set(patientIds)];
+    if (!data) {
+      return [];
+    }
+
+    const patientIds: BigInteger[] = data.map(
+      (appointment) => appointment.patient_id as BigInteger
+    );
+    const patientIdsNoDuplicates: BigInteger[] = [...new Set(patientIds)];
     return patientIdsNoDuplicates;
   } catch (error) {
     console.error("Error fetching appointments:", error);
@@ -568,7 +574,9 @@ export async function getAppointmentsForTomorrow() {
   }
 }
 
-export async function getPhoneNumbersById(patientIds: Array<BigInteger>) {
+export async function getPhoneNumbersById(
+  patientIds: Array<BigInteger>
+): Promise<string[]> {
   try {
     const { data, error } = await supabase
       .from("Patients")
@@ -580,7 +588,9 @@ export async function getPhoneNumbersById(patientIds: Array<BigInteger>) {
       return [];
     }
 
-    const phoneNumbers = data.map((patient) => patient.phone_nr);
+    const phoneNumbers: string[] = data.map(
+      (patient) => patient.phone_nr as string
+    );
     return phoneNumbers;
   } catch (error) {
     console.error("Error fetching phone numbers:", error);
@@ -588,9 +598,7 @@ export async function getPhoneNumbersById(patientIds: Array<BigInteger>) {
   }
 }
 
-export async function formatAsInternationalNumber(
-  numbers: string[]
-): Promise<string[]> {
+export function formatAsInternationalNumber(numbers: string[]) {
   return numbers.map((number) => {
     if (number.startsWith("08")) {
       return "00359" + number.substring(1);
