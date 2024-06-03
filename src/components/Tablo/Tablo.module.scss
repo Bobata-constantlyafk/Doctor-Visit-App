@@ -37,13 +37,14 @@
       border-radius: 5px;
       background-color: #a4a2a2;
       cursor: pointer;
-      height: 40%;
-      width: 30%;
+      height: 3em;
+      width: 6em;
       @media only screen and (max-width: 900px) {
-        height: 20%;
-        width: 60%;
+        height: 2.5em;
+        width: 5em;
         align-self: center;
         margin-top: -15vw;
+        
       }
       font-size: 0.9rem;
       justify-self: center;
