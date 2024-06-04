@@ -1,16 +1,10 @@
 import React from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-const notify = () => toast("Bomboclaat!");
+import BulkGate from "~/components/BulkGate";
 
 export default function SupaBase() {
   return (
     <>
-      <button
-        style={{ width: "50px", height: "50px", backgroundColor: "yellow" }}
-        onClick={notify}></button>
-      <ToastContainer />
+      <BulkGate />
     </>
   );
 }

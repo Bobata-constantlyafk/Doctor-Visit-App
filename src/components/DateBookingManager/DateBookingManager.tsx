@@ -5,7 +5,7 @@ import styles from "./DateBookingManager.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
 import { useGlobalContext } from "~/utils/store";
 import { useRouter } from "next/router";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer,toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   createAppointmentFunc,

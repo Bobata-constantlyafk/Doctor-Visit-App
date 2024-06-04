@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { Appointment, Patient } from "./interfaces";
 import { Dispatch, SetStateAction } from "react";
 import { useState, useEffect } from "react";
+import { any } from "zod";
+import internal from "stream";
 
 interface HoursManagementData {
   openingHours: number;
@@ -477,18 +479,21 @@ export function handleLogoClick() {
   return window.location.reload();
 }
 
-export function handleMenuClick(setIsSidebarOpen: Dispatch<SetStateAction<boolean>>) {
-  setIsSidebarOpen(prevState => !prevState);
-};
+export function handleMenuClick(
+  setIsSidebarOpen: Dispatch<SetStateAction<boolean>>
+) {
+  setIsSidebarOpen((prevState) => !prevState);
+}
 
 export function getSidebarStyle(isSidebarOpen: boolean) {
   return {
-    display: isSidebarOpen ? 'block' : 'none',
+    display: isSidebarOpen ? "block" : "none",
   };
-};
+}
 
-
-export async function fetchUser(setUser: Dispatch<SetStateAction<User | null>>):Promise<void> {
+export async function fetchUser(
+  setUser: Dispatch<SetStateAction<User | null>>
+): Promise<void> {
   const {
     data: { user },
     error,
@@ -499,15 +504,109 @@ export async function fetchUser(setUser: Dispatch<SetStateAction<User | null>>):
   } else {
     setUser(user);
   }
-};
+}
 
-export async function checkPatientAppointments(phoneNumberInput: string,setSecAppointmentActive: React.Dispatch<React.SetStateAction<boolean>>) {
-  const patientId: PostgrestSingleResponse<BigInteger> = await supabase.rpc("check_if_customer_is_present_in_db", {phone_number_input: phoneNumberInput});
-  const lastMonthDataNum = await supabase.rpc("get_primary_appointments_count_for_the_last_30_days", {patient_id_input: patientId.data});
+export async function checkPatientAppointments(
+  phoneNumberInput: string,
+  setSecAppointmentActive: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  const patientId: PostgrestSingleResponse<BigInteger> = await supabase.rpc(
+    "check_if_customer_is_present_in_db",
+    { phone_number_input: phoneNumberInput }
+  );
+  const lastMonthDataNum = await supabase.rpc(
+    "get_primary_appointments_count_for_the_last_30_days",
+    { patient_id_input: patientId.data }
+  );
 
-  if(lastMonthDataNum.data > 0){
-    setSecAppointmentActive(true)
+  if (lastMonthDataNum.data > 0) {
+    setSecAppointmentActive(true);
   } else {
-    setSecAppointmentActive(false)
+    setSecAppointmentActive(false);
   }
+}
+
+export async function getAppointments(): Promise<Appointment[]> {
+  try {
+    const { data, error } = await supabase.from("Appointments").select("*");
+
+    if (error) {
+      console.error("Error fetching appointments:", error.message);
+      return [];
+    }
+
+    return data as Appointment[];
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return [];
+  }
+}
+
+export async function getAppointmentsForTomorrow(): Promise<BigInteger[]> {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  try {
+    const { data, error } = await supabase
+      .from("Appointments")
+      .select("patient_id")
+      .gte("date", tomorrow.toISOString());
+
+    if (error) {
+      console.error("Error fetching appointments:", error.message);
+      return [];
+    }
+
+    if (!data) {
+      return [];
+    }
+
+    const patientIds: BigInteger[] = data.map(
+      (appointment) => appointment.patient_id as BigInteger
+    );
+    const patientIdsNoDuplicates: BigInteger[] = [...new Set(patientIds)];
+    return patientIdsNoDuplicates;
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return [];
+  }
+}
+
+export async function getPhoneNumbersById(
+  patientIds: Array<BigInteger>
+): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from("Patients")
+      .select("phone_nr")
+      .in("id", patientIds);
+
+    if (error) {
+      console.error("Error fetching phone numbers:", error.message);
+      return [];
+    }
+
+    const phoneNumbers: string[] = data.map(
+      (patient) => patient.phone_nr as string
+    );
+    return phoneNumbers;
+  } catch (error) {
+    console.error("Error fetching phone numbers:", error);
+    return [];
+  }
+}
+
+export function formatAsInternationalNumber(numbers: string[]) {
+  return numbers.map((number) => {
+    if (number.startsWith("08")) {
+      return "00359" + number.substring(1);
+    } else if (number.startsWith("+")) {
+      return "00" + number.substring(1);
+    } else {
+      console.log("Invalid phone number format for number:", number);
+      return "Invalid phone number, please format with '+' (example: +31620101010) | Невалиден телефонен номер, моля форматирайте с '+' (пример: +359899100200)";
+    }
+  });
 }
