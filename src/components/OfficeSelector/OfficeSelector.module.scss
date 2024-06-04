@@ -1,43 +1,58 @@
-.officeSelectorMain{
+.officeMain{
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 0.15fr 0.1fr;
-    height: 100vh;
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
+    grid-template-columns: 1fr 0px 1fr;
+    height: 90vh;
 
-.officeSelectorTitle{
-    // grid-area: 1/1/2/3;
-    padding-top: 2rem;
-    grid-column: 1 / span 3;
-    text-align: center;
-}
-.officeSelectorButton1{
-    // grid-area: 2/1/3/2;
-    grid-column-start: -3;
-    width: 25rem;
-    justify-self: end;
-    margin-right: 5rem;
-    width: 15rem;
-    border-radius: 10px;
-}
-.officeSelectorButton2{
-    // grid-area: 2/2/3/3;
-    grid-column-start: -2;
-    width: 25rem;
-    justify-self: start;
-    margin-left: 5rem;
-    width: 15rem;
-    border-radius: 10px;
-}
-.buttonTextMain{
-    font-size: 1.5rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
-.buttonTextSec{
-    margin-top: 0;
-    margin-bottom: 2rem;
-    font-style: italic;
-}
+    grid-column-gap: 5vw;
+    justify-content: center;
+
+    .vl {
+        border-left: 3px solid rgba(0, 136, 169, 1);
+        height: 40vw;
+        align-self: center;
+      }
+
+    .officeTitle{
+        justify-self: end;
+        align-self: center;
+        text-align: center;
+        font-size: 3.5vw;
+        font-weight: 500;
+    }
+
+    .officeRight {
+        display: grid;
+        justify-self: start;
+        align-self: center;
+    
+        .officeRow{
+            display: grid;
+            justify-content: center;
+            margin-bottom: 1vw;
+
+    
+            .officeRowTitle{
+                display: grid;
+                grid-template-columns: 10rem 10rem;
+                justify-items: start;
+                align-items: end;
+                font-style: italic;
+
+                h1{
+                    font-weight: 100;
+                    margin-bottom: 0.5vw;
+                    margin-top: 0.5vw;
+                }
+            }
+    
+            img{
+                width: 25vw;
+                height: 15vw;
+                cursor: pointer;
+                margin-top: 0vw;
+            }
+        }
+    }
+    
+   
 }
