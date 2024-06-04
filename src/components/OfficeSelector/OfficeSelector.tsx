@@ -5,7 +5,7 @@ import DateBookingManager from "~/components/DateBookingManager";
 import InfoForm from "~/components/InfoForm";
 import styles from "./OfficeSelector.module.scss";
 
-const officeSelector: React.FC = () => {
+const OfficeSelector: React.FC = () => {
   const {
     calendarState,
     setCalendarState,
@@ -89,4 +89,4 @@ const officeSelector: React.FC = () => {
   );
 };
 
-export default officeSelector;
+export default OfficeSelector;
