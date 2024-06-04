@@ -1,7 +1,1 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/tablo": "pages/tablo.js"
-}
+{"/_app":"pages/_app.js","/api/trpc/[trpc]":"pages/api/trpc/[trpc].js","/_error":"pages/_error.js","/_document":"pages/_document.js","/en/404":"pages/en/404.html","/en/500":"pages/en/500.html","/en/vhod":"pages/en/vhod.html","/en/propusnati":"pages/en/propusnati.html","/en/izhod":"pages/en/izhod.html","/en/test":"pages/en/test.html","/en/success":"pages/en/success.html","/en/chasove":"pages/en/chasove.html","/en/log":"pages/en/log.html","/en":"pages/en.html","/en/tablo":"pages/en/tablo.html"}
