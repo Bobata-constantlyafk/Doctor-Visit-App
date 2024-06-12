@@ -6,11 +6,11 @@
     grid-column-gap: 5vw;
     justify-content: center;
 
-    .vl {
-        border-left: 3px solid rgba(0, 136, 169, 1);
-        height: 40vw;
-        align-self: center;
-      }
+    @media only screen and (max-width: 900px) {
+        grid-template-columns: auto;
+        grid-template-rows: 35vw 35vw 35vw;
+        height: 100vh;
+    }
 
     .officeTitle{
         justify-self: end;
@@ -18,25 +18,56 @@
         text-align: center;
         font-size: 3.5vw;
         font-weight: 500;
+
+        @media screen and (max-width: 900px) {
+            justify-self: center;
+            font-size: 10vw;
+            font-weight: 350;
+        }
     }
+
+    .vl {
+        border-left: 3px solid rgba(0, 136, 169, 1);
+        height: 40vw;
+        align-self: center;
+
+        @media screen and (max-width: 900px) {
+            border-top: 3px solid rgba(0, 136, 169, 1);
+            border-left: none;;
+            height: 10vw;
+            margin-bottom: 20vw;
+        }
+      }
 
     .officeRight {
         display: grid;
         justify-self: start;
         align-self: center;
+
+        @media screen and (max-width: 900px) {
+            margin-top: 40vw;
+        }
     
         .officeRow{
             display: grid;
             justify-content: center;
             margin-bottom: 1vw;
 
-    
+            @media screen and (max-width: 900px) {
+                margin-top: 15vw;
+            }
+
             .officeRowTitle{
                 display: grid;
                 grid-template-columns: 10rem 10rem;
                 justify-items: start;
                 align-items: end;
                 font-style: italic;
+
+                @media screen and (max-width: 900px) {
+                    padding-bottom: 1vw;
+                    align-items: start;
+                }
 
                 h1{
                     font-weight: 100;
@@ -50,6 +81,11 @@
                 height: 15vw;
                 cursor: pointer;
                 margin-top: 0vw;
+
+                @media screen and (max-width: 900px) {
+                    width: 75vw;
+                    height: 45vw; 
+                }
             }
         }
     }

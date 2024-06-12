@@ -43,7 +43,7 @@ const OfficeSelector: React.FC = () => {
             <div className={styles.officeRow}>
               <div className={styles.officeRowTitle}>
                 <h1>Варна</h1>
-                <p>Пон-Четв</p>
+                <p>Пон. - Четв.</p>
               </div>
 
               <img
