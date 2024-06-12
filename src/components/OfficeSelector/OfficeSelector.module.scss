@@ -9,7 +9,7 @@
     @media only screen and (max-width: 900px) {
         grid-template-columns: auto;
         grid-template-rows: 35vw 35vw 35vw;
-        height: 120vh;
+        height: 180vh;
     }
 
     .officeTitle{
@@ -23,19 +23,20 @@
             justify-self: center;
             font-size: 10vw;
             font-weight: 350;
+            margin-top: 50vw;
         }
     }
 
     .vl {
         border-left: 3px solid rgba(0, 136, 169, 1);
-        height: 40vw;
+        height: 0vw;
         align-self: center;
 
         @media screen and (max-width: 900px) {
             border-top: 3px solid rgba(0, 136, 169, 1);
             border-left: none;;
             height: 0vw;
-            margin-bottom: 20vw;
+            margin-top: 40vw;
         }
       }
 
@@ -45,7 +46,7 @@
         align-self: center;
 
         @media screen and (max-width: 900px) {
-            margin-top: 90vw;
+            margin-top: 160vw;
         }
     
         .officeRow{
@@ -56,6 +57,7 @@
             @media screen and (max-width: 900px) {
                 margin-top: 15vw;
                 justify-items: center;
+                margin-top: 20vw;
             }
 
             .officeRowTitle{
