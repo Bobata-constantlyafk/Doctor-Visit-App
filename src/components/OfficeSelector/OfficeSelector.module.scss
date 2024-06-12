@@ -9,7 +9,7 @@
     @media only screen and (max-width: 900px) {
         grid-template-columns: auto;
         grid-template-rows: 35vw 35vw 35vw;
-        height: 100vh;
+        height: 120vh;
     }
 
     .officeTitle{
@@ -34,7 +34,7 @@
         @media screen and (max-width: 900px) {
             border-top: 3px solid rgba(0, 136, 169, 1);
             border-left: none;;
-            height: 10vw;
+            height: 0vw;
             margin-bottom: 20vw;
         }
       }
@@ -45,7 +45,7 @@
         align-self: center;
 
         @media screen and (max-width: 900px) {
-            margin-top: 40vw;
+            margin-top: 90vw;
         }
     
         .officeRow{
@@ -55,6 +55,7 @@
 
             @media screen and (max-width: 900px) {
                 margin-top: 15vw;
+                justify-items: center;
             }
 
             .officeRowTitle{
@@ -65,14 +66,19 @@
                 font-style: italic;
 
                 @media screen and (max-width: 900px) {
-                    padding-bottom: 1vw;
+                    grid-template-columns: auto;
                     align-items: start;
+                    justify-items: center;
                 }
 
                 h1{
                     font-weight: 100;
                     margin-bottom: 0.5vw;
                     margin-top: 0.5vw;
+
+                    @media screen and (max-width: 900px) {
+                        margin-bottom: -5vw;
+                    }
                 }
             }
     
@@ -83,8 +89,8 @@
                 margin-top: 0vw;
 
                 @media screen and (max-width: 900px) {
-                    width: 75vw;
-                    height: 45vw; 
+                    width: 90vw;
+                    height: 55vw; 
                 }
             }
         }
