@@ -40,6 +40,30 @@ const BulkGate: FC = () => {
     }
   };
 
+  const sendMessage = (): void => {
+    try {
+      console.log("BulkGate, in the sendMessage");
+      if (formattedNumbers.length === 0) {
+        console.warn("No numbers to send messages to.");
+        return;
+      }
+      for (const number of formattedNumbers) {
+        mutate({
+          application_id: "32502",
+          application_token:
+            "yBCg91fjSoPhUai76v5Kb2BnIWwTlTQeG66qdURgrRzkS1bmGw",
+          number: number,
+          text: "Zdraveite, utre imate zapazen chas pri D-r Pravchev",
+          sender_id: "gText",
+          sender_id_value: "Dr Pravchev",
+        });
+      }
+      console.log("Message sent successfully");
+    } catch (error) {
+      console.error("Failed to send message", error as Error);
+    }
+  };
+
   useEffect(() => {
     const fetchAppointments = async () => {
       const tomorrowAppointments: BigInteger[] =
@@ -54,6 +78,7 @@ const BulkGate: FC = () => {
     };
 
     void fetchAppointments();
+    void sendMessage();
   }, []);
 
   return (
