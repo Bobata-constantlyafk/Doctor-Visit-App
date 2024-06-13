@@ -1,5 +1,4 @@
-import React, { FC, FormEvent, useEffect } from "react";
-import { useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import useBulkGate from "../../../bulkGate";
 import {
   getAppointmentsForTomorrow,
@@ -15,39 +14,36 @@ const BulkGate: FC = () => {
 
   const { mutate, isLoading, isError, error } = useBulkGate();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      console.log("BulkGate, in the handleSubmit");
-      if (formattedNumbers.length === 0) {
-        console.warn("No numbers to send messages to.");
-        return;
-      }
-      for (const number of formattedNumbers) {
-        mutate({
-          application_id: "32502",
-          application_token:
-            "yBCg91fjSoPhUai76v5Kb2BnIWwTlTQeG66qdURgrRzkS1bmGw",
-          number: number,
-          text: "Testing messages",
-          sender_id: "gText",
-          sender_id_value: "Dr Pravchev",
-        });
-      }
-      console.log("Message sent successfully");
-    } catch (error) {
-      console.error("Failed to send message", error as Error);
-    }
-  };
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const tomorrowAppointments: BigInteger[] =
+          await getAppointmentsForTomorrow();
+        const numbersToBeTexted: string[] = await getPhoneNumbersById(
+          tomorrowAppointments
+        );
+        const getFormattedNumbers: string[] =
+          formatAsInternationalNumber(numbersToBeTexted);
+        setFormattedNumbers(getFormattedNumbers);
 
-  const sendMessage = (): void => {
+        console.log("get numbers to be texted: ", getFormattedNumbers);
+        sendMessage(getFormattedNumbers);
+      } catch (error) {
+        console.error("Failed to fetch appointments or format numbers", error);
+      }
+    };
+
+    void fetchAppointments();
+  }, []);
+
+  function sendMessage(numbers: string[]) {
     try {
       console.log("BulkGate, in the sendMessage");
-      if (formattedNumbers.length === 0) {
+      if (numbers.length === 0) {
         console.warn("No numbers to send messages to.");
         return;
       }
-      for (const number of formattedNumbers) {
+      for (const number of numbers) {
         mutate({
           application_id: "32502",
           application_token:
@@ -62,41 +58,11 @@ const BulkGate: FC = () => {
     } catch (error) {
       console.error("Failed to send message", error as Error);
     }
-  };
-
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      const tomorrowAppointments: BigInteger[] =
-        await getAppointmentsForTomorrow();
-      const numbersToBeTexted: string[] = await getPhoneNumbersById(
-        tomorrowAppointments
-      );
-      const getFormattedNumbers: string[] =
-        formatAsInternationalNumber(numbersToBeTexted);
-      setFormattedNumbers(getFormattedNumbers);
-      console.log("get numbers to be texted: ", getFormattedNumbers);
-    };
-
-    void fetchAppointments();
-    void sendMessage();
-  }, []);
+  }
 
   return (
     <>
       <p>Bababoe</p>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-        />
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button type="submit">Test</button>
-      </form>
     </>
   );
 };

@@ -545,14 +545,17 @@ export async function getAppointments(): Promise<Appointment[]> {
 export async function getAppointmentsForTomorrow(): Promise<BigInteger[]> {
   const today = new Date();
   const tomorrow = new Date(today);
+  const nextday = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(0, 0, 0, 0);
+  nextday.setDate(tomorrow.getDate() + 2);
 
   try {
     const { data, error } = await supabase
       .from("Appointments")
       .select("patient_id")
-      .gte("date", tomorrow.toISOString());
+      .gte("date", tomorrow.toISOString())
+      .lte("date", nextday.toISOString());
 
     if (error) {
       console.error("Error fetching appointments:", error.message);
