@@ -27,7 +27,7 @@ const BulkGate: FC = () => {
         setFormattedNumbers(getFormattedNumbers);
 
         console.log("get numbers to be texted: ", getFormattedNumbers);
-        sendMessage(getFormattedNumbers);
+        // sendMessage(getFormattedNumbers);
       } catch (error) {
         console.error("Failed to fetch appointments or format numbers", error);
       }
