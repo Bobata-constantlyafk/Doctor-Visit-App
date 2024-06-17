@@ -1,13 +1,10 @@
-// pages/api/send-message.ts (or send-message.js if using JavaScript)
 import { NextApiRequest, NextApiResponse } from "next";
 import {
   getAppointmentsForTomorrow,
   getPhoneNumbersById,
   formatAsInternationalNumber,
 } from "~/utils/functions";
-// import useBulkGate from "../../../bulkGate";
 import { sendMessagez } from "bulkGate";
-import { log } from "console";
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,8 +24,6 @@ export default async function handler(
 
       console.log("get numbers to be texted: ", getFormattedNumbers);
       await sendMessage(getFormattedNumbers);
-      console.log("yeehaw");
-      log("yeehaw");
     } catch (error) {
       console.error("Failed to fetch appointments or numbers", error);
       res

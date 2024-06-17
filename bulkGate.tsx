@@ -1,4 +1,3 @@
-// bulkGate.js (or bulkGate.ts if using TypeScript)
 interface MessageData {
   application_id: string;
   application_token: string;
