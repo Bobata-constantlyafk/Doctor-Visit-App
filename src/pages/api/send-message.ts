@@ -44,8 +44,7 @@ export default async function handler(
       for (const number of numbers) {
         await sendMessagez({
           application_id: "32502",
-          application_token:
-            "yBCg91fjSoPhUai76v5Kb2BnIWwTlTQeG66qdURgrRzkS1bmGw",
+          application_token: String(process.env.NEXT_PUBLIC_BULK_GATE_KEY),
           number: number,
           text: "Zdraveite, utre imate zapazen chas pri D-r Pravchev",
           sender_id: "gText",
