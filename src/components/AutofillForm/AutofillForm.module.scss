@@ -1,0 +1,81 @@
+.infoMain{
+    width: 100%;
+    height: 90vh;
+    background-color: rgb(249, 255, 255);
+    @media only screen and (max-width: 900px) {
+      padding-inline: 10vw;
+      height: 80vh;
+    }
+}
+
+.infoContainer{
+  & > * {
+    margin-top: 1.5vw;
+    @media only screen and (max-width: 900px) {
+      margin-top: 3vw;
+    }
+  }
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+
+    h1{
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 350;
+    }
+
+    label{
+        font-size: 1.5rem;
+        color: rgb(123, 123, 123);
+    }
+
+    input{
+        font-size: 0.9rem;
+        width: 100%;
+        border: none;
+        border-bottom: 2.5px solid black;
+        background-color: transparent;
+        outline: none;
+    }
+
+    input::placeholder {
+      color: #18a65c;
+    }
+    
+    select {
+        width: 100%;
+        margin-top: 5px;
+        padding: 0.7em;
+        background-color: #9bd2ff;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: border-color 0.3s, background-color 0.3s;
+      }
+
+      option[value=""] {
+        color: gray; 
+      }
+
+      button{
+        margin-top: 4vw;
+        @media only screen and (max-width: 900px) {
+          margin-top: 15vw;
+          font-size: 15px;
+        }
+        margin-bottom: 2vh;
+        padding: 1rem;
+        border: none;
+        border-radius: 5px;
+        color:#fff;
+        background-color: #3fcf8e;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      
+      button[disabled] {
+        background-color: gray;
+        cursor: not-allowed;
+      }
+}

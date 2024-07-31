@@ -1,14 +1,11 @@
-import React, { FC } from "react";
+import React from "react";
+import Tablo from "~/components/Tablo/Tablo";
+import AutofillForm from "~/components/AutofillForm";
 
-const TestingPage: FC = () => {
-  console.log("Bababooey: ");
+export default function SupaBase() {
   return (
     <>
-      <p>
-        This is a testing page <br /> Wuddaya doin here, buddy?!?
-      </p>
+      <AutofillForm closeModal={() => console.log()} />
     </>
   );
-};
-
-export default TestingPage;
+}

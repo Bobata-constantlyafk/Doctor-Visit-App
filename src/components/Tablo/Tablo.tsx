@@ -23,7 +23,6 @@ import {
 
 const Tablo: FC = ({}) => {
   const [date, setDate] = useState<Date | null>(null);
-
   const [appointments, setAppointments] = useState<AppointmentForTablo[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState<boolean[]>(

@@ -175,7 +175,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
           <option value="" disabled>
             Моля, изберете подходящият преглед
           </option>
-          <option value="Purvichen">Първичен преглед</option>
+          <option value="Purvichen">Първичен преглед 1</option>
           <option value="Vtorichen">Вторичен преглед</option>
         </select>
       </div>
