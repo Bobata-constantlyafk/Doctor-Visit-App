@@ -5,7 +5,7 @@ const TestingPage: FC = () => {
   return (
     <>
       <p>
-        This is a testing page <br /> Wuddaya doin here?!?
+        This is a testing page <br /> Wuddaya doin here, buddy?!?
       </p>
     </>
   );
