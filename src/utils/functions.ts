@@ -4,9 +4,6 @@ import { add, format } from "date-fns";
 import { toast } from "react-toastify";
 import { Appointment, Patient } from "./interfaces";
 import { Dispatch, SetStateAction } from "react";
-import { useState, useEffect } from "react";
-import { any } from "zod";
-import internal from "stream";
 
 interface HoursManagementData {
   openingHours: number;
@@ -340,7 +337,6 @@ export async function setAppointmentAsMissed(
 }
 
 // Update the database to delete the specified appointment
-
 export async function deleteAppointment(
   index: number,
   appointments: Appointment[]
@@ -370,6 +366,7 @@ export async function deleteAppointment(
   }
 }
 
+// Update the database to delete the specified appointment
 export async function deleteVtorichenAppointment(
   index: number,
   appointments: Appointment[]
@@ -399,6 +396,7 @@ export async function deleteVtorichenAppointment(
   }
 }
 
+// Update the database to delete the PAIR of specified appointments
 export async function deletePurvichenAppointment(
   index: number,
   appointments: Appointment[]
@@ -506,6 +504,7 @@ export async function fetchUser(
   }
 }
 
+// Check if the patient has any appointments in the last 30 days
 export async function checkPatientAppointments(
   phoneNumberInput: string,
   setSecAppointmentActive: React.Dispatch<React.SetStateAction<boolean>>
@@ -526,6 +525,7 @@ export async function checkPatientAppointments(
   }
 }
 
+// Get all appointments
 export async function getAppointments(): Promise<Appointment[]> {
   try {
     const { data, error } = await supabase.from("Appointments").select("*");
@@ -542,6 +542,7 @@ export async function getAppointments(): Promise<Appointment[]> {
   }
 }
 
+// Get all appointments for tomorrow (date after today)
 export async function getAppointmentsForTomorrow(): Promise<BigInteger[]> {
   const today = new Date();
   const tomorrow = new Date(today);
@@ -577,6 +578,7 @@ export async function getAppointmentsForTomorrow(): Promise<BigInteger[]> {
   }
 }
 
+// Get phone numbers by patient IDs
 export async function getPhoneNumbersById(
   patientIds: Array<BigInteger>
 ): Promise<string[]> {
@@ -601,6 +603,7 @@ export async function getPhoneNumbersById(
   }
 }
 
+// Format phone numbers. Replaces +359 with 00359 and 08 with 003598
 export function formatAsInternationalNumber(numbers: string[]) {
   return numbers.map((number) => {
     if (number.startsWith("08")) {
@@ -612,4 +615,37 @@ export function formatAsInternationalNumber(numbers: string[]) {
       return "Invalid phone number, please format with '+' (example: +31620101010) | Невалиден телефонен номер, моля форматирайте с '+' (пример: +359899100200)";
     }
   });
+}
+
+// Get all atient info by EGN
+export async function getPatientInfoByEgn(
+  egn: string
+): Promise<Patient | null> {
+  try {
+    const { data, error } = await supabase
+      .from("Patients")
+      .select("id, name, lastName, phone_nr, missed, missed_date")
+      .eq("egn", egn);
+
+    if (error) {
+      console.error("Error fetching patient info:", error.message);
+      return null;
+    }
+
+    if (!data[0] || data.length === 0) {
+      return null;
+    }
+
+    const patient: Patient = {
+      id: data[0].id,
+      name: data[0].name,
+      phone_nr: data[0].phone_nr,
+    };
+
+    console.log("Patient info:", patient);
+    return patient;
+  } catch (error) {
+    console.error("Error fetching patient info:", error);
+    return null;
+  }
 }

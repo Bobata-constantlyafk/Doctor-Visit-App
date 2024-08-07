@@ -27,5 +27,5 @@ export interface Patient {
   name: string;
   phone_nr: string;
   missed?: boolean;
-  missed_date: Date;
+  missed_date?: Date;
 }

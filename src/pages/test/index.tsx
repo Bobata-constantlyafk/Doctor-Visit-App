@@ -5,7 +5,7 @@ import AutofillForm from "~/components/AutofillForm";
 export default function SupaBase() {
   return (
     <>
-      <AutofillForm closeModal={() => console.log()} />
+      <AutofillForm />
     </>
   );
 }

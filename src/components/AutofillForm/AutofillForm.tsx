@@ -1,16 +1,10 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
-import styles from "./AutofillForm.module.scss";
+import styles from "../InfoFormModal/InfoFormModal.module.scss";
+import { getPatientInfoByEgn } from "~/utils/functions";
+import { Patient } from "~/utils/interfaces";
 
-interface AutofillFormProps {
-  closeModal: () => void;
-}
-
-const AutofillForm: React.FC<AutofillFormProps> = ({ closeModal }) => {
+const AutofillForm: React.FC = ({}) => {
   const [egn, setEgn] = useState("");
-
-  useEffect(() => {
-    console.log("log: useEffect");
-  }, []);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -19,9 +13,10 @@ const AutofillForm: React.FC<AutofillFormProps> = ({ closeModal }) => {
     setter(e.target.value);
   };
 
-  const onFormSubmit = async (): Promise<void> => {
-    closeModal();
-    console.log("yep that button workin");
+  const onFormSubmit = async (): Promise<Patient | null> => {
+    const patientInfo = await getPatientInfoByEgn(egn);
+    return patientInfo;
+    // Need to figure out a way how once this is submitted it will trigger the next form to save the data
   };
 
   return (
