@@ -25,6 +25,7 @@ export interface AppointmentForTablo {
 export interface Patient {
   id: number;
   name: string;
+  lastName?: string;
   phone_nr: string;
   missed?: boolean;
   missed_date?: Date;

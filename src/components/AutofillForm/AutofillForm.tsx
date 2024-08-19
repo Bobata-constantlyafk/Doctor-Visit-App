@@ -15,6 +15,7 @@ const AutofillForm: React.FC = ({}) => {
 
   const onFormSubmit = async (): Promise<Patient | null> => {
     const patientInfo = await getPatientInfoByEgn(egn);
+    console.log("patient info: " + patientInfo);
     return patientInfo;
     // Need to figure out a way how once this is submitted it will trigger the next form to save the data
   };
@@ -23,11 +24,11 @@ const AutofillForm: React.FC = ({}) => {
     <div className={styles.infoContainer}>
       <h1>Въведете ЕГН</h1>
       <div>
-        <label htmlFor="phoneNumber">Тел номер:</label>
+        <label htmlFor="e=EGN">ЕГН:</label>
         <input
           type="tel"
           placeholder="Моля, въведете телефонен номер "
-          id="phoneNumber"
+          id="EGN"
           value={egn}
           pattern="[0-9]*"
           inputMode="tel"
