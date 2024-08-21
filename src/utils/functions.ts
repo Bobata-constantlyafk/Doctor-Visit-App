@@ -642,8 +642,6 @@ export async function getPatientInfoByEgn(
       lastName: data[0].lastName,
       phone_nr: data[0].phone_nr,
     };
-
-    console.log("Patient info:", patient);
     return patient;
   } catch (error) {
     console.error("Error fetching patient info:", error);

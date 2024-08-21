@@ -3,7 +3,11 @@ import styles from "../InfoFormModal/InfoFormModal.module.scss";
 import { getPatientInfoByEgn } from "~/utils/functions";
 import { Patient } from "~/utils/interfaces";
 
-const AutofillForm: React.FC = ({}) => {
+interface AutofillFormProps {
+  onPatientInfoUpdate: (info: Patient | null) => void;
+}
+
+const AutofillForm: React.FC<AutofillFormProps> = ({ onPatientInfoUpdate }) => {
   const [egn, setEgn] = useState("");
 
   const handleInputChange = (
@@ -13,10 +17,10 @@ const AutofillForm: React.FC = ({}) => {
     setter(e.target.value);
   };
 
-  const onFormSubmit = async (): Promise<Patient | null> => {
+  const onFormSubmit = async (): Promise<void> => {
     const patientInfo = await getPatientInfoByEgn(egn);
-    console.log("patient info: " + patientInfo);
-    return patientInfo;
+    console.log("Patient info Autofill: " + JSON.stringify(patientInfo));
+    onPatientInfoUpdate(patientInfo);
     // Need to figure out a way how once this is submitted it will trigger the next form to save the data
   };
 

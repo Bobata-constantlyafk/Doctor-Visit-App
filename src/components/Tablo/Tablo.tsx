@@ -223,11 +223,12 @@ const Tablo: FC = ({}) => {
                       onClick={() => setIsModalOpen(false)}
                       className={styles.overlay}></div>
                     <div className={styles.modalContent}>
-                      <InfoFormModal
+                      {/* -b- fix dis shit */}
+                      {/* <InfoFormModal
                         appoinmentDateTime={dateForApp}
                         getAllAppointments={() => getAllAppointments()}
                         closeModal={() => closeModal()}
-                      />
+                      /> */}
                     </div>
                   </div>
                 </div>
