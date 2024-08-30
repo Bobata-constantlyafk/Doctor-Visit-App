@@ -1,37 +1,37 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import styles from "./InfoFormModal.module.scss";
-import { Patient } from "~/utils/interfaces";
 import {
   createAppointmentFunc,
   getExistingAppointments,
+  getPatientInfoByEgn,
 } from "~/utils/functions";
-import { json } from "stream/consumers";
-
 interface InfoFormModalProps {
   appoinmentDateTime: Date;
   closeModal: () => void;
   getAllAppointments: () => Promise<void>;
-  patientInfo: Patient | null;
 }
 
 const InfoFormModal: React.FC<InfoFormModalProps> = ({
   appoinmentDateTime,
   closeModal,
   getAllAppointments,
-  patientInfo,
 }) => {
+  const [egn, setEgn] = useState("");
+  const [egnFilled, setEgnFilled] = useState<boolean>(false);
+
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
   const [age_range, setAge_range] = useState<string>("");
   const [typeEye, setTypeEye] = useState<string>("");
+
   const [existingAppointments, setExistingAppointments] = useState<Date[]>([]);
   const addMinutesAhead = 80;
   const addExtraMinutesAhead = addMinutesAhead + 20;
   let timeBetweenNextAppointment = "nuthin";
 
   useEffect(() => {
-    console.log("ot info form modal" + JSON.stringify(patientInfo));
     getExistingAppointments(appoinmentDateTime, typeEye, age_range)
       .then((existingAppointments) => {
         setExistingAppointments(existingAppointments);
@@ -53,6 +53,20 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
     setter: React.Dispatch<React.SetStateAction<string>>
   ) => {
     setter(e.target.value);
+  };
+
+  const onEGNSubmit = async (): Promise<void> => {
+    const patientInfo = await getPatientInfoByEgn(egn);
+    console.log("Patient info Autofill: " + JSON.stringify(patientInfo));
+    setEgnFilled(true);
+
+    if (patientInfo) {
+      setName(patientInfo.name);
+      setLastName(patientInfo.lastName);
+      setPhoneNumber(patientInfo.phone_nr);
+    } else {
+      console.error("Patient info not found for EGN:", egn);
+    }
   };
 
   const onFormSubmit = async (
@@ -77,8 +91,10 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
     await getAllAppointments();
   };
 
-  // Booking a primary appointment will create two appoinments, via the functions.ts file.
-  // One starting at a selected date and time and another ending either 80 or 100 minutes after. 80 is the priority.
+  // Booking a "secondary" appointment will create one appoinment
+  // Booking a "primary" appointment will create two appoinments, via the functions.ts file.
+  // The first appointment will start at a selected date and time
+  // The second appointment will be either 80 or 100 minutes after. Depending on which slot is available, with being 80 the priority.
   // We loop through the array of appointments for the selected date and check if 80 or 100 minutes ahead are available.
   // Then we return a string (for the backend) indicating when to book the ending appointment: "1h20" for 80 minutes, "1h40" for 100 minutes, or a message if neither is available.
   function getTimeBetween() {
@@ -123,75 +139,95 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
 
   return (
     <div className={styles.infoContainer}>
-      <>
-        <h1>Запази час</h1>
-        <div>
-          <label htmlFor="name">Име:</label>
-          <input
-            type="text"
-            placeholder="Моля, въведете име"
-            id="name"
-            value={name}
-            onChange={(e) => handleInputChange(e, setName)}
-          />
-        </div>
-        <div>
-          <label htmlFor="name">Фамилия:</label>
-          <input
-            type="text"
-            placeholder="Моля, въведете фамилия"
-            id="lastName"
-            value={lastName}
-            onChange={(e) => handleInputChange(e, setLastName)}
-          />
-        </div>
-        <div>
-          <label htmlFor="phoneNumber">Тел номер:</label>
-          <input
-            type="tel"
-            placeholder="Моля, въведете телефонен номер "
-            id="phoneNumber"
-            value={phoneNumber}
-            pattern="[0-9]*"
-            inputMode="tel"
-            onChange={(e) => handleInputChange(e, setPhoneNumber)}
-          />
-        </div>
-        <div>
-          <label htmlFor="age_range">Възраст:</label>
-          <select
-            className="ageSelection"
-            id="age_range"
-            value={age_range}
-            onChange={(e) => handleChoiceChange(e, setAge_range)}>
-            <option value="" disabled>
-              Изберете възрастова група
-            </option>
-            <option value="Pod">Под 25</option>
-            <option value="Nad">Над 25</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="choiceType">Вид преглед:</label>
-          <select
-            className="examinationType"
-            id="typeEye"
-            value={typeEye}
-            onChange={(e) => handleChoiceChange(e, setTypeEye)}>
-            <option value="" disabled>
-              Моля, изберете подходящият преглед
-            </option>
-            <option value="Purvichen">Първичен преглед 1</option>
-            <option value="Vtorichen">Вторичен преглед</option>
-          </select>
-        </div>
-        <button
-          type="button"
-          onClick={() => void onFormSubmit(typeEye, age_range)}>
-          Напред →
-        </button>
-      </>
-      )
+      {egnFilled != false ? (
+        <>
+          <h1>Запази час</h1>
+          <div>
+            <label htmlFor="name">Име:</label>
+            <input
+              type="text"
+              placeholder="Моля, въведете името си"
+              id="name"
+              value={name}
+              onChange={(e) => handleInputChange(e, setName)}
+            />
+          </div>
+          <div>
+            <label htmlFor="name">Фамилия:</label>
+            <input
+              type="text"
+              placeholder="Моля, въведете фамилия"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => handleInputChange(e, setLastName)}
+            />
+          </div>
+          <div>
+            <label htmlFor="phoneNumber">Тел номер:</label>
+            <input
+              type="tel"
+              placeholder="Моля, въведете телефонен номер "
+              id="phoneNumber"
+              value={phoneNumber}
+              pattern="[0-9]*"
+              inputMode="tel"
+              onChange={(e) => handleInputChange(e, setPhoneNumber)}
+            />
+          </div>
+          <div>
+            <label htmlFor="age_range">Възраст:</label>
+            <select
+              className="ageSelection"
+              id="age_range"
+              value={age_range}
+              onChange={(e) => handleChoiceChange(e, setAge_range)}>
+              <option value="" disabled>
+                Изберете възрастова група
+              </option>
+              <option value="Pod">Под 25</option>
+              <option value="Nad">Над 25</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="choiceType">Вид преглед:</label>
+            <select
+              className="examinationType"
+              id="typeEye"
+              value={typeEye}
+              onChange={(e) => handleChoiceChange(e, setTypeEye)}>
+              <option value="" disabled>
+                Моля, изберете подходящият преглед
+              </option>
+              <option value="Purvichen">Първичен преглед 1</option>
+              <option value="Vtorichen">Вторичен преглед</option>
+            </select>
+          </div>
+          <button
+            type="button"
+            onClick={() => void onFormSubmit(typeEye, age_range)}>
+            Напред →
+          </button>
+        </>
+      ) : (
+        <>
+          <h1>Въведете ЕГН</h1>
+          <div>
+            <label htmlFor="e=EGN">ЕГН:</label>
+            <input
+              type="tel"
+              placeholder="Моля, въведете телефонен номер "
+              id="EGN"
+              value={egn}
+              pattern="[0-9]*"
+              inputMode="tel"
+              onChange={(e) => handleInputChange(e, setEgn)}
+            />
+          </div>
+          <button type="button" onClick={() => void onEGNSubmit()}>
+            Напред →
+          </button>
+        </>
+      )}
     </div>
   );
 };

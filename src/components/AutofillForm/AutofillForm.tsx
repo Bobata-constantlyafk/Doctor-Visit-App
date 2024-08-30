@@ -21,7 +21,6 @@ const AutofillForm: React.FC<AutofillFormProps> = ({ onPatientInfoUpdate }) => {
     const patientInfo = await getPatientInfoByEgn(egn);
     console.log("Patient info Autofill: " + JSON.stringify(patientInfo));
     onPatientInfoUpdate(patientInfo);
-    // Need to figure out a way how once this is submitted it will trigger the next form to save the data
   };
 
   return (

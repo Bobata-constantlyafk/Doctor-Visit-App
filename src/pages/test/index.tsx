@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AutofillForm from "~/components/AutofillForm";
 import InfoFormModal from "~/components/InfoFormModal";
+import { useGlobalContext } from "~/utils/store";
 
 export default function SupaBase() {
   const [patientInfo, setPatientInfo] = useState(null);
@@ -27,7 +28,6 @@ export default function SupaBase() {
           appoinmentDateTime={dummyAppointmentDateTime}
           closeModal={dummyCloseModal}
           getAllAppointments={dummyGetAllAppointments}
-          patientInfo={patientInfo}
         />
       )}
     </>
