@@ -3,7 +3,7 @@ import styles from "./InfoFormModal.module.scss";
 import {
   createAppointmentFunc,
   getExistingAppointments,
-  getPatientInfoByEgn,
+  getPatientInfoByEGN,
 } from "~/utils/functions";
 interface InfoFormModalProps {
   appoinmentDateTime: Date;
@@ -16,7 +16,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
   closeModal,
   getAllAppointments,
 }) => {
-  const [egn, setEgn] = useState("");
+  const [EGN, setEgn] = useState("");
   const [egnFilled, setEgnFilled] = useState<boolean>(false);
 
   const [name, setName] = useState("");
@@ -56,7 +56,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
   };
 
   const onEGNSubmit = async (): Promise<void> => {
-    const patientInfo = await getPatientInfoByEgn(egn);
+    const patientInfo = await getPatientInfoByEGN(EGN);
     console.log("Patient info Autofill: " + JSON.stringify(patientInfo));
     setEgnFilled(true);
 
@@ -65,7 +65,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
       setLastName(patientInfo.lastName);
       setPhoneNumber(patientInfo.phone_nr);
     } else {
-      console.error("Patient info not found for EGN:", egn);
+      console.error("Patient info not found for EGN:", EGN);
     }
   };
 
@@ -81,6 +81,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
       name,
       lastName,
       phoneNumber,
+      EGN,
       timeBetweenNextAppointment
     );
 
@@ -198,7 +199,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
               <option value="" disabled>
                 Моля, изберете подходящият преглед
               </option>
-              <option value="Purvichen">Първичен преглед 1</option>
+              <option value="Purvichen">Първичен преглед</option>
               <option value="Vtorichen">Вторичен преглед</option>
             </select>
           </div>
@@ -217,7 +218,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
               type="tel"
               placeholder="Моля, въведете телефонен номер "
               id="EGN"
-              value={egn}
+              value={EGN}
               pattern="[0-9]*"
               inputMode="tel"
               onChange={(e) => handleInputChange(e, setEgn)}

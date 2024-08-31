@@ -5,13 +5,11 @@ import { useGlobalContext } from "~/utils/store";
 import { checkPatientAppointments } from "~/utils/functions";
 import { useEffect,useState } from "react";
 
-
 interface InfoFormProps {
   onFormSubmit: (choiceType: string, age_range: string) => void;
 }
 
 const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
-
   const [secAppointmentActive, setSecAppointmentActive] = useState(false);
   // State variables for form inputs
   const {
@@ -21,6 +19,8 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
     setLastName,
     phoneNumber,
     setPhoneNumber,
+    EGN,
+    setEGN,
     age_range,
     setAge_range,
     typeEye,
@@ -55,12 +55,11 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
       !!name && isValidPhoneNumber(phoneNumber) && !!age_range && !!typeEye
     );
   };
-  
-  
+
   useEffect(() => {
-   void checkPatientAppointments(phoneNumber,setSecAppointmentActive);
-  })
-  
+    void checkPatientAppointments(phoneNumber, setSecAppointmentActive);
+  });
+
   return (
     <div className={styles.infoMain}>
       <div className={styles.infoContainer}>
@@ -76,13 +75,25 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
           />
         </div>
         <div>
-          <label htmlFor="name">Фамилия:</label>
+          <label htmlFor="lastName">Фамилия:</label>
           <input
             type="text"
             placeholder="Моля, въведете фамилия"
             id="lastName"
             value={lastName}
             onChange={(e) => handleInputChange(e, setLastName)}
+          />
+        </div>
+        <div>
+          <label htmlFor="EGN">ЕГН:</label>
+          <input
+            type="tel"
+            placeholder="Моля, въведете ЕГН"
+            id="EGN"
+            value={EGN}
+            pattern="[0-9]*"
+            inputMode="tel"
+            onChange={(e) => handleInputChange(e, setEGN)}
           />
         </div>
         <div>
@@ -122,8 +133,13 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
               Моля, изберете подходящият преглед
             </option>
             <option value="Purvichen">Първичен преглед</option>
-            {secAppointmentActive ? <option value="Vtorichen">Вторичен преглед</option>
-              : <option value="Vtorichen" disabled>Вторичен преглед</option>}
+            {secAppointmentActive ? (
+              <option value="Vtorichen">Вторичен преглед</option>
+            ) : (
+              <option value="Vtorichen" disabled>
+                Вторичен преглед
+              </option>
+            )}
           </select>
         </div>
         <button

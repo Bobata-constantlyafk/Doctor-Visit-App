@@ -1,11 +1,12 @@
 import { FC, useState, useEffect } from "react";
+import React from "react";
 import Calendar from "../Calendar";
 import "react-calendar/dist/Calendar.css";
 import styles from "./DateBookingManager.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
 import { useGlobalContext } from "~/utils/store";
 import { useRouter } from "next/router";
-import { ToastContainer,toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   createAppointmentFunc,
@@ -21,7 +22,7 @@ const DateBookingManager: FC = ({}) => {
   const successType = "appointment";
 
   // Global state variables
-  const { name, lastName, phoneNumber, age_range, typeEye } =
+  const { name, lastName, phoneNumber, EGN, age_range, typeEye } =
     useGlobalContext();
 
   // State to store existing appointments for the selected date
@@ -209,6 +210,7 @@ const DateBookingManager: FC = ({}) => {
     name: string,
     lastName: string,
     phoneNumber: string,
+    EGN: string,
     timeBetweenNextAppointment?: string
   ) => {
     try {
@@ -219,6 +221,7 @@ const DateBookingManager: FC = ({}) => {
         name,
         lastName,
         phoneNumber,
+        EGN,
         timeBetweenNextAppointment
       );
       // void router.push(
@@ -244,7 +247,7 @@ const DateBookingManager: FC = ({}) => {
   return (
     <div className={styles.calendarMain}>
       {date ? (
-        <>
+        <React.Fragment>
           <div className={styles.viewAvailableHoursHeading}>
             <button className={styles.buttonBack} onClick={() => setDate(null)}>
               ← Назад
@@ -284,6 +287,7 @@ const DateBookingManager: FC = ({}) => {
                           name,
                           lastName,
                           phoneNumber,
+                          EGN,
                           timeBetweenNextAppointment
                         );
                       }}
@@ -296,7 +300,7 @@ const DateBookingManager: FC = ({}) => {
               })}
             </div>
           </div>
-        </>
+        </React.Fragment>
       ) : (
         <Calendar onSelectDate={(selectedDate) => setDate(selectedDate)} />
       )}

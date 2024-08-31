@@ -16,15 +16,19 @@ interface HoursManagementData {
 const createPatient = async (
   name: string,
   lastName: string,
-  phoneNumber: string
+  phoneNumber: string,
+  EGN: string
 ) => {
   let patient_id = null;
   await (
     supabase
       .from("Patients")
-      .upsert([{ name: name, lastName: lastName, phone_nr: phoneNumber }], {
-        onConflict: "phone_nr",
-      })
+      .upsert(
+        [{ name: name, lastName: lastName, phone_nr: phoneNumber, EGN: EGN }],
+        {
+          onConflict: "phone_nr",
+        }
+      )
       .select("*") as unknown as Promise<{
       data: Patient[];
       error: PostgrestError;
@@ -99,9 +103,10 @@ export async function createAppointmentFunc(
   name: string,
   lastName: string,
   phoneNumber: string,
+  EGN: string,
   timeBetweenNextAppointment?: string
 ) {
-  const patient_id = await createPatient(name, lastName, phoneNumber);
+  const patient_id = await createPatient(name, lastName, phoneNumber, EGN);
 
   let appointmentData: Appointment[];
 
@@ -505,6 +510,8 @@ export async function fetchUser(
 }
 
 // Check if the patient has any appointments in the last 30 days
+// Swap the phoneNumber in this function for EGN -b-
+// This whole mf don't work
 export async function checkPatientAppointments(
   phoneNumberInput: string,
   setSecAppointmentActive: React.Dispatch<React.SetStateAction<boolean>>
@@ -618,14 +625,14 @@ export function formatAsInternationalNumber(numbers: string[]) {
 }
 
 // Get all atient info by EGN
-export async function getPatientInfoByEgn(
-  egn: string
+export async function getPatientInfoByEGN(
+  EGN: string
 ): Promise<Patient | null> {
   try {
     const { data, error } = await supabase
       .from("Patients")
-      .select("id, name, lastName, phone_nr, missed, missed_date")
-      .eq("egn", egn);
+      .select("id, name, lastName, phone_nr, EGN, missed, missed_date")
+      .eq("EGN", EGN);
 
     if (error) {
       console.error("Error fetching patient info:", error.message);
@@ -641,6 +648,7 @@ export async function getPatientInfoByEgn(
       name: data[0].name,
       lastName: data[0].lastName,
       phone_nr: data[0].phone_nr,
+      EGN: data[0].EGN,
     };
     return patient;
   } catch (error) {

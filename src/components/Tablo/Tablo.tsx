@@ -126,7 +126,7 @@ const Tablo: FC = ({}) => {
     const { data, error } = await supabase
       .from("Appointments")
       .select(
-        "date, age_range, type, patient_id, Patients(name, lastName, phone_nr, missed)"
+        "date, age_range, type, patient_id, Patients(name, lastName, phone_nr, EGN, missed)"
       )
       .order("date");
     if (error) {

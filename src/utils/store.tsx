@@ -16,6 +16,8 @@ interface ContextProps {
   setLastName: Dispatch<SetStateAction<string>>;
   phoneNumber: string;
   setPhoneNumber: Dispatch<SetStateAction<string>>;
+  EGN: string;
+  setEGN: Dispatch<SetStateAction<string>>;
   age_range: string;
   setAge_range: Dispatch<SetStateAction<string>>;
   typeEye: string;
@@ -33,6 +35,8 @@ const GlobalContext = createContext<ContextProps>({
   setLastName: (): string => "",
   phoneNumber: "",
   setPhoneNumber: (): string => "",
+  EGN: "",
+  setEGN: (): string => "",
   age_range: "",
   setAge_range: (): string => "",
   typeEye: "",
@@ -51,6 +55,7 @@ export const GlobalContextProvider = ({
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [EGN, setEGN] = useState("");
   const [age_range, setAge_range] = useState("");
   const [typeEye, setTypeEye] = useState("");
   const [calendarState, setCalendarState] = useState(0);
@@ -64,6 +69,8 @@ export const GlobalContextProvider = ({
         setLastName,
         phoneNumber,
         setPhoneNumber,
+        EGN,
+        setEGN,
         age_range,
         setAge_range,
         typeEye,

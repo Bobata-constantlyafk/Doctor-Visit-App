@@ -18,6 +18,7 @@ export interface AppointmentForTablo {
     name: string;
     lastName: string;
     phone_nr: string;
+    EGN: string;
     missed: boolean;
   }[];
 }
@@ -27,6 +28,7 @@ export interface Patient {
   name: string;
   lastName: string;
   phone_nr: string;
+  EGN: string;
   missed?: boolean;
   missed_date?: Date;
 }
