@@ -6,7 +6,8 @@
 
 
 .tabloMain{
-  min-height: 73.3vh;
+  min-height: 80vh;
+  padding-bottom: 10vw;
 
   .calendarSelf{
     display: grid;
@@ -51,7 +52,6 @@
       align-self: center;
     }
   }
-
 
    .appsAndHours{
     display: grid;

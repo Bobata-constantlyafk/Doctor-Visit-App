@@ -257,7 +257,7 @@ const DateBookingManager: FC = ({}) => {
               <h3> {title} </h3>
             </div>
           </div>
-          <div className={styles.buttonContainer}>
+          <div className={styles.hoursContainer}>
             <div className={styles.calendarHours}>
               {getAllActiveHours.map((hour) => (
                 <div className={styles.calendarHour} key={hour}>
