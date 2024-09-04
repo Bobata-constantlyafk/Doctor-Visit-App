@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import {
-  getPhoneNumbersById,
-  formatAsInternationalNumber,
-} from "~/utils/functions";
+import { formatAsInternationalNumber } from "~/utils/functions";
 import { sendMessagez } from "bulkGate";
+import format from "date-fns-tz/format";
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,14 +12,24 @@ export default async function handler(
     return;
   }
 
-  const fetchAppointments = async () => {
-    try {
-      const numbersToBeTexted = ["0899188177"];
-      const getFormattedNumbers =
-        formatAsInternationalNumber(numbersToBeTexted);
+  const { phoneNumber, appointmentTimeFormated } = req.body;
 
-      console.log("get numbers to be texted: ", getFormattedNumbers);
-      await sendMessageSingle(getFormattedNumbers);
+  if (!phoneNumber || !appointmentTimeFormated) {
+    res
+      .status(400)
+      .json({ message: "Phone number and appointment time are required" });
+    return;
+  }
+  const formatNumber = async () => {
+    try {
+      const getFormattedNumbers = formatAsInternationalNumber([phoneNumber]);
+      const formattedNumber = getFormattedNumbers[0];
+
+      if (!formattedNumber) {
+        throw new Error("Formatted number is undefined");
+      }
+
+      await sendMessageSingle(formattedNumber);
     } catch (error) {
       console.error("Failed to fetch appointments or numbers", error);
       res
@@ -30,30 +38,30 @@ export default async function handler(
     }
   };
 
-  await fetchAppointments();
+  await formatNumber();
 
-  async function sendMessageSingle(numbers: string[]) {
+  async function sendMessageSingle(number: string) {
     try {
-      console.log("BulkGate, in the sendMessage");
-      if (numbers.length === 0) {
+      if (!number) {
         console.warn("No numbers to send messages to.");
         return;
       }
-      for (const number of numbers) {
-        await sendMessagez({
-          application_id: "32502",
-          application_token: String(process.env.NEXT_PUBLIC_BULK_GATE_KEY),
-          number: number,
-          text: "Zdraveite, imate zapazen chas pri D-r Pravchev",
-          sender_id: "gText",
-          sender_id_value: "Dr Pravchev",
-        });
-      }
-      console.log("Message sent successfully");
-      res.status(200).json({ message: "Messages sent successfully" });
+
+      await sendMessagez({
+        application_id: "32502",
+        application_token: String(process.env.NEXT_PUBLIC_BULK_GATE_KEY),
+        number: number,
+        text: `Zdraveite, imate zapazen chas pri D-r Pravchev na ${appointmentTimeFormated}`,
+        sender_id: "gText",
+        sender_id_value: "Dr Pravchev",
+      });
+
+      res.status(200).json({ message: "Messages sent successfully | API" });
     } catch (error) {
       console.error("Failed to send message", error);
-      res.status(500).json({ message: "Failed to send message, api error" });
+      res
+        .status(500)
+        .json({ message: "Failed to send message, api error | API" });
     }
   }
 }

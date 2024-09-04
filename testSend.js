@@ -3,7 +3,7 @@ const axios = require("axios");
 async function testSendMessage() {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/send-message-bulk",
+      "http://localhost:3000/api/send-message-single",
       {}
     );
     console.log("Response:", response.data);

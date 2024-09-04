@@ -1,11 +1,11 @@
-import React from "react";
-import Success from "~/components/Success";
+import React, { useEffect } from "react";
+import { sendNewAppointmentNotification } from "~/utils/functions";
+import format from "date-fns-tz/format";
 
 export default function SupaBase() {
   return (
     <>
-      <Success />
-      <p>success and bababoe</p>
+      <p>Testing sendNewAppointmentNotification function</p>
     </>
   );
 }
