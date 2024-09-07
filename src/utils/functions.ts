@@ -65,11 +65,7 @@ const appointmentsOverlapNotification = () =>
 //===========================================================================================
 
 // Feteches appointments that are in the database
-export async function getExistingAppointments(
-  date: Date,
-  typeEye: string,
-  age_range: string
-): Promise<Date[]> {
+export async function getExistingAppointments(date: Date): Promise<Date[]> {
   const formattedSelectedDate = format(date, "yyyy-MM-dd");
 
   try {
@@ -207,6 +203,9 @@ export async function createAppointmentFunc(
     });
 }
 
+interface SendMessageResponse {
+  message: string;
+} // this interface is needed for type gymnastics
 export async function sendNewAppointmentNotification(
   phoneNumber: string,
   appointmentTime: Date
@@ -225,13 +224,14 @@ export async function sendNewAppointmentNotification(
       }),
     });
 
-    const data = await response.json();
+    const data: SendMessageResponse =
+      (await response.json()) as SendMessageResponse;
 
     if (!response.ok) {
       throw new Error(data.message || "Something went wrong!");
     }
 
-    console.log("Notification sent successfully:", data);
+    console.log("Notification sent successfully -b-:", data);
   } catch (error) {
     console.error("Failed to send notification:", error);
   }
@@ -676,11 +676,11 @@ export async function getPatientInfoByEGN(
     }
 
     const patient: Patient = {
-      id: data[0].id,
-      name: data[0].name,
-      lastName: data[0].lastName,
-      phone_nr: data[0].phone_nr,
-      EGN: data[0].EGN,
+      id: data[0].id as number,
+      name: data[0].name as string,
+      lastName: data[0].lastName as string,
+      phone_nr: data[0].phone_nr as string,
+      EGN: data[0].EGN as string,
     };
     return patient;
   } catch (error) {

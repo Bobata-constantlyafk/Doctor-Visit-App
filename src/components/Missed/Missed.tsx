@@ -74,7 +74,11 @@ const Missed: FC = () => {
             <div className={styles.info}>
               <p>{patient.name}</p>
               <p>{patient.phone_nr}</p>
-              <p>{formatDateAndHour(patient.missed_date as Date)}</p>
+              <p>
+                {patient.missed_date
+                  ? formatDateAndHour(patient.missed_date)
+                  : "No date available"}
+              </p>
               <button onClick={() => void setMissedAsFalse(patient.id)}>
                 Решен
               </button>

@@ -48,11 +48,26 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
     const phoneRegex = /^(0\d{9}|(\+\d{10,12}))$/;
     return phoneRegex.test(phoneNumber);
   };
+  // Validate EGN format
+  const isValidEGN = (egn: string): boolean => {
+    const egnRegex = /^\d{10}$/;
+    return egnRegex.test(egn);
+  };
+  // Validate name format
+  const isValidName = (name: string): boolean => {
+    const nameRegex = /^[a-zA-Z]+([ '-][a-zA-Z]+)*$/;
+    return name.length > 1 && nameRegex.test(name);
+  };
 
   // Check if the entire form is valid
   const isFormValid = (): boolean => {
     return (
-      !!name && isValidPhoneNumber(phoneNumber) && !!age_range && !!typeEye
+      isValidName(name) &&
+      isValidName(lastName) &&
+      isValidEGN(EGN) &&
+      isValidPhoneNumber(phoneNumber) &&
+      !!age_range &&
+      !!typeEye
     );
   };
 
@@ -144,12 +159,8 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
         </div>
         <button
           type="button"
-          // disabled={!isFormValid()}
+          disabled={!isFormValid()}
           onClick={() => {
-            // if (isFormValid()) {
-            //   logVars();
-            //   onFormSubmit();
-            // }
             onFormSubmit(typeEye, age_range);
           }}>
           Напред →

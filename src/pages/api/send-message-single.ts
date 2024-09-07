@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { formatAsInternationalNumber } from "~/utils/functions";
 import { sendMessagez } from "bulkGate";
-import format from "date-fns-tz/format";
 
+type RequestBody = {
+  phoneNumber: string;
+  appointmentTimeFormated: string;
+};
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -12,7 +15,8 @@ export default async function handler(
     return;
   }
 
-  const { phoneNumber, appointmentTimeFormated } = req.body;
+  const { phoneNumber, appointmentTimeFormated }: RequestBody =
+    req.body as RequestBody;
 
   if (!phoneNumber || !appointmentTimeFormated) {
     res
