@@ -32,7 +32,7 @@ const InfoFormModal: React.FC<InfoFormModalProps> = ({
   let timeBetweenNextAppointment = "nuthin";
 
   useEffect(() => {
-    getExistingAppointments(appoinmentDateTime, typeEye, age_range)
+    getExistingAppointments(appoinmentDateTime)
       .then((existingAppointments) => {
         setExistingAppointments(existingAppointments);
       })

@@ -86,7 +86,7 @@ const DateBookingManager: FC = ({}) => {
     getDataForAppointmentType();
     if (!date) return;
 
-    getExistingAppointments(date, typeEye, age_range)
+    getExistingAppointments(date)
       .then((existingAppointments) => {
         setExistingAppointments(existingAppointments);
         console.log("Existing appointments fetched");
