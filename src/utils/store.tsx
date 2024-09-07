@@ -1,5 +1,4 @@
 "use client";
-
 import React, {
   createContext,
   useContext,
@@ -7,7 +6,6 @@ import React, {
   SetStateAction,
   useState,
 } from "react";
-
 
 interface ContextProps {
   name: string;
