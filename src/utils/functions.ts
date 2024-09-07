@@ -160,7 +160,7 @@ export async function createAppointmentFunc(
           patient_id: patient_id,
         },
         {
-          date: nextAppointmentDate,
+          date: nextAppointmentDate, // rename to nextAppointmentTime
           age_range: age_range,
           type: typeEye,
           patient_id: patient_id,
@@ -184,6 +184,8 @@ export async function createAppointmentFunc(
       return;
   }
 
+  await sendNewAppointmentNotification(phoneNumber, appointmentTime);
+
   (
     supabase
       .from("Appointments")
@@ -203,6 +205,36 @@ export async function createAppointmentFunc(
     .catch((error) => {
       console.error("Error creating appointment:", error);
     });
+}
+
+export async function sendNewAppointmentNotification(
+  phoneNumber: string,
+  appointmentTime: Date
+) {
+  try {
+    const appointmentTimeFormated = format(appointmentTime, "dd MMM HH:mm");
+
+    const response = await fetch("/api/send-message-single", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phoneNumber,
+        appointmentTimeFormated,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Something went wrong!");
+    }
+
+    console.log("Notification sent successfully:", data);
+  } catch (error) {
+    console.error("Failed to send notification:", error);
+  }
 }
 
 // Formats date to words

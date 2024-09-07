@@ -192,10 +192,6 @@ const DateBookingManager: FC = ({}) => {
         isStartingTimeTaken,
         timeBetweenNextAppointment,
       });
-
-      console.log(
-        "Ending Time: " + isEndingTimeTaken + " | " + i.toString().slice(16, 25)
-      );
     }
 
     return appointments;

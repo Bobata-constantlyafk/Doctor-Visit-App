@@ -12,7 +12,7 @@ const Missed: FC = () => {
     async function fetchMissedPatients() {
       const { data, error } = await supabase
         .from("Patients")
-        .select("id, name, phone_nr, missed, missed_date")
+        .select("id, name, lastName, EGN, phone_nr, missed, missed_date")
         .eq("missed", true);
 
       if (error) {
@@ -74,7 +74,7 @@ const Missed: FC = () => {
             <div className={styles.info}>
               <p>{patient.name}</p>
               <p>{patient.phone_nr}</p>
-              <p>{formatDateAndHour(patient.missed_date)}</p>
+              <p>{formatDateAndHour(patient.missed_date as Date)}</p>
               <button onClick={() => void setMissedAsFalse(patient.id)}>
                 Решен
               </button>
