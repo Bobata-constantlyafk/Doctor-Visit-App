@@ -196,7 +196,9 @@ const Tablo: FC = ({}) => {
           {/* {user ? (
         <> */}
           <div className={styles.header}>
-            <button className={styles.buttonBack} onClick={() => setDate(null)}>
+            <button
+              className={styles.buttonBack}
+              onClick={() => window.location.reload()}>
               ← Назад
             </button>
             <h1>{formatDateToWords(date)}</h1>
