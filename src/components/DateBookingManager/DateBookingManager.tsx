@@ -6,8 +6,7 @@ import styles from "./DateBookingManager.module.scss";
 import { add, format, isSameMinute, setMinutes } from "date-fns";
 import { useGlobalContext } from "~/utils/store";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { appointmentsOverlapNotification } from "~/utils/functions";
 import {
   createAppointmentFunc,
   formatDateToWords,
@@ -19,7 +18,7 @@ const DateBookingManager: FC = ({}) => {
   const [date, setDate] = useState<Date | null>(null);
 
   const router = useRouter();
-  const successType = "appointment";
+  let successType = "appointment";
 
   // Global state variables
   const { name, lastName, phoneNumber, EGN, age_range, typeEye } =
@@ -220,9 +219,6 @@ const DateBookingManager: FC = ({}) => {
         EGN,
         timeBetweenNextAppointment
       );
-      // void router.push(
-      //   `/success?appointmentDate=${encodeURIComponent(time.toISOString())}`
-      // );
       void router.push({
         pathname: "/success",
         query: {
@@ -231,7 +227,15 @@ const DateBookingManager: FC = ({}) => {
         },
       });
     } catch (error) {
-      console.error("Appointment creation failed:", error);
+      console.error("Appointment creation failed DBM:", error);
+      successType = "appointmentTaken";
+      void router.push({
+        pathname: "/success",
+        query: {
+          time: time.toISOString(),
+          successType,
+        },
+      });
     }
   };
 
@@ -290,7 +294,6 @@ const DateBookingManager: FC = ({}) => {
                       disabled={isStartingTimeTaken || !isEndingTimeTaken}>
                       {format(time, "kk:mm")}
                     </button>
-                    <ToastContainer />
                   </div>
                 );
               })}

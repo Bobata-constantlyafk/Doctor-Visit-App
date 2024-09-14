@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import Footer from "~/components/Navigation/Footer/Footer";
 import FooterMobile from "~/components/Navigation/FooterMobile/FooterMobile";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const queryClient = new QueryClient();
@@ -24,6 +26,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       {isMobile ? <Sidebar></Sidebar> : <Navbar></Navbar>}
       <Component {...pageProps} />
       {isMobile ? <FooterMobile /> : <Footer />}
+      <ToastContainer />
     </QueryClientProvider>
   );
 };

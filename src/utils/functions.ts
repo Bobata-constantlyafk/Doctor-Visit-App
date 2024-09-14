@@ -54,12 +54,21 @@ const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const appointmentsOverlapNotification = () =>
+export function appointmentsOverlapNotification() {
   toast.error("Избраният час не е свободен", {
     position: "top-center",
-    autoClose: 4000,
-    pauseOnHover: false,
+    autoClose: 5000,
+    pauseOnHover: true,
   });
+}
+
+export function appointmentSuccess() {
+  toast.success("Избраният час e запазен", {
+    position: "top-center",
+    autoClose: 5000,
+    pauseOnHover: true,
+  });
+}
 
 //Functions
 //===========================================================================================
@@ -102,106 +111,108 @@ export async function createAppointmentFunc(
   EGN: string,
   timeBetweenNextAppointment?: string
 ) {
-  const patient_id = await createPatient(name, lastName, phoneNumber, EGN);
+  try {
+    const patient_id = await createPatient(name, lastName, phoneNumber, EGN);
 
-  let appointmentData: Appointment[];
+    let appointmentData: Appointment[];
 
-  //If the appointment type is primary, then a second appointment will be created.
-  //The exact time of the second appointment depends on a two thing:
-  //1.The age range of the patient (under or over 25)
-  //2.Only if they are under 25, the time between the appointments of other patients
-  switch (typeEye) {
-    case "Purvichen":
-      let nextAppointmentDate = new Date();
-      switch (age_range) {
-        case "Nad":
-          nextAppointmentDate = add(appointmentTime, { minutes: 40 });
-          break;
-        case "Pod":
-          console.log("time from function: " + timeBetweenNextAppointment);
-          switch (timeBetweenNextAppointment) {
-            case "1h20":
-              nextAppointmentDate = add(appointmentTime, {
-                hours: 1,
-                minutes: 20,
-              });
-              console.log("function case: 1h20");
-              break;
-            case "1h40":
-              nextAppointmentDate = add(appointmentTime, {
-                hours: 1,
-                minutes: 40,
-              });
-              console.log("function case: 1h40");
-              break;
-            case undefined:
-              nextAppointmentDate = add(appointmentTime, {
-                hours: 1,
-                minutes: 20,
-              });
-              console.log("Appointment ending time is undefined");
-              break;
-            default:
-              console.error("Invalid appointment ending time");
-              console.log("case default");
-              return;
-          }
-          break;
-      }
-      appointmentData = [
-        {
-          date: appointmentTime,
-          age_range: age_range,
-          type: typeEye,
-          patient_id: patient_id,
-        },
-        {
-          date: nextAppointmentDate, // rename to nextAppointmentTime
-          age_range: age_range,
-          type: typeEye,
-          patient_id: patient_id,
-        },
-      ];
-      break;
+    // If the appointment type is primary, then a second appointment will be created.
+    // The exact time of the second appointment depends on two things:
+    // 1. The age range of the patient (under or over 25)
+    // 2. Only if they are under 25, the time between the appointments of other patients
+    switch (typeEye) {
+      case "Purvichen":
+        let nextAppointmentDate = new Date();
+        switch (age_range) {
+          case "Nad":
+            nextAppointmentDate = add(appointmentTime, { minutes: 40 });
+            break;
+          case "Pod":
+            console.log("time from function: " + timeBetweenNextAppointment);
+            switch (timeBetweenNextAppointment) {
+              case "1h20":
+                nextAppointmentDate = add(appointmentTime, {
+                  hours: 1,
+                  minutes: 20,
+                });
+                console.log("function case: 1h20");
+                break;
+              case "1h40":
+                nextAppointmentDate = add(appointmentTime, {
+                  hours: 1,
+                  minutes: 40,
+                });
+                console.log("function case: 1h40");
+                break;
+              case undefined:
+                nextAppointmentDate = add(appointmentTime, {
+                  hours: 1,
+                  minutes: 20,
+                });
+                console.log("Appointment ending time is undefined");
+                break;
+              default:
+                console.error("Invalid appointment ending time");
+                console.log("case default");
+                throw new Error("Invalid appointment ending time");
+            }
+            break;
+        }
+        appointmentData = [
+          {
+            date: appointmentTime,
+            age_range: age_range,
+            type: typeEye,
+            patient_id: patient_id,
+          },
+          {
+            date: nextAppointmentDate, // rename to nextAppointmentTime
+            age_range: age_range,
+            type: typeEye,
+            patient_id: patient_id,
+          },
+        ];
+        break;
 
-    case "Vtorichen":
-      appointmentData = [
-        {
-          date: appointmentTime,
-          age_range: age_range,
-          type: typeEye,
-          patient_id: patient_id,
-        },
-      ];
-      break;
+      case "Vtorichen":
+        appointmentData = [
+          {
+            date: appointmentTime,
+            age_range: age_range,
+            type: typeEye,
+            patient_id: patient_id,
+          },
+        ];
+        break;
 
-    default:
-      console.error("Invalid appointment type");
-      return;
-  }
+      default:
+        console.error("Invalid appointment type");
+        throw new Error("Invalid appointment type");
+    }
 
-  await sendNewAppointmentNotification(phoneNumber, appointmentTime);
+    // await sendNewAppointmentNotification(phoneNumber, appointmentTime); -b-
 
-  (
-    supabase
+    const { data, error } = (await supabase
       .from("Appointments")
-      .upsert(appointmentData) as unknown as Promise<{
+      .upsert(appointmentData)) as unknown as {
       data: Appointment;
       error: Error;
-    }>
-  )
-    .then(({ data, error }) => {
-      if (error) {
-        console.error("Error creating appointment:", error);
-        appointmentsOverlapNotification();
-      } else {
-        console.log("Appointment created successfully:", data);
-      }
-    })
-    .catch((error) => {
+    };
+
+    if (error) {
       console.error("Error creating appointment:", error);
-    });
+      appointmentsOverlapNotification();
+      throw new Error("Failed to create appointment");
+    } else {
+      appointmentSuccess();
+      console.log("Appointment created successfully:", data);
+    }
+  } catch (error) {
+    console.error("Error in createAppointmentFunc:", error);
+    throw error; // Propagate the error to the calling function
+  }
 }
+
 
 interface SendMessageResponse {
   message: string;

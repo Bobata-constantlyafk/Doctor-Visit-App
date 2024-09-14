@@ -45,6 +45,10 @@ const Success: FC = () => {
         setSubHeaderText(getFormattedDate(new Date(parseDate)));
         console.log("updated for appointment");
         break;
+      case "appointmentTaken":
+        setHeaderText("Избраният час е зает");
+        setSubHeaderText("Моля пробвайте пак");
+        break;
       default:
         setHeaderText("Success type has not been defined");
         break;

@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
-import { sendNewAppointmentNotification } from "~/utils/functions";
-import format from "date-fns-tz/format";
+import { appointmentsOverlapNotification } from "~/utils/functions";
 
 export default function SupaBase() {
+  useEffect(() => {
+    appointmentsOverlapNotification();
+  });
   return (
     <>
-      <p>Testing sendNewAppointmentNotification function</p>
+      <p>Toast</p>
     </>
   );
 }

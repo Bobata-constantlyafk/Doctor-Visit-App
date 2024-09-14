@@ -11,8 +11,6 @@ import {
   deleteAppointment,
 } from "~/utils/functions";
 import { AppointmentForTablo } from "~/utils/interfaces";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import {
   isSameDay,
   isSameMinute,
@@ -37,7 +35,6 @@ const Tablo: FC = ({}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dateForApp, setDateForApp] = useState<Date>(new Date());
 
-
   //Get the patient data from Supabase, when the application runs
   useEffect(() => {
     void getOpeningClosingHours();
@@ -56,7 +53,7 @@ const Tablo: FC = ({}) => {
         });
     }
     void getUserData();
-    
+
     void getAllAppointments();
   }, []);
 
@@ -100,7 +97,6 @@ const Tablo: FC = ({}) => {
       console.error("Error:", error);
     }
   }
-  
 
   // Create a constant for all active hours
   const getAllActiveHours: number[] = [];
@@ -134,7 +130,7 @@ const Tablo: FC = ({}) => {
     } else {
       setAppointments(data);
     }
-  }  
+  }
 
   // Creates an array of appointments with the opening and closing hours and minutes
   // This is used to filter out appointments that are outside of the opening and closing hours and to show them in the frontend
@@ -214,7 +210,6 @@ const Tablo: FC = ({}) => {
               ))}
             </div>
             <div className={styles.tabloCards}>
-              <ToastContainer />
               {/* Info form will be shown when the plus button on an empty appointment is clicked */}
               {isModalOpen ? (
                 <div className={styles.infoForm}>

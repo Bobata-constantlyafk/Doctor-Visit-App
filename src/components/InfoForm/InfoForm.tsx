@@ -3,7 +3,7 @@ import React, { ChangeEvent } from "react";
 import styles from "./InfoForm.module.scss";
 import { useGlobalContext } from "~/utils/store";
 import { checkPatientAppointments } from "~/utils/functions";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 interface InfoFormProps {
   onFormSubmit: (choiceType: string, age_range: string) => void;
@@ -159,7 +159,7 @@ const InfoForm: React.FC<InfoFormProps> = ({ onFormSubmit }) => {
         </div>
         <button
           type="button"
-          disabled={!isFormValid()}
+          // disabled={!isFormValid()} -b-
           onClick={() => {
             onFormSubmit(typeEye, age_range);
           }}>
