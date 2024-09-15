@@ -81,7 +81,7 @@ const Privacy: FC = () => {
             </li>
             <li>
               <a href="https://dr-pravchev.netlify.app/" target="_blank">
-                Dr. P's EGN software
+                Dr. Pravchevs EGN software
               </a>
             </li>
           </ul>
