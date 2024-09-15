@@ -16,7 +16,15 @@ const FooterMobile: React.FC = () => {
         <p>
           {" "}
           Тел. номер:
-          <br /> 0 889 433 995{" "}
+          <br /> 0889 433 995{" "}
+        </p>
+      </div>
+
+      <div className={styles.poveritelnost}>
+        <p
+          onClick={() => (window.location.href = "/poveritelnost")}
+          className={styles.footerPoveritelnost}>
+          Политика за поверителност
         </p>
       </div>
     </div>

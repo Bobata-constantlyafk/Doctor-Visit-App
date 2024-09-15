@@ -6,14 +6,24 @@
     @media only screen and (max-width: 900px) {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        justify-items:end;
-        height: 7rem;
-        text-align: start;
+        padding-left: 1rem;
+        padding-right: 1rem;
 
         .phoneNr{
             display: grid;
-            justify-self: center;
+            justify-self: end;
         }
+
+        .poveritelnost{
+            display: grid;
+            justify-self:end;
+        }
+    }
+
+    .footerPoveritelnost{
+        cursor: pointer;
+        color: #87CEEB;
+        text-decoration: underline;
     }
 }
 
