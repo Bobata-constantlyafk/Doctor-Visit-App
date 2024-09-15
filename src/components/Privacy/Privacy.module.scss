@@ -1,0 +1,15 @@
+.privacyMain {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  justify-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #fafafa;
+  z-index: 0;
+
+  .privacyCenter{
+    h1{
+      text-align: center;
+    }
+  }
+}
